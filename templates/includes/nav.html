@@ -1,0 +1,42 @@
+<div class="row ms-3 me-3 mt-2">
+  <div class="col">
+      <h2 class="fst-italic"><span style="color:red">Т</span>ранс<span style="color:red">Р</span>ем<span style="color:red">К</span>ом</h2>
+  </div>
+  <div class="col text-end mt-3">
+      <a href="#" class="pe-2">Пользователь: РомановИЮ</a>
+      <a href="#" class="pe-2">Вход</a>
+      <a href="#" class="pe-2">Выход</a>
+  </div>
+</div>
+<hr class="mb-1">
+    <nav class="navbar">
+      <div class="container">
+        <a href="{% url 'index' %}" class="btn btn-outline-dark nav-link zoom-menu mb-2">Главная</a>
+        <a href="{% url 'viewing_block' %}" class="btn btn-outline-dark nav-link zoom-menu mb-2">Учет блоков</a>
+        <div class="nav-item dropdown">
+            <a href="#" class="btn btn-outline-dark nav-link dropdown-toggle zoom-menu mb-2" id="managmentDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">Управление</a>
+            <ul class="dropdown-menu" aria-labelledby="managmentDropdown">
+              <li><a class="dropdown-item" href="{% url 'records_block' %}">Управление блоками</a></li>
+              <li><hr class="dropdown-divider"></li>
+              <li><a class="dropdown-item" href="#">Управление компонентами</a></li>
+              <li><hr class="dropdown-divider"></li>
+              <li><a class="dropdown-item" href="#">Управление заявками</a></li>
+            </ul>
+        </div>
+        <div class="nav-item dropdown">
+            <a href="" class="btn btn-outline-dark nav-link dropdown-toggle zoom-menu mb-2" id="statisticDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">Статистика</a>
+            <ul class="dropdown-menu" aria-labelledby="statisticDropdown">
+                <li><a class="dropdown-item" href="#">Статистика по блокам</a></li>
+                <li><hr class="dropdown-divider"></li>
+                <li><a class="dropdown-item" href="#">Статистика по компонентам</a></li>
+                <li><hr class="dropdown-divider"></li>
+                <li><a class="dropdown-item" href="#">Связи компонентов</a></li>
+              </ul>
+        </div>
+        <a href="" class="btn btn-outline-dark nav-link zoom-menu mb-2">Учет компонентов</a>
+        <a href="" class="btn btn-outline-dark nav-link zoom-menu mb-2">Заказы компонентов</a>
+        <a href="" class="btn btn-outline-dark nav-link zoom-menu mb-2">Дефектные ведомости</a>
+        <a href="" class="btn btn-outline-dark nav-link zoom-menu mb-2">Производителю</a>
+      </div>
+    </nav>
+    <hr class="mt-1">

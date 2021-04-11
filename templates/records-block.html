@@ -1,0 +1,135 @@
+{% extends "base.html" %}
+{% block title %}Управление блоками{% endblock %}
+
+{% block content %}
+{% load user_filters %}
+<h1 class="text-center">Управление блоками</h1>
+<hr>
+<h3>Фильтр</h3>
+<br>
+<form class="ms-1 me-1" method='GET'>
+  {% csrf_token %}
+  <div class="row">
+    <div class="col-1" style="min-width: 150px;">
+      {{ data_filter.form.number_block.label }}
+      {{ data_filter.form.number_block|addclass:"form-control form-control-sm" }}
+    </div>
+    <div class="col-3" style="min-width: 150px;">
+      <label for="id_name_block">Тип блока</label>
+      {{ data_filter.form.name_block|addclass:"form-control form-control-sm" }}
+      <label class="mt-1" for="id_region">Подразделение</label>
+      {{ data_filter.form.region|addclass:"form-control form-control-sm" }}
+    </div>
+    <div class="col-1" style="min-width: 150px;">
+      <label for="id_serial">Зав.№</label>
+      {{ data_filter.form.serial_number|addclass:"form-control form-control-sm" }}
+      <label for="id_FIO">ФИО</label>
+      {{ data_filter.form.FIO|addclass:"form-control form-control-sm" }}
+    </div>
+    <div class="col-2" style="min-width: 150px;">
+      <label for="id_date_add_0">Дата приема c</label>
+      <input type="date" name="date_add_after" class="form-control form-control-sm" placeholder="Дата приема" title="" id="id_date_add_0">
+      <label for="id_date_add_1">по</label>
+      <input type="date" name="date_add_before" class="form-control form-control-sm" placeholder="Дата приема" title="" id="id_date_add_1">
+    </div>
+    <div class="col-2" style="min-width: 150px;">
+      <label for="id_date_repair_0">Дата ремонта с</label>
+      <input type="date" name="date_repair_after" class="form-control form-control-sm" placeholder="Дата ремонта" title="" id="id_date_repair_0">
+      <label for="id_date_repair_1">по</label>
+      <input type="date" name="date_repair_before" class="form-control form-control-sm" placeholder="Дата ремонта" title="" id="id_date_repair_1">
+    </div>
+    <div class="col-2" style="min-width: 150px;">
+      <label for="id_date_shipment_0">Дата отправки с</label>
+      <input type="date" name="date_shipment_after" class="form-control form-control-sm" placeholder="Дата отправки" title="" id="id_date_shipment_0">
+      <label for="id_date_shipment_1">по</label>
+      <input type="date" name="date_shipment_before" class="form-control form-control-sm" placeholder="Дата отправки" title="" id="id_date_shipment_1">
+    </div>
+    <div class="col" style="min-width: 150px;">
+      <label for="id_status">Статус</label>
+      {{ data_filter.form.status|addclass:"form-control form-control-sm" }}
+      <div class="d-grid gap-2">
+        <button type="submit" class="btn btn-sm btn-dark mt-4" name="search_all">Поиск</button>
+      </div>
+    </div>
+  </div>
+</form>
+
+<hr>
+<div class="table-responsive ms-3 me-3">
+  <p>Количество блоков: {{ cnt }}</p>
+    <table class="table table-sm table-hover">
+        <thead>
+          <tr>
+            <th scope="col" style="width: 5%">Учетный номер</th>
+            <th style="min-width: 350px;" scope="col">Наименование блока</th>
+            <th scope="col" style="width: 5%">Зав. номер</th>
+            <th scope="col" style="width: 11%">Участок</th>
+            <th scope="col" style="width: 5%">Дата приема</th>
+            <th scope="col" style="width: 5%">Дата ремонта</th>
+            <th scope="col" style="width: 5%">Дата отправки</th>
+            <th scope="col" style="width: 4%">Состояние</th>
+            <th scope="col" style="width: 26%">Примечание</th>
+          </tr>
+        </thead>
+        <tbody>
+        {% for bb in data_filter.qs %}
+        {% if bb.status == 'неисправен' %}
+        <tr class="text-danger">
+            <th scope="row"><input class="checkbox" type="checkbox" name="checkbox" value="{{ bb.pk }}" id='{{ bb.pk }}'>&nbsp<a href="#">{{ bb.pk }}</a></th>
+            <td>{{ bb.name_block }}</td>
+            <td>{{ bb.serial_number }}</td>
+            <td>{{ bb.region }}</td>
+            <td>{{ bb.date_add|date:"d.m.Y" }}</td>
+            <td>{{ bb.date_repair|date:"d.m.Y" }}</td>
+            <td>{{ bb.date_shipment|date:"d.m.Y" }}</td>
+            <td>{{ bb.status }}</td>
+            <td>{{ bb.note|default_if_none:"" }}</td>
+        </tr>
+        {%elif bb.status == 'отправлен'%}
+        <tr class="text-success">
+            <th scope="row"><input class="checkbox" type="checkbox" name="checkbox" value="{{bb.pk}}" id='{{bb.pk}}'>&nbsp<a href="#">{{bb.pk}}</a></th>
+            <td>{{ bb.name_block }}</td>
+            <td>{{ bb.serial_number }}</td>
+            <td>{{ bb.region }}</td>
+            <td>{{ bb.date_add|date:"d.m.Y" }}</td>
+            <td>{{ bb.date_repair|date:"d.m.Y" }}</td>
+            <td>{{ bb.date_shipment|date:"d.m.Y" }}</td>
+            <td>{{ bb.status }}</td>
+            <td>{{ bb.note|default_if_none:"" }}</td>
+        </tr>
+        {% elif bb.status == 'готов' and bb.date_repair != null %}
+        <tr class="text-info">
+            <th scope="row"><input class="checkbox" type="checkbox" name="checkbox" value="{{bb.pk}}" id='{{bb.pk}}'>&nbsp<a href="#">{{bb.pk}}</a></th>
+            <td>{{ bb.name_block }}</td>
+            <td>{{ bb.serial_number }}</td>
+            <td>{{ bb.region }}</td>
+            <td>{{ bb.date_add|date:"d.m.Y" }}</td>
+            <td>{{ bb.date_repair|date:"d.m.Y" }}</td>
+            <td>{{ bb.date_shipment|date:"d.m.Y" }}</td>
+            <td>{{ bb.status }}</td>
+            <td>{{ bb.note|default_if_none:"" }}</td>
+        </tr>
+        {% else %}
+        <tr>
+            <th scope="row"><input class="checkbox" type="checkbox" name="checkbox" value="{{bb.pk}}" id='{{bb.pk}}'>&nbsp<a href="#">{{bb.pk}}</a></th>
+            <td>{{ bb.name_block }}</td>
+            <td>{{ bb.serial_number }}</td>
+            <td>{{ bb.region }}</td>
+            <td>{{ bb.date_add|date:"d.m.Y" }}</td>
+            <td>{{ bb.date_repair|date:"d.m.Y" }}</td>
+            <td>{{ bb.date_shipment|date:"d.m.Y" }}</td>
+            <td>{{ bb.status }}</td>
+            <td>{{ bb.note|default_if_none:"" }}</td>
+        </tr>
+        {% endif %}
+        {%endfor%}
+        </tbody>
+      </table>
+</div>
+
+<script>
+$(document).ready(function() {
+    $('#id_name_block').select2();
+});
+</script>
+{% endblock %}
