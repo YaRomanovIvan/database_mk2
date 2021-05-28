@@ -1,4 +1,4 @@
-from django.shortcuts import render, reverse, redirect
+from django.shortcuts import render, redirect
 import datetime
 from django.contrib import messages
 from .models import Post, Record_block, Unit, Type_block
