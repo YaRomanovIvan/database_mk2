@@ -2,7 +2,7 @@ from django.shortcuts import render, redirect
 import datetime
 from django.contrib import messages
 from .models import Post, Record_block, Unit, Type_block
-from .filters import block_filter
+from .filters import Block_filter, One_block_filter
 from .forms_block import Record_block_form, Type_block_form, Unit_form
 
 
@@ -19,8 +19,21 @@ def viewing_block(request):
     """ учет блоков. Информация о блоках в центре """
     today = datetime.date.today()
     last_mounth = today - datetime.timedelta(days=30)
+    if "one_block_filter" in request.GET:
+        data_filter = One_block_filter(
+            request.GET, queryset=Record_block.objects.all()
+        )
+        cnt = data_filter.qs.count()
+        return render(
+            request,
+            "viewing-block.html",
+            {
+                "data_filter": data_filter,
+                "cnt": cnt,
+            },
+        )
     if "search_all" in request.GET:
-        data_filter = block_filter(
+        data_filter = Block_filter(
             request.GET, queryset=Record_block.objects.all()
         )
         cnt = data_filter.qs.count()
@@ -36,7 +49,7 @@ def viewing_block(request):
     queryset = Record_block.objects.prefetch_related(
         "name_block", "region"
     ).filter(date_add__range=(last_mounth, today))
-    data_filter = block_filter(request.GET, queryset=queryset)
+    data_filter = Block_filter(request.GET, queryset=queryset)
     cnt = data_filter.qs.count()
 
     return render(
@@ -52,8 +65,21 @@ def viewing_block(request):
 def records_block(request):
     today = datetime.date.today()
     last_mounth = today - datetime.timedelta(days=30)
+    if "one_block_filter" in request.GET:
+        data_filter = One_block_filter(
+            request.GET, queryset=Record_block.objects.all()
+        )
+        cnt = data_filter.qs.count()
+        return render(
+            request,
+            "viewing-block.html",
+            {
+                "data_filter": data_filter,
+                "cnt": cnt,
+            },
+        )
     if "search_all" in request.GET:
-        data_filter = block_filter(
+        data_filter = Block_filter(
             request.GET, queryset=Record_block.objects.all()
         )
         cnt = data_filter.qs.count()
@@ -72,7 +98,7 @@ def records_block(request):
     queryset = Record_block.objects.prefetch_related(
         "name_block", "region"
     ).filter(date_add__range=(last_mounth, today))
-    data_filter = block_filter(request.GET, queryset=queryset)
+    data_filter = Block_filter(request.GET, queryset=queryset)
     cnt = data_filter.qs.count()
 
     return render(

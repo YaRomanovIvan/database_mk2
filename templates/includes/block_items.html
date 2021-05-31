@@ -1,0 +1,73 @@
+{% load user_filters %}
+<hr>
+<div class="table-responsive ms-3 me-3">
+  <p>Количество блоков: {{ cnt }}</p>
+    <table class="table table-sm table-hover">
+        <thead>
+          <tr>
+            <th scope="col" style="width: 5%">Учетный номер</th>
+            <th style="min-width: 350px;" scope="col">Наименование блока</th>
+            <th scope="col" style="width: 5%">Зав. номер</th>
+            <th scope="col" style="width: 11%">Участок</th>
+            <th scope="col" style="width: 5%">Дата приема</th>
+            <th scope="col" style="width: 5%">Дата ремонта</th>
+            <th scope="col" style="width: 5%">Дата отправки</th>
+            <th scope="col" style="width: 4%">Состояние</th>
+            <th scope="col" style="width: 26%">Примечание</th>
+          </tr>
+        </thead>
+        <tbody>
+        {% for bb in data_filter.qs %}
+        {% if bb.status == 'неисправен' %}
+        <tr class="text-danger">
+            <th scope="row"><input class="checkbox" type="checkbox" name="checkbox" value="{{ bb.pk }}" id='{{ bb.pk }}'>&nbsp<a href="#">{{ bb.pk }}</a></th>
+            <td>{{ bb.name_block }}</td>
+            <td>{{ bb.serial_number }}</td>
+            <td>{{ bb.region }}</td>
+            <td>{{ bb.date_add|date:"d.m.Y" }}</td>
+            <td>{{ bb.date_repair|date:"d.m.Y" }}</td>
+            <td>{{ bb.date_shipment|date:"d.m.Y" }}</td>
+            <td>{{ bb.status }}</td>
+            <td>{{ bb.note|default_if_none:"" }}</td>
+        </tr>
+        {%elif bb.status == 'отправлен'%}
+        <tr class="text-success">
+            <th scope="row"><input class="checkbox" type="checkbox" name="checkbox" value="{{bb.pk}}" id='{{bb.pk}}'>&nbsp<a href="#">{{bb.pk}}</a></th>
+            <td>{{ bb.name_block }}</td>
+            <td>{{ bb.serial_number }}</td>
+            <td>{{ bb.region }}</td>
+            <td>{{ bb.date_add|date:"d.m.Y" }}</td>
+            <td>{{ bb.date_repair|date:"d.m.Y" }}</td>
+            <td>{{ bb.date_shipment|date:"d.m.Y" }}</td>
+            <td>{{ bb.status }}</td>
+            <td>{{ bb.note|default_if_none:"" }}</td>
+        </tr>
+        {% elif bb.status == 'готов' and bb.date_repair != null %}
+        <tr class="text-info">
+            <th scope="row"><input class="checkbox" type="checkbox" name="checkbox" value="{{bb.pk}}" id='{{bb.pk}}'>&nbsp<a href="#">{{bb.pk}}</a></th>
+            <td>{{ bb.name_block }}</td>
+            <td>{{ bb.serial_number }}</td>
+            <td>{{ bb.region }}</td>
+            <td>{{ bb.date_add|date:"d.m.Y" }}</td>
+            <td>{{ bb.date_repair|date:"d.m.Y" }}</td>
+            <td>{{ bb.date_shipment|date:"d.m.Y" }}</td>
+            <td>{{ bb.status }}</td>
+            <td>{{ bb.note|default_if_none:"" }}</td>
+        </tr>
+        {% else %}
+        <tr>
+            <th scope="row"><input class="checkbox" type="checkbox" name="checkbox" value="{{bb.pk}}" id='{{bb.pk}}'>&nbsp<a href="#">{{bb.pk}}</a></th>
+            <td>{{ bb.name_block }}</td>
+            <td>{{ bb.serial_number }}</td>
+            <td>{{ bb.region }}</td>
+            <td>{{ bb.date_add|date:"d.m.Y" }}</td>
+            <td>{{ bb.date_repair|date:"d.m.Y" }}</td>
+            <td>{{ bb.date_shipment|date:"d.m.Y" }}</td>
+            <td>{{ bb.status }}</td>
+            <td>{{ bb.note|default_if_none:"" }}</td>
+        </tr>
+        {% endif %}
+        {% endfor %}
+        </tbody>
+      </table>
+</div>

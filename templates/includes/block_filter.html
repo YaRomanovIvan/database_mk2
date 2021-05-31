@@ -1,0 +1,70 @@
+{% load user_filters %}
+<hr>
+<h3 class="ms-1 me-1">Фильтр</h3>
+<form class="ms-1 me-1" method='GET'>
+    {% csrf_token %}
+    <div class="col-md-3">
+        <div class="row">
+            <div class="form-group is_valid">
+                <label for="id_number_block">Точный номер блока</label>
+                <input type="number" name="number_block" class="form-control form-control-sm" placeholder="Точный номер блока" title="" id="id_number_block">
+            </div>
+            <div class="d-grid gap-2">
+              <button type="submit" class="btn btn-sm btn-dark mt-4" name="one_block_filter" id="one_block_filter">Поиск</button>
+            </div>
+        </div>
+    </div>
+</form>
+<br>
+<form class="ms-1 me-1" method='GET'>
+  {% csrf_token %}
+  <div class="row">
+    <div class="col-1" style="min-width: 150px;">
+      <div class="form-group is-valid">
+        <label for="id_number_block_0">Номер блока с</label>
+        <input type="number" name="number_block_min" class="form-control form-control-sm" placeholder="Номер блока" title="" id="id_number_block_0">
+      </div>
+      <div class="form-group is-valid">
+        <label for="id_number_block_1">по</label>
+        <input type="number" name="number_block_max" class="form-control form-control-sm" placeholder="Номер блока" title="" id="id_number_block_1">
+      </div>
+    </div>
+    <div class="col-3" style="min-width: 150px;">
+      <label for="id_name_block">Тип блока</label>
+      {{ data_filter.form.name_block|addclass:"form-control form-control-sm" }}
+      <label class="mt-1" for="id_region">Подразделение</label>
+      {{ data_filter.form.region|addclass:"form-control form-control-sm" }}
+    </div>
+    <div class="col-1" style="min-width: 150px;">
+      <label for="id_serial">Зав.№</label>
+      {{ data_filter.form.serial_number|addclass:"form-control form-control-sm" }}
+      <label for="id_FIO">ФИО</label>
+      {{ data_filter.form.FIO|addclass:"form-control form-control-sm" }}
+    </div>
+    <div class="col-2" style="min-width: 150px;">
+      <label for="id_date_add_0">Дата приема c</label>
+      <input type="date" name="date_add_after" class="form-control form-control-sm" placeholder="Дата приема" title="" id="id_date_add_0">
+      <label for="id_date_add_1">по</label>
+      <input type="date" name="date_add_before" class="form-control form-control-sm" placeholder="Дата приема" title="" id="id_date_add_1">
+    </div>
+    <div class="col-2" style="min-width: 150px;">
+      <label for="id_date_repair_0">Дата ремонта с</label>
+      <input type="date" name="date_repair_after" class="form-control form-control-sm" placeholder="Дата ремонта" title="" id="id_date_repair_0">
+      <label for="id_date_repair_1">по</label>
+      <input type="date" name="date_repair_before" class="form-control form-control-sm" placeholder="Дата ремонта" title="" id="id_date_repair_1">
+    </div>
+    <div class="col-2" style="min-width: 150px;">
+      <label for="id_date_shipment_0">Дата отправки с</label>
+      <input type="date" name="date_shipment_after" class="form-control form-control-sm" placeholder="Дата отправки" title="" id="id_date_shipment_0">
+      <label for="id_date_shipment_1">по</label>
+      <input type="date" name="date_shipment_before" class="form-control form-control-sm" placeholder="Дата отправки" title="" id="id_date_shipment_1">
+    </div>
+    <div class="col" style="min-width: 150px;">
+      <label for="id_status">Статус</label>
+      {{ data_filter.form.status|addclass:"form-control form-control-sm" }}
+      <div class="d-grid gap-2">
+        <button type="submit" class="btn btn-sm btn-dark mt-4" name="search_all">Поиск</button>
+      </div>
+    </div>
+  </div>
+</form>

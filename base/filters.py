@@ -1,9 +1,26 @@
 import django_filters
 from .models import Record_block
-from django import forms
 
 
-class block_filter(django_filters.FilterSet):
+class One_block_filter(django_filters.FilterSet):
+    number_block = django_filters.NumberFilter()
+
+    class Meta:
+        model = Record_block
+        fields = [
+            'number_block',
+            'name_block',
+            'serial_number',
+            'date_add',
+            'date_repair',
+            'date_shipment',
+            'region',
+            'FIO',
+            'status',
+        ]
+
+
+class Block_filter(django_filters.FilterSet):
     number_block = django_filters.RangeFilter()
     serial_number = django_filters.CharFilter(
         lookup_expr='icontains',
