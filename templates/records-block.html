@@ -4,52 +4,36 @@
 {% block content %}
 <h1 class="text-center">Управление блоками</h1>
 
-<div class="row">
-
-  <div class="col">
-    <div>
-      <h3>Внести блок в ремонт</h3>
-      <form method="POST" action="{% url 'add_new_record_block' %}">
-        {% csrf_token %}
-        {{ record_block_form.as_p }}
-        <button type='submit' class='btn btn-primary' name='add_record_block'>
-          Добавить
-        </button>
-      </form>
-    </div>
-  </div>
-
-  <div class="col">
-    <div>
-      <div>
-        <h3>Внести новое наименование блока</h3>
-        <form method='POST' action="{% url 'add_new_type_block' %}">
-          {% csrf_token %}
-          {{ type_block_form.as_p }}
-          <button type='submit' class='btn btn-primary' name='add_type_block'>
-            Добавить
-          </button>
-        </form>
-      </div>
-    </div>
-
-    <div>
-      <div>
-        <h3>Внести новое наименование участка</h3>
-        <form method="POST" action="{% url 'add_new_region' %}">
-          {% csrf_token %}
-          {{ unit_form.as_p }}
-          <button type='submit' class='btn btn-primary' name='add_unit'>
-            Добавить
-          </button>
-        </form>
-      </div>
-    </div>
-  </div>
-
-</div>
-
 {% include 'includes/block_filter.html' %}
+
+<hr>
+<!-- Button trigger modal -->
+<button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#staticBackdrop">
+  Launch static backdrop modal
+</button>
+
+<!-- Modal -->
+<div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="staticBackdropLabel">Modal title</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <label class="form-label" for='id_send_block'>Номера блоков:</label>
+        <textarea class="form-control" id="id_send_block" rows="3" aria-label="default input example" placeholder="Например: 85000 85501 86203 81204"></textarea>
+        <br>
+        <label class="form-label" for='drive'>Водитель:</label>
+        <input class="form-control" id='drive' type="text" placeholder="Например: Иванов И.И." aria-label="default input example">
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-primary">Understood</button>
+      </div>
+    </div>
+  </div>
+</div>
 
 {% include 'includes/block_items.html' %}
 

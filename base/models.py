@@ -243,8 +243,8 @@ class Record_components(models.Model):
     )
 
     class Meta:
-        verbose_name_plural = "Компоненты"
-        verbose_name = "Компонент"
+        verbose_name_plural = "Учет компонентов"
+        verbose_name = "Учет"
         ordering = ["-id"]
 
 

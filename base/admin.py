@@ -52,8 +52,7 @@ class Record_blockAdmin(admin.ModelAdmin):
         "passed",
     )
     list_filter = (
-        "number_block",
-        "name_block",
+        "name_block__name_block",
         "region",
         "date_add",
         "date_repair",
