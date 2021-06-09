@@ -4,16 +4,93 @@
 {% block content %}
 <h1 class="text-center">Управление блоками</h1>
 
+<hr>
+<!-- Кнопки, открывающие модальные окна форм -->
+<nav class="navbar">
+  <div class="container">
+    <button type="button" class="btn btn-outline-primary nav-link zoom-menu mb-2" data-bs-toggle="modal" data-bs-target="#add_block">Добавить блок в ремонт</button>
+    <button type="button" class="btn btn-outline-primary nav-link zoom-menu mb-2" data-bs-toggle="modal" data-bs-target="#create_type_block">Добавить новый тип блока</button>
+    <button type="button" class="btn btn-outline-primary nav-link zoom-menu mb-2" data-bs-toggle="modal" data-bs-target="#create_new_region">Добавить подразделение</button>
+    <button type="button" class="btn btn-outline-success nav-link zoom-menu mb-2" data-bs-toggle="modal" data-bs-target="#send_block">Отправить указанные блоки</button>
+  </div>
+</nav>
+<!-- /////////////////////////////////////// -->
+
 {% include 'includes/block_filter.html' %}
 
 <hr>
-<!-- Button trigger modal -->
-<button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#staticBackdrop">
-  Launch static backdrop modal
-</button>
 
 <!-- Modal -->
-<div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+<!-- Модальное окно добавления блоков в центр -->
+<form class='' method='POST'>
+<div class="modal fade" id="add_block" data-bs-backdrop="static" data-bs-keyboard="false"  aria-labelledby="staticBackdropLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="staticBackdropLabel">Добавить блок в ремонт</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        {% for field in record_block_form %}
+          {{ field.label }}
+          {{ field }}
+        <br>
+        {% endfor %}
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-primary">Understood</button>
+      </div>
+    </div>
+  </div>
+</div>
+</form>
+<!-- Модальное окно добавления нового типа блока -->
+<div class="modal fade" id="create_type_block" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="staticBackdropLabel">Modal title</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <label class="form-label" for='id_send_block'>Номера блоков:</label>
+        <textarea class="form-control" id="id_send_block" rows="3" aria-label="default input example" placeholder="Например: 85000 85501 86203 81204"></textarea>
+        <br>
+        <label class="form-label" for='drive'>Водитель:</label>
+        <input class="form-control" id='drive' type="text" placeholder="Например: Иванов И.И." aria-label="default input example">
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-primary">Understood</button>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- Модальное окно отправки блоков -->
+<div class="modal fade" id="create_new_region" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="staticBackdropLabel">Modal title</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <label class="form-label" for='id_send_block'>Номера блоков:</label>
+        <textarea class="form-control" id="id_send_block" rows="3" aria-label="default input example" placeholder="Например: 85000 85501 86203 81204"></textarea>
+        <br>
+        <label class="form-label" for='drive'>Водитель:</label>
+        <input class="form-control" id='drive' type="text" placeholder="Например: Иванов И.И." aria-label="default input example">
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-primary">Understood</button>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- Модальное окно отправки блоков -->
+<div class="modal fade" id="send_block" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
   <div class="modal-dialog">
     <div class="modal-content">
       <div class="modal-header">
@@ -37,9 +114,17 @@
 
 {% include 'includes/block_items.html' %}
 
+ {% for field in record_block_form %}
+        {{ field.label }}
+        {{ field }}
+        <br>
+        {% endfor %}
 <script>
 $(document).ready(function() {
     $('#id_record_block').select2();
+});
+$(document).ready(function() {
+    $('#id_name_block').select2();
 });
 </script>
 {% endblock %}
