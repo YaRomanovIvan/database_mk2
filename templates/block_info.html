@@ -1,0 +1,99 @@
+{% extends "base.html" %}
+{% block title %}Информация о блоке{% endblock %}
+
+{% block content %}
+{% load user_filters %}
+<style>
+thead th {
+  position: sticky;
+  top: 0;
+  background: white;
+}
+</style>
+<div class="container">
+    <h3 class="text-center">Информация о блоке {{ about_block }}</h3>
+</div>
+
+<hr>
+
+<div class="ms-3 me-3">
+    <table class="table table-sm table-hover">
+        <thead>
+          <tr>
+                <th scope="col" style="width: 5%">Учетный номер</th>
+                <th style="min-width: 350px;" scope="col">Наименование блока</th>
+                <th scope="col" style="width: 5%">Зав. номер</th>
+                <th scope="col" style="width: 11%">Участок</th>
+                <th scope="col" style="width: 5%">Дата приема</th>
+                <th scope="col" style="width: 5%">Дата ремонта</th>
+                <th scope="col" style="width: 5%">Дата отправки</th>
+                <th scope="col" style="width: 4%">Состояние</th>
+                <th scope="col" style="width: 26%">Примечание</th>
+          </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <th scope="row">{{ about_block.number_block }}</th>
+                <td>{{ about_block.name_block }}</td>
+                <td>{{ about_block.serial_number }}</td>
+                <td>{{ about_block.region }}</td>
+                <td>{{ about_block.date_add|date:"d.m.Y" }}</td>
+                <td>{{ about_block.date_repair|date:"d.m.Y" }}</td>
+                <td>{{ about_block.date_shipment|date:"d.m.Y" }}</td>
+                <td>{{ about_block.status }}</td>
+                <td>{{ about_block.note|default_if_none:"" }}</td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+
+<hr>
+<div class="row ms-3 me-3">
+    <div class='col'>
+        <table class="table table-sm table-bordered table-hover">
+            <thead>
+                <tr>
+                    <th scope="col">Списанные компоненты</th>
+                    <th scope="col">В количестве</th>
+                    <th scope="col">На сумму</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>Наименование компонента}</td>
+                    <td>Кол-во шт.</td>
+                    <td>На сумму р.</td>
+                </tr>
+                <tr>
+                    <td>Наименование компонента}</td>
+                    <td>Кол-во шт.</td>
+                    <td>На сумму р.</td>
+                </tr>
+                <tr>
+                    <td>Наименование компонента}</td>
+                    <td>Кол-во шт.</td>
+                    <td>На сумму р.</td>
+                </tr>
+                <td></td><td><strong>Итого:</strong></td>
+                <td>Общая сумма р.</td>
+            </tbody>
+        </table>
+    </div>
+    <div class='col text-center'>
+        <nav class="navbar justify-content-center">
+            <div class="row">
+                <button type="button" class="btn btn-success nav-link zoom-menu mb-2" data-bs-toggle="modal" data-bs-target="#add_block">Привязать компоненты</button>
+                {% if about_block.date_shipment %}
+                <button type="button" class="btn btn-warning nav-link zoom-menu mb-2 disabled" data-bs-toggle="modal" data-bs-target="#create_type_block">Ремонт (блок уже отправлен)</button>
+                <button type="button" class="btn btn-outline-primary nav-link zoom-menu mb-2 disabled" data-bs-toggle="modal" data-bs-target="#send_block">Редактировать (блок уже отправлен)</button>
+                <button type="button" class="btn btn-outline-danger nav-link zoom-menu mb-2 disabled" data-bs-toggle="modal" data-bs-target="#create_new_region">Дефектная ведомость (блок уже отправлен)</button>
+                {% else %}
+                <button type="button" class="btn btn-warning nav-link zoom-menu mb-2" data-bs-toggle="modal" data-bs-target="#create_type_block">Ремонт</button>
+                <button type="button" class="btn btn-outline-primary nav-link zoom-menu mb-2" data-bs-toggle="modal" data-bs-target="#send_block">Редактировать</button>
+                <button type="button" class="btn btn-outline-danger nav-link zoom-menu mb-2" data-bs-toggle="modal" data-bs-target="#create_new_region">Дефектная ведомость</button>
+                {% endif %}
+            </div>
+        </nav>
+    </div>
+</div>
+{% endblock %}

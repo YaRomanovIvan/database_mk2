@@ -1,4 +1,4 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import get_object_or_404, render, redirect
 import datetime
 from django.contrib import messages
 from .models import Post, Record_block, Unit, Type_block
@@ -209,4 +209,12 @@ def commit_send_block(request):
         block.save()
     messages.success(request, "Блоки отправлены!")
     return redirect("records_block")
-    
+
+
+def block_info(request, pk):
+    """ информация о блоке """
+    about_block = Record_block.objects.get(pk=pk)
+    context = {
+        'about_block': about_block,
+    }
+    return render(request, 'block_info.html', context)

@@ -25,4 +25,5 @@ urlpatterns = [
         'send_block/', views.send_block, name='send_block',
     ),
     path('send_block/commit/', views.commit_send_block, name='commit_send_block'),
+    path('block_info/<int:pk>', views.block_info, name='block_info'),
 ]

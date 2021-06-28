@@ -28,7 +28,7 @@ thead th {
         {% for bb in data_filter.qs %}
         {% if bb.status == 'неисправен' %}
         <tr class="text-danger">
-            <th scope="row"><input class="form-check-input" type="checkbox" name="checkbox" value="{{ bb.pk }}" id='{{ bb.pk }}'>&nbsp<a href="#">{{ bb.pk }}</a></th>
+            <th scope="row"><input class="form-check-input" type="checkbox" name="checkbox" value="{{ bb.pk }}" id='{{ bb.pk }}'>&nbsp<a href="{% url 'block_info' bb.pk %}">{{ bb.pk }}</a></th>
             <td>{{ bb.name_block }}</td>
             <td>{{ bb.serial_number }}</td>
             <td>{{ bb.region }}</td>
@@ -40,7 +40,7 @@ thead th {
         </tr>
         {%elif bb.status == 'отправлен'%}
         <tr class="text-success">
-            <th scope="row"><input class="form-check-input" type="checkbox" name="checkbox" value="{{bb.pk}}" id='{{bb.pk}}'>&nbsp<a href="#">{{bb.pk}}</a></th>
+            <th scope="row"><input class="form-check-input" type="checkbox" name="checkbox" value="{{bb.pk}}" id='{{bb.pk}}'>&nbsp<a href="{% url 'block_info' bb.pk %}">{{bb.pk}}</a></th>
             <td>{{ bb.name_block }}</td>
             <td>{{ bb.serial_number }}</td>
             <td>{{ bb.region }}</td>
@@ -52,7 +52,7 @@ thead th {
         </tr>
         {% elif bb.status == 'готов' and bb.date_repair != null %}
         <tr class="text-info">
-            <th scope="row"><input class="form-check-input" type="checkbox" name="checkbox" value="{{bb.pk}}" id='{{bb.pk}}'>&nbsp<a href="#">{{bb.pk}}</a></th>
+            <th scope="row"><input class="form-check-input" type="checkbox" name="checkbox" value="{{bb.pk}}" id='{{bb.pk}}'>&nbsp<a href="{% url 'block_info' bb.pk %}">{{bb.pk}}</a></th>
             <td>{{ bb.name_block }}</td>
             <td>{{ bb.serial_number }}</td>
             <td>{{ bb.region }}</td>
@@ -64,7 +64,7 @@ thead th {
         </tr>
         {% else %}
         <tr>
-            <th scope="row"><input class="form-check-input" type="checkbox" name="checkbox" value="{{bb.pk}}" id='{{bb.pk}}'>&nbsp<a href="#">{{bb.pk}}</a></th>
+            <th scope="row"><input class="form-check-input" type="checkbox" name="checkbox" value="{{bb.pk}}" id='{{bb.pk}}'>&nbsp<a href="{% url 'block_info' bb.pk %}">{{bb.pk}}</a></th>
             <td>{{ bb.name_block }}</td>
             <td>{{ bb.serial_number }}</td>
             <td>{{ bb.region }}</td>
