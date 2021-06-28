@@ -15,80 +15,103 @@
   </div>
 </nav>
 <!-- /////////////////////////////////////// -->
+<div class='container'>
+  {% include 'includes/messages.html' %}
+</div>
 
 {% include 'includes/block_filter.html' %}
 
 <hr>
-
+<style>
+.select2-close-mask{
+    z-index: 2099;
+}
+.select2-dropdown{
+    z-index: 3051;
+}
+</style>
 <!-- Modal -->
 <!-- Модальное окно добавления блоков в центр -->
-<form class='' method='POST'>
-<div class="modal fade" id="add_block" data-bs-backdrop="static" data-bs-keyboard="false"  aria-labelledby="staticBackdropLabel" aria-hidden="true">
-  <div class="modal-dialog">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title" id="staticBackdropLabel">Добавить блок в ремонт</h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-      </div>
-      <div class="modal-body">
-        {% for field in record_block_form %}
-          {{ field.label }}
-          {{ field }}
-        <br>
-        {% endfor %}
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-        <button type="button" class="btn btn-primary">Understood</button>
+  <div class="modal fade" id="add_block" data-bs-backdrop="static" data-bs-keyboard="false"  aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="staticBackdropLabel">Добавить блок в ремонт</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <form action='{% url "add_new_record_block" %}' method='POST'>
+          {% csrf_token %}
+          <div class="modal-body">
+              {% for field in record_block_form %}
+                {% if field.label == 'Наименование блока' %}
+                  {{ field.label }}
+                  {{ field }}
+                  <br>
+                {% else %}
+                  {{ field.label }}
+                  {{ field }}
+                {% endif %}
+                <br>
+              {% endfor %}
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            <button type="submit" class="btn btn-primary">Добавить</button>
+          </div>
+        </form>
       </div>
     </div>
   </div>
-</div>
-</form>
 <!-- Модальное окно добавления нового типа блока -->
-<div class="modal fade" id="create_type_block" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
-  <div class="modal-dialog">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title" id="staticBackdropLabel">Modal title</h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-      </div>
-      <div class="modal-body">
-        <label class="form-label" for='id_send_block'>Номера блоков:</label>
-        <textarea class="form-control" id="id_send_block" rows="3" aria-label="default input example" placeholder="Например: 85000 85501 86203 81204"></textarea>
-        <br>
-        <label class="form-label" for='drive'>Водитель:</label>
-        <input class="form-control" id='drive' type="text" placeholder="Например: Иванов И.И." aria-label="default input example">
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-        <button type="button" class="btn btn-primary">Understood</button>
-      </div>
-    </div>
-  </div>
-</div>
-<!-- Модальное окно отправки блоков -->
-<div class="modal fade" id="create_new_region" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
-  <div class="modal-dialog">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title" id="staticBackdropLabel">Modal title</h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-      </div>
-      <div class="modal-body">
-        <label class="form-label" for='id_send_block'>Номера блоков:</label>
-        <textarea class="form-control" id="id_send_block" rows="3" aria-label="default input example" placeholder="Например: 85000 85501 86203 81204"></textarea>
-        <br>
-        <label class="form-label" for='drive'>Водитель:</label>
-        <input class="form-control" id='drive' type="text" placeholder="Например: Иванов И.И." aria-label="default input example">
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-        <button type="button" class="btn btn-primary">Understood</button>
+  <div class="modal fade" id="create_type_block" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="staticBackdropLabel">Новый тип блока</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <form action='{% url "add_new_type_block" %}' method='POST'>
+          {% csrf_token %}
+          <div class="modal-body">
+            {% for field in type_block_form %}
+              {{ field.label }}
+              {{ field }}
+              <br>
+            {% endfor %}
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            <button type="submit" class="btn btn-primary">Добавить</button>
+          </div>
+        </form>
       </div>
     </div>
   </div>
-</div>
+<!-- Модальное окно добавления региона -->
+  <div class="modal fade" id="create_new_region" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="staticBackdropLabel">Modal title</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <form action='{% url "add_new_region" %}' method='POST'>
+          {% csrf_token %}
+          <div class="modal-body">
+            {% for field in unit_form %}
+              {{ field.label }}
+              {{ field }}
+              <br>
+            {% endfor %}
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            <button type="submit" class="btn btn-primary">Добавить</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
 <!-- Модальное окно отправки блоков -->
 <div class="modal fade" id="send_block" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
   <div class="modal-dialog">
@@ -114,17 +137,15 @@
 
 {% include 'includes/block_items.html' %}
 
- {% for field in record_block_form %}
-        {{ field.label }}
-        {{ field }}
-        <br>
-        {% endfor %}
 <script>
 $(document).ready(function() {
-    $('#id_record_block').select2();
+    $('#id_record_block').select2({ width: '100%' });
 });
 $(document).ready(function() {
     $('#id_name_block').select2();
+});
+$(document).ready(function() {
+    $('.component_multiple_select2').select2({ width: '100%', height: '100%' });
 });
 </script>
 {% endblock %}

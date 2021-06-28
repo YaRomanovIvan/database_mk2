@@ -1,5 +1,6 @@
 from django import forms
-from .models import Type_block, Unit, Record_block
+from django.forms.widgets import Widget
+from .models import Components, Type_block, Unit, Record_block
 
 
 class Type_block_form(forms.ModelForm):
@@ -10,10 +11,17 @@ class Type_block_form(forms.ModelForm):
             attrs={"class": "form-control form-control-sm"}
         ),
     )
+    components = forms.ModelMultipleChoiceField(
+        queryset=Components.objects.all(),
+        label='Привязать компоненты',
+        help_text='Поле не обязательно для заполнения. Вы можете привязать компоненты позже.',
+        widget=forms.SelectMultiple(attrs={"id": "id_record_component", "class": "form-control form-control-sm component_multiple_select2",}),
+        required=False,
+    )
 
     class Meta:
         model = Type_block
-        fields = ("id", "name_block")
+        fields = ("id", "name_block", "components",)
 
 
 class Unit_form(forms.ModelForm):
@@ -40,7 +48,7 @@ class Record_block_form(forms.ModelForm):
     name_block = forms.ModelChoiceField(
         label="Наименование блока",
         queryset=Type_block.objects.all(),
-        widget=forms.Select(attrs={"id": "id_record_block", "class": "form-control form-control-sm"}),
+        widget=forms.Select(attrs={"id": "id_record_block", "class": "form-control form-control-sm",}),
     )
     serial_number = forms.CharField(
         label="Заводской номер",

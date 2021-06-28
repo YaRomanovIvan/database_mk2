@@ -117,46 +117,46 @@ def records_block(request):
 def add_new_record_block(request):
     """ добавляем новый блок в ремонт """
     if request.method != "POST":
-        return redirect("main_block:add_record_block")
+        return redirect("records_block")
     record_block_form = Record_block_form(request.POST)
     if not record_block_form.is_valid():
         messages.error(request, "Что-то пошло не так!")
-        return redirect("main_block:add_record_block")
+        return redirect("records_block")
     record_block_form.save()
     messages.success(
         request, f'Блок с номером {request.POST["number_block"]} добавлен!'
     )
-    return redirect("main_block:add_record_block")
+    return redirect("records_block")
 
 
 def add_new_type_block(request):
     """ добавляем новое наименование блока """
     if request.method != "POST":
-        return redirect("main_block:add_record_block")
+        return redirect("records_block")
     type_block_form = Type_block_form(request.POST)
     if not type_block_form.is_valid():
         messages.error(
             request, "Что-то пошло не так! Возможно такой блок уже существует!"
         )
-        return redirect("main_block:add_record_block")
+        return redirect("records_block")
     type_block_form.save()
     messages.success(
         request, f'Наименование {request.POST["name_block"]} добавлено!'
     )
-    return redirect("main_block:add_record_block")
+    return redirect("records_block")
 
 
 def add_new_region(request):
     """ добавляем новый участок """
     if request.method != "POST":
-        return redirect("main_block:add_record_block")
+        return redirect("records_block")
     unit_form = Unit_form(request.POST)
     if not unit_form.is_valid():
         messages.error(
             request,
             "Что-то пошло не так! Вероятно такой участок уже существует!",
         )
-        return redirect("main_block:add_record_block")
+        return redirect("records_block")
     unit_form.save()
     messages.success(request, f'Участок {request.POST["region"]} добавлен!')
-    return redirect("main_block:add_record_block")
+    return redirect("records_block")
