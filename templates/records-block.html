@@ -112,30 +112,14 @@
       </div>
     </div>
   </div>
-<!-- Модальное окно отправки блоков -->
-<div class="modal fade" id="send_block" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
-  <div class="modal-dialog">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title" id="staticBackdropLabel">Modal title</h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-      </div>
-      <div class="modal-body">
-        <label class="form-label" for='id_send_block'>Номера блоков:</label>
-        <textarea class="form-control" id="id_send_block" rows="3" aria-label="default input example" placeholder="Например: 85000 85501 86203 81204"></textarea>
-        <br>
-        <label class="form-label" for='drive'>Водитель:</label>
-        <input class="form-control" id='drive' type="text" placeholder="Например: Иванов И.И." aria-label="default input example">
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-        <button type="button" class="btn btn-primary">Understood</button>
-      </div>
-    </div>
-  </div>
-</div>
 
-{% include 'includes/block_items.html' %}
+<form method='GET' action='{% url "send_block" %}'>
+  {% csrf_token %}
+  <div class='ms-3 me-3'>
+    <button type="submit" class="btn btn-outline-success">Отправить указанные блоки</button>
+  </div>
+  {% include 'includes/block_items.html' %}
+</form>
 
 <script>
 $(document).ready(function() {

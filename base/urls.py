@@ -21,4 +21,8 @@ urlpatterns = [
         views.add_new_region,
         name="add_new_region",
     ),
+    path(
+        'send_block/', views.send_block, name='send_block',
+    ),
+    path('send_block/commit/', views.commit_send_block, name='commit_send_block'),
 ]

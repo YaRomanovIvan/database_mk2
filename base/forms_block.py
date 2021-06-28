@@ -66,3 +66,16 @@ class Record_block_form(forms.ModelForm):
     class Meta:
         model = Record_block
         fields = ("number_block", "name_block", "serial_number", "region")
+
+
+class Send_block_form(forms.ModelForm):
+    passed = forms.CharField(
+        label="Водитель",
+        help_text='Петро В.В."',
+        widget=forms.TextInput(
+            attrs={"class": "form-control form-control-sm"}
+        ),
+    )
+    class Meta:
+        model = Record_block
+        fields = ("passed",)

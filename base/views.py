@@ -3,7 +3,7 @@ import datetime
 from django.contrib import messages
 from .models import Post, Record_block, Unit, Type_block
 from .filters import Block_filter, One_block_filter
-from .forms_block import Record_block_form, Type_block_form, Unit_form
+from .forms_block import Record_block_form, Type_block_form, Unit_form, Send_block_form
 
 
 def index(request):
@@ -63,6 +63,7 @@ def viewing_block(request):
 
 
 def records_block(request):
+    """ управление блоками """
     today = datetime.date.today()
     last_mounth = today - datetime.timedelta(days=30)
     if "one_block_filter" in request.GET:
@@ -160,3 +161,52 @@ def add_new_region(request):
     unit_form.save()
     messages.success(request, f'Участок {request.POST["region"]} добавлен!')
     return redirect("records_block")
+
+
+def send_block(request):
+    """ промежуточная страница отправки блоков """
+    number_id = request.GET.getlist("checkbox")
+    if not number_id:
+        messages.error(request, "Выберите блоки для отправки!")
+        return redirect("records_block")
+    queryset = Record_block.objects.prefetch_related(
+        "name_block", "region"
+    ).filter(number_block__in=number_id)
+    data_filter = Block_filter(request.GET, queryset=queryset)
+    cnt = data_filter.qs.count()
+
+    return render(
+        request,
+        "send_block.html",
+        {
+            "data_filter": data_filter,
+            "cnt": cnt,
+            'send_block': Send_block_form(),
+        },
+    )
+
+
+def commit_send_block(request):
+    """ отправка блоков """
+    if request.method != 'POST':
+        return redirect('send_block')
+    send = Send_block_form(request.POST)
+    if not send.is_valid():
+        messages.error(request, "Что-то пошло не так!")
+        return redirect("send_block")
+    number_id = request.POST.getlist("checkbox")
+    if not number_id:
+        messages.error(request, "Выберите блоки для отправки!")
+        return redirect("send_block")
+    send.save(commit=False)
+    passed = send.cleaned_data.get("passed")
+    date_shipment = datetime.date.today()
+    for id in number_id:
+        block = Record_block.objects.get(pk=id)
+        block.passed = passed
+        block.date_shipment = date_shipment
+        block.status = 'отправлен'
+        block.save()
+    messages.success(request, "Блоки отправлены!")
+    return redirect("records_block")
+    

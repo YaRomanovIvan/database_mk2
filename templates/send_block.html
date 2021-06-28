@@ -1,0 +1,57 @@
+{% extends "base.html" %}
+{% block title %}Отправка блоков{% endblock %}
+
+{% block content %}
+<h1 class="text-center">Отправка блоков</h1>
+
+<form method='POST' action="{% url 'commit_send_block' %}">
+{% include 'includes/block_items.html' %}
+<br>
+<div class='me-3 ms-3'>
+    <p>Выделить всё <input id="select_all" type="checkbox" class="form-check-input"></p>
+    <button type="button" class="btn btn-outline-success nav-link zoom-menu mb-2" data-bs-toggle="modal" data-bs-target="#send_block">Отправить указанные блоки</button>
+</div>
+
+<div class="modal fade" id="send_block" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="staticBackdropLabel">Modal title</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <form action='{% url "add_new_region" %}' method='POST'>
+          {% csrf_token %}
+          <div class="modal-body">
+            {% for field in send_block %}
+              {{ field.label }}
+              {{ field }}
+              <br>
+            {% endfor %}
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            <button type="submit" class="btn btn-primary">Отправить</button>
+          </div>
+        </form>
+      </div>
+    </div>
+</div>
+
+</form>
+
+
+<script>
+document.getElementById('select_all')
+  .addEventListener('click', function (e) {
+    var els = document.querySelectorAll(
+      'input[name=checkbox]'
+    );
+
+    Array.prototype.forEach.call(els, function(cb){
+      cb.checked = e.target.checked;
+    });
+  })
+;
+</script>
+
+{% endblock %}
