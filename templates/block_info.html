@@ -3,13 +3,22 @@
 
 {% block content %}
 {% load user_filters %}
+
+
 <style>
 thead th {
   position: sticky;
   top: 0;
   background: white;
 }
+.select2-close-mask{
+    z-index: 2099;
+}
+.select2-dropdown{
+    z-index: 3051;
+}
 </style>
+
 <div class="container">
     <h3 class="text-center">Информация о блоке {{ about_block }}</h3>
 </div>
@@ -78,11 +87,12 @@ thead th {
                 <td>Общая сумма р.</td>
             </tbody>
         </table>
+        {% include 'includes/messages.html' %}
     </div>
     <div class='col text-center'>
         <nav class="navbar justify-content-center">
             <div class="row">
-                <button type="button" class="btn btn-success nav-link zoom-menu mb-2" data-bs-toggle="modal" data-bs-target="#add_block">Привязать компоненты</button>
+                <button type="button" class="btn btn-success nav-link zoom-menu mb-2" data-bs-toggle="modal" data-bs-target="#add_components_for_type_block">Привязать или удалить компоненты</button>
                 {% if about_block.date_shipment %}
                 <button type="button" class="btn btn-warning nav-link zoom-menu mb-2 disabled" data-bs-toggle="modal" data-bs-target="#create_type_block">Ремонт (блок уже отправлен)</button>
                 <button type="button" class="btn btn-outline-primary nav-link zoom-menu mb-2 disabled" data-bs-toggle="modal" data-bs-target="#send_block">Редактировать (блок уже отправлен)</button>
@@ -96,4 +106,33 @@ thead th {
         </nav>
     </div>
 </div>
+<!-- Модальное окно добавления нового типа блока -->
+<div class="modal fade" id="add_components_for_type_block" data-bs-backdrop="static" data-bs-keyboard="false" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="staticBackdropLabel">Новый тип блока</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <form action='{% url "add_components_for_block" about_block.pk %}' method='POST'>
+          {% csrf_token %}
+          <div class="modal-body">
+            {{ type_block_form.name_block.as_hidden }}
+            <label for="{{ type_block_form.components.id_for_label }}">Привязать или удалить компонент:</label>
+            {{ type_block_form.components }}
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Закрыть</button>
+            <button type="submit" class="btn btn-primary">Применить</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+<script>
+    $(document).ready(function() {
+        $('#id_record_component').select2({width: '100%',});
+    });
+</script>
 {% endblock %}

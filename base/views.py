@@ -121,6 +121,7 @@ def add_new_record_block(request):
         return redirect("records_block")
     record_block_form = Record_block_form(request.POST)
     if not record_block_form.is_valid():
+        print(record_block_form.errors)
         messages.error(request, "Что-то пошло не так!")
         return redirect("records_block")
     record_block_form.save()
@@ -213,8 +214,30 @@ def commit_send_block(request):
 
 def block_info(request, pk):
     """ информация о блоке """
-    about_block = Record_block.objects.get(pk=pk)
+    about_block = get_object_or_404(Record_block, pk=pk)
+    block = get_object_or_404(Type_block, name_block=about_block.name_block)
     context = {
         'about_block': about_block,
+        'type_block_form': Type_block_form(instance=block),
+        'record_block_form': Record_block_form(instance=about_block),
     }
     return render(request, 'block_info.html', context)
+
+
+def add_components_for_block(request, pk):
+    """ привязываем компоненты к блоку из информации о блоке """
+    if request.method != "POST":
+        return redirect("block_info", pk)
+    name_block = get_object_or_404(Record_block, pk=pk)
+    block = get_object_or_404(Type_block, name_block=name_block.name_block)
+    type_block_form = Type_block_form(request.POST, instance=block)
+    if not type_block_form.is_valid():
+        messages.error(
+            request, "Что-то пошло не так!"
+        )
+        return redirect("block_info", pk)
+    type_block_form.save()
+    messages.success(
+        request, 'Компоненты привязаны!'
+    )
+    return redirect("block_info", pk)

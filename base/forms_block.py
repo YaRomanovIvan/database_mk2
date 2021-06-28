@@ -15,7 +15,9 @@ class Type_block_form(forms.ModelForm):
         queryset=Components.objects.all(),
         label='Привязать компоненты',
         help_text='Поле не обязательно для заполнения. Вы можете привязать компоненты позже.',
-        widget=forms.SelectMultiple(attrs={"id": "id_record_component", "class": "form-control form-control-sm component_multiple_select2",}),
+        widget=forms.SelectMultiple(attrs={
+            "id": "id_record_component", 
+            "class": "component_multiple_select2",}),
         required=False,
     )
 
@@ -65,7 +67,7 @@ class Record_block_form(forms.ModelForm):
 
     class Meta:
         model = Record_block
-        fields = ("number_block", "name_block", "serial_number", "region")
+        fields = ("__all__")
 
 
 class Send_block_form(forms.ModelForm):

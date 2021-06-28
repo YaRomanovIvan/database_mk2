@@ -187,6 +187,7 @@ class Record_block(models.Model):
     status = models.CharField(
         max_length=15,
         null=True,
+        blank=True,
         choices=CHOICE,
         default=wait,
         verbose_name="Состояние",

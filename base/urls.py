@@ -26,4 +26,9 @@ urlpatterns = [
     ),
     path('send_block/commit/', views.commit_send_block, name='commit_send_block'),
     path('block_info/<int:pk>', views.block_info, name='block_info'),
+    path(
+        'block_info/<int:pk>/add_components_for_block/',
+        views.add_components_for_block,
+        name='add_components_for_block',
+    ),
 ]
