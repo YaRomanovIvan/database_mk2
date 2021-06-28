@@ -58,6 +58,7 @@ thead th {
 
 <hr>
 <div class="row ms-3 me-3">
+    
     <div class='col'>
         <table class="table table-sm table-bordered table-hover">
             <thead>
@@ -89,9 +90,10 @@ thead th {
         </table>
         {% include 'includes/messages.html' %}
     </div>
+
     <div class='col text-center'>
         <nav class="navbar justify-content-center">
-            <div class="row">
+            <div class="row" style="max-width: 600px;">
                 <button type="button" class="btn btn-success nav-link zoom-menu mb-2" data-bs-toggle="modal" data-bs-target="#add_components_for_type_block">Привязать или удалить компоненты</button>
                 {% if about_block.date_shipment %}
                 <button type="button" class="btn btn-warning nav-link zoom-menu mb-2 disabled" data-bs-toggle="modal" data-bs-target="#create_type_block">Ремонт (блок уже отправлен)</button>
@@ -105,13 +107,15 @@ thead th {
             </div>
         </nav>
     </div>
+
 </div>
+
 <!-- Модальное окно добавления нового типа блока -->
 <div class="modal fade" id="add_components_for_type_block" data-bs-backdrop="static" data-bs-keyboard="false" aria-labelledby="staticBackdropLabel" aria-hidden="true">
     <div class="modal-dialog">
       <div class="modal-content">
         <div class="modal-header">
-          <h5 class="modal-title" id="staticBackdropLabel">Новый тип блока</h5>
+          <h5 class="modal-title" id="staticBackdropLabel">Привязать или отвязать компонент к блоку</h5>
           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
         <form action='{% url "add_components_for_block" about_block.pk %}' method='POST'>
@@ -128,7 +132,7 @@ thead th {
         </form>
       </div>
     </div>
-  </div>
+</div>
 
 <script>
     $(document).ready(function() {
