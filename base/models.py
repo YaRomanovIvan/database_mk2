@@ -221,6 +221,7 @@ class Record_components(models.Model):
         on_delete=models.CASCADE,
         verbose_name="Компонент",
         related_name="record_component",
+        related_query_name='query_record_compoent',
     )
     block = models.ForeignKey(
         Record_block,

@@ -1,7 +1,9 @@
+from django.db.models.query import Prefetch
 from django.shortcuts import get_object_or_404, render, redirect
 import datetime
 from django.contrib import messages
-from .models import Post, Record_block, Unit, Type_block
+from django.db.models import Sum
+from .models import Post, Record_block, Unit, Type_block, Components, Record_components
 from .filters import Block_filter, One_block_filter
 from .forms_block import Record_block_form, Type_block_form, Unit_form, Send_block_form
 
@@ -241,3 +243,24 @@ def add_components_for_block(request, pk):
         request, 'Компоненты привязаны!'
     )
     return redirect("block_info", pk)
+
+
+
+# -----------------------------------------------------------------------------------------------------
+# ------------------------------------ Компоненты -----------------------------------------------------
+
+
+def view_components(request):
+    components = Components.objects.annotate(
+        summ=Sum("amount_trk") + Sum("amount_eis") + Sum("amount_vts")
+    ).order_by("summ")
+    today = datetime.date.today()
+    last_mounth = today - datetime.timedelta(days=30)
+    for i in components:
+        print(i.record_component.all())
+    
+    context = {
+        'components': components,
+        #'ago_30_days': ago_30_days,
+    }
+    return render(request, 'view_components.html', context)

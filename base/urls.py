@@ -31,4 +31,5 @@ urlpatterns = [
         views.add_components_for_block,
         name='add_components_for_block',
     ),
+    path('components/', views.view_components, name='components'),
 ]
