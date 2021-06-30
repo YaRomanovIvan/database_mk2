@@ -1,7 +1,7 @@
 from django.contrib import admin
 
-from .models import (Applications, Applications_status, Components, Maker,
-                     Maker_company, Order, Record_block, Record_components,
+from .models import (Applications, Applications_status, Component, Maker,
+                     Maker_company, Order, Record_block, Record_component,
                      Type_block, Unit, Post)
 
 
@@ -131,11 +131,11 @@ class Maker_companyAdmin(admin.ModelAdmin):
 
 
 admin.site.register(Post, PostAdmin)
-admin.site.register(Components, ComponentsAdmin)
+admin.site.register(Component, ComponentsAdmin)
 admin.site.register(Type_block, Type_blockAdmin)
 admin.site.register(Unit, UnitAdmin)
 admin.site.register(Record_block, Record_blockAdmin)
-admin.site.register(Record_components, Record_componentsAdmin)
+admin.site.register(Record_component, Record_componentsAdmin)
 admin.site.register(Maker, MakerAdmin)
 admin.site.register(Order, OrderAdmin)
 admin.site.register(Maker_company, Maker_companyAdmin)

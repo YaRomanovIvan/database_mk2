@@ -1,6 +1,5 @@
 from django import forms
-from django.forms.widgets import Widget
-from .models import Components, Type_block, Unit, Record_block
+from .models import Component, Type_block, Unit, Record_block
 
 
 class Type_block_form(forms.ModelForm):
@@ -12,7 +11,7 @@ class Type_block_form(forms.ModelForm):
         ),
     )
     components = forms.ModelMultipleChoiceField(
-        queryset=Components.objects.all(),
+        queryset=Component.objects.all(),
         label='Привязать компоненты',
         help_text='Поле не обязательно для заполнения. Вы можете привязать компоненты позже.',
         widget=forms.SelectMultiple(attrs={

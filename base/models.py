@@ -38,7 +38,7 @@ class Post(models.Model):
         ordering = ["-pub_date"]
 
 
-class Components(models.Model):
+class Component(models.Model):
     """ Модель для записи информации о компонентах. Тип компонента, маркировка
     примечание, количество в разных компаниях и средняя цена """
     id = models.AutoField(
@@ -95,7 +95,7 @@ class Type_block(models.Model):
         verbose_name="Наименование блока",
     )
     components = models.ManyToManyField(
-        Components,
+        Component,
         related_name='block_components',
         verbose_name='Компоненты блока',
         blank=True,
@@ -214,14 +214,13 @@ class Record_block(models.Model):
         ordering = ["-number_block"]
 
 
-class Record_components(models.Model):
+class Record_component(models.Model):
     """ модель учета компонентов. """
     component = models.ForeignKey(
-        Components,
+        Component,
         on_delete=models.CASCADE,
         verbose_name="Компонент",
         related_name="record_component",
-        related_query_name='query_record_compoent',
     )
     block = models.ForeignKey(
         Record_block,
@@ -319,7 +318,7 @@ class Order(models.Model):
         verbose_name="id",
     )
     component = models.ForeignKey(
-        Components,
+        Component,
         on_delete=models.CASCADE,
         verbose_name="Наименование компонента",
         related_name="order_components",
@@ -359,7 +358,7 @@ class Applications_status(models.Model):
 class Applications(models.Model):
     """ модель  """
     component = models.ForeignKey(
-        Components,
+        Component,
         on_delete=models.CASCADE,
         verbose_name="Наименование компонента",
         related_name="applications_components",

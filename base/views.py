@@ -3,7 +3,7 @@ from django.shortcuts import get_object_or_404, render, redirect
 import datetime
 from django.contrib import messages
 from django.db.models import Sum
-from .models import Post, Record_block, Unit, Type_block, Components, Record_components
+from .models import Post, Record_block, Unit, Type_block, Component, Record_component
 from .filters import Block_filter, One_block_filter
 from .forms_block import Record_block_form, Type_block_form, Unit_form, Send_block_form
 
@@ -251,16 +251,22 @@ def add_components_for_block(request, pk):
 
 
 def view_components(request):
-    components = Components.objects.annotate(
+    """ страница с информацие о компонентах и расходе за 30 дней. """
+    components = Component.objects.annotate(
         summ=Sum("amount_trk") + Sum("amount_eis") + Sum("amount_vts")
     ).order_by("summ")
     today = datetime.date.today()
     last_mounth = today - datetime.timedelta(days=30)
-    for i in components:
-        print(i.record_component.all())
-    
+    result = []
+    for record in components:
+        summ = record.record_component.filter(
+                date_add__range=(last_mounth, today)
+            ).aggregate(Sum('amount'))
+        result.append([record, summ['amount__sum']])
+    #qs = components
+    #print(qs.filter(record_component__date_add__range=(last_mounth, today)).aggregate(cnt=Sum('record_component__amount')))
     context = {
         'components': components,
-        #'ago_30_days': ago_30_days,
+        'result': result,
     }
     return render(request, 'view_components.html', context)

@@ -22,7 +22,7 @@
             </tr>
         </thead>
         <tbody>
-            {% for record in components %}
+            {% for record, cnt in result %}
             <tr>
                 <td><a href="#">ред.</a></td>
                 <td>{{ record.type_component }}
@@ -38,45 +38,7 @@
                 <td>{{ record.amount_trk }}</td>
                 <td>{{ record.amount_vts }}</td>
                 <td>{{ record.summ }}</td>
-                <td>{{ value }}</td>
-                <td>{{ record.price }} р/шт</td>
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
-    
-    <table class="table table-sm table-bordered table-hover">
-        <thead>
-            <tr>
-                <th scope="col" style="width: 1%"></th>
-                <th scope="col">Наименование компонента <br>Всего наименований: кол-во</th>
-                <th>Ссылки на поиск</th>
-                <th scope="col" style="width: 5%">Количество ЭИС</th>
-                <th scope="col" style="width: 5%">Количество ТРК</th>
-                <th scope="col" style="width: 5%">Количество ВТС</th>
-                <th scope="col" style="width: 5%">Общее количество</th>
-                <th scope="col" style="width: 10%">Списано за прошедшие 30 дней</th>
-                <th scope="col" style="width: 10%">Цена за единицу</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for record in ago_30_days %}
-            <tr>
-                <td><a href="#">ред.</a></td>
-                <td>{{ record.type_component }}
-                    {{ record.marking }}
-                    {{ record.note|default_if_none:"" }}  
-                </td>
-                <td>
-                    <a href="https://www.chipdip.ru/search?searchtext={{ record.marking }}">ChipDip</a>&nbsp
-                    <a href="https://www.elitan.ru/price/index.php?find={{ record.marking }}&delay=-1&mfg=all&seenform=y">Elitan</a>&nbsp
-                    <a href="https://www.platan.ru/cgi-bin/qwery_i.pl?code={{ record.marking }}">Platan</a>  
-                </td>
-                <td>{{ record.amount_eis }}</td>
-                <td>{{ record.amount_trk }}</td>
-                <td>{{ record.amount_vts }}</td>
-                <td>{{ record.summ }}</td>
-                <td>{{ value }}</td>
+                <td>{{ cnt }}</td>
                 <td>{{ record.price }} р/шт</td>
             </tr>
             {% endfor %}
