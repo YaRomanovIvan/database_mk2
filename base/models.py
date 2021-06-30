@@ -1,6 +1,7 @@
 from django.contrib.auth import get_user_model
 from django.core import validators
 from django.db import models
+from django.db.models.deletion import SET_NULL
 
 User = get_user_model()
 
@@ -36,6 +37,22 @@ class Post(models.Model):
         verbose_name_plural = "Новости"
         verbose_name = "Новость"
         ordering = ["-pub_date"]
+
+
+class Maker_company(models.Model):
+    """ модель компаний производетелей. Записываются названия компаний. """
+    name = models.CharField(
+        max_length=50,
+        verbose_name="Наименование",
+    )
+
+    class Meta:
+        verbose_name_plural = "Производители"
+        verbose_name = "Производитель"
+        ordering = ["name"]
+
+    def __str__(self):
+        return self.name
 
 
 class Component(models.Model):
@@ -99,6 +116,14 @@ class Type_block(models.Model):
         related_name='block_components',
         verbose_name='Компоненты блока',
         blank=True,
+    )
+    maker = models.ForeignKey(
+        Maker_company,
+        related_name='block_maker',
+        verbose_name='Производитель',
+        on_delete=SET_NULL,
+        blank=True,
+        null=True,
     )
 
     def __str__(self):
@@ -247,22 +272,6 @@ class Record_component(models.Model):
         verbose_name_plural = "Учет компонентов"
         verbose_name = "Учет"
         ordering = ["-id"]
-
-
-class Maker_company(models.Model):
-    """ модель компаний производетелей. Записываются названия компаний. """
-    name = models.CharField(
-        max_length=50,
-        verbose_name="Наименование",
-    )
-
-    class Meta:
-        verbose_name_plural = "Производители"
-        verbose_name = "Производитель"
-        ordering = ["name"]
-
-    def __str__(self):
-        return self.name
 
 
 class Maker(models.Model):
