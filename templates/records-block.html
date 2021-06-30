@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% load user_filters %}
 {% block title %}Управление блоками{% endblock %}
 
 {% block content %}
@@ -41,6 +42,14 @@
         <form action='{% url "add_new_record_block" %}' method='POST'>
           {% csrf_token %}
           <div class="modal-body">
+            {% if form.subject.errors %}
+    <ol>
+    {% for error in form.subject.errors %}
+        <li><strong>{{ error|escape }}</strong></li>
+    {% endfor %}
+    </ol>
+{% endif %}
+            {{ record_block_form.number_block.errors }}
               {{ record_block_form.number_block.label_tag }}
               {{ record_block_form.number_block }}
               {{ record_block_form.name_block.label_tag }}
@@ -49,6 +58,9 @@
               {{ record_block_form.serial_number }}
               {{ record_block_form.region.label_tag }}
               {{ record_block_form.region }}
+              {{ record_block_form.note.label_tag }}
+              {{ record_block_form.note|addclass:'form-control form-control-sm' }}
+
           </div>
           <div class="modal-footer">
             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
@@ -69,14 +81,15 @@
         <form action='{% url "add_new_type_block" %}' method='POST'>
           {% csrf_token %}
           <div class="modal-body">
-            {% for field in type_block_form %}
-              {{ field.label }}
-              {{ field }}
-              <br>
-            {% endfor %}
+            {{ type_block_form.name_block.label_tag }}
+            {{ type_block_form.name_block }}
+            {{ type_block_form.components.label_tag }}
+            {{ type_block_form.components }}
+            {{ type_block_form.maker.label_tag}}
+            {{ type_block_form.maker|addclass:'form-control form-control-sm' }}
           </div>
           <div class="modal-footer">
-            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Закрыть</button>
             <button type="submit" class="btn btn-primary">Добавить</button>
           </div>
         </form>
@@ -88,7 +101,7 @@
     <div class="modal-dialog">
       <div class="modal-content">
         <div class="modal-header">
-          <h5 class="modal-title" id="staticBackdropLabel">Modal title</h5>
+          <h5 class="modal-title" id="staticBackdropLabel">Добавление нового подразделения</h5>
           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
         <form action='{% url "add_new_region" %}' method='POST'>

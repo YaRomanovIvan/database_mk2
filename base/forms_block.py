@@ -22,7 +22,7 @@ class Type_block_form(forms.ModelForm):
 
     class Meta:
         model = Type_block
-        fields = ("id", "name_block", "components",)
+        fields = ("id", "name_block", "components", "maker")
 
 
 class Unit_form(forms.ModelForm):

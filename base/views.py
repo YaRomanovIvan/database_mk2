@@ -124,7 +124,7 @@ def add_new_record_block(request):
     record_block_form = Record_block_form(request.POST)
     if not record_block_form.is_valid():
         print(record_block_form.errors)
-        messages.error(request, "Что-то пошло не так!")
+        messages.error(request, "Ошибка формы!")
         return redirect("records_block")
     record_block_form.save()
     messages.success(
