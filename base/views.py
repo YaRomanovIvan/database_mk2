@@ -343,6 +343,7 @@ def update_amount(request):
 
 
 def update_price(request):
+    """ изменение цены компонента """
     if request.method != 'POST':
         return redirect('components')
     form = Update_price_form(request.POST)
