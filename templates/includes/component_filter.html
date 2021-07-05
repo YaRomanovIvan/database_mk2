@@ -1,0 +1,46 @@
+{% load user_filters %}
+<form class="ms-1 me-1" method='GET'>
+    {% csrf_token %}
+        <h3>Фильтр</h3>
+        <div class="row">
+            <div class="col">
+                <label for="{{ component_filter.form.type_component.id_for_label }}" >{{ component_filter.form.type_component.label }}</label>
+                {{ component_filter.form.type_component|addclass:"form-control form-control-sm" }}
+            </div>
+            <div class="col">
+                <label for="{{ component_filter.form.marking.id_for_label }}" >{{ component_filter.form.marking.label }}</label>
+                {{ component_filter.form.marking|addclass:"form-control form-control-sm" }}
+            </div>
+        </div>
+        <br>
+        <div class="row">
+            {% for field in component_filter.form %}
+                {{ field.help_text }}
+            {% endfor %}
+            <div class="col">
+                <label for="{{ component_filter.form.amount_eis.id_for_label }}" >{{ component_filter.form.amount_eis.label }}</label>
+                {{ component_filter.form.amount_eis|addclass:"form-control form-control-sm" }}
+            </div>
+            <div class="col">
+                <label for="{{ component_filter.form.amount_trk.id_for_label }}" >{{ component_filter.form.amount_trk.label }}</label>
+                {{ component_filter.form.amount_trk|addclass:"form-control form-control-sm" }}
+            </div>
+            <div class="col">
+                <label for="{{ component_filter.form.amount_vts.id_for_label }}" >{{ component_filter.form.amount_vts.label }}</label>
+                {{ component_filter.form.amount_vts|addclass:"form-control form-control-sm" }}
+            </div>
+            <div class="col">
+                <label for="{{ component_filter.form.summ.id_for_label }}" >{{ component_filter.form.summ.label }}</label>
+                {{ component_filter.form.summ|addclass:"form-control form-control-sm" }}
+            </div>
+            <div class="col">
+                <label for="{{ component_filter.form.price.id_for_label }}" >{{ component_filter.form.price.label }}</label>
+                {{ component_filter.form.price|addclass:"form-control form-control-sm" }}
+            </div>
+        </div>
+        <br>
+        <div class="row ms-1 me-1">
+        <button type="submit" class="btn btn-dark btn-sm btn-block">Применить</button>
+        </div>
+
+</form>

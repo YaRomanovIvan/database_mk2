@@ -4,7 +4,7 @@ import datetime
 from django.contrib import messages
 from django.db.models import Sum
 from .models import Post, Record_block, Unit, Type_block, Component, Record_component
-from .filters import Block_filter, One_block_filter
+from .filters import Block_filter, One_block_filter, Components_filter
 from .forms_block import Record_block_form, Type_block_form, Unit_form, Send_block_form
 
 
@@ -255,18 +255,20 @@ def view_components(request):
     components = Component.objects.annotate(
         summ=Sum("amount_trk") + Sum("amount_eis") + Sum("amount_vts")
     ).order_by("summ")
+    component_filter = Components_filter(
+        request.GET,
+        queryset=components,
+    )
     today = datetime.date.today()
     last_mounth = today - datetime.timedelta(days=30)
     result = []
-    for record in components:
+    for record in component_filter.qs:
         summ = record.record_component.filter(
                 date_add__range=(last_mounth, today)
             ).aggregate(Sum('amount'))
         result.append([record, summ['amount__sum']])
-    #qs = components
-    #print(qs.filter(record_component__date_add__range=(last_mounth, today)).aggregate(cnt=Sum('record_component__amount')))
     context = {
-        'components': components,
         'result': result,
+        "component_filter": component_filter,
     }
     return render(request, 'view_components.html', context)

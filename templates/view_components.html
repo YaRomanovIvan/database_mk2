@@ -1,8 +1,12 @@
 {% extends "base.html" %}
 {% block title %}Информация о компонентах{% endblock %}
+{% load user_filters %}
 
 {% block content %}
 <h1 class="text-center">Информация о компонентах</h1>
+
+
+{% include 'includes/component_filter.html' %}
 
 <hr>
 
