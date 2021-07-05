@@ -1,11 +1,14 @@
-from django.db.models.query import Prefetch
 from django.shortcuts import get_object_or_404, render, redirect
 import datetime
 from django.contrib import messages
 from django.db.models import Sum
-from .models import Post, Record_block, Unit, Type_block, Component, Record_component
+from .models import Post, Record_block, Type_block, Component
 from .filters import Block_filter, One_block_filter, Components_filter
 from .forms_block import Record_block_form, Type_block_form, Unit_form, Send_block_form
+from .forms_components import (
+    New_component_form,
+    Edit_component_form, Update_amount_form, Update_price_form
+)
 
 
 def index(request):
@@ -270,5 +273,87 @@ def view_components(request):
     context = {
         'result': result,
         "component_filter": component_filter,
+        "new_component_form": New_component_form(),
+        "edit_component_form": Edit_component_form(),
+        "update_amount_form": Update_amount_form(),
+        "update_price_form": Update_price_form(),
     }
     return render(request, 'view_components.html', context)
+
+
+def new_component(request):
+    """ создать (добавить) новый компонент """
+    if request.method != 'POST':
+        return redirect("components")
+    form = New_component_form(request.POST)
+    if not form.is_valid():
+        messages.error(
+        request, 'Ошибка формы!'
+        )
+        return redirect("components")
+    form.save()
+    messages.success(
+        request, 'Компонент добавлен успешно!'
+    )
+    return redirect('components')
+    
+
+def update_amount(request):
+    """ изменить (прибавить) количество компонента """
+    if request.method != 'POST':
+        return redirect('components')
+    update_amount_form = Update_amount_form(request.POST)
+    if update_amount_form.is_valid():
+        component = update_amount_form.cleaned_data.get("component")
+        amount = update_amount_form.cleaned_data.get("amount")
+        company = update_amount_form.cleaned_data.get("company")
+        update = Component.objects.get(marking=component.marking)
+        if company == "ТРК":
+            update.amount_trk += amount
+            update.save()
+            messages.success(
+                request,
+                f"Компонент {update.marking} обновлен! "
+                f"Добавлено {amount} шт. "
+                f"Текущее количество {update.amount_trk} шт. (ТРК)",
+            )
+            return redirect('components')
+        if company == "ЭИС":
+            update.amount_eis += amount
+            update.save()
+            messages.success(
+                request,
+                f"Компонент {update.marking} обновлен! "
+                f"Добавлено {amount} шт. "
+                f"Текущее количество {update.amount_eis} шт. (ЭИС)",
+            )
+            return redirect('components')
+        if company == "ВТС":
+            update.amount_vts += amount
+            update.save()
+            messages.success(
+                request,
+                f"Компонент {update.marking} обновлен! "
+                f"Добавлено {amount} шт. "
+                f"Текущее количество {update.amount_vts} шт. (ВТС)",
+            )
+            return redirect('components')
+        messages.error(request, "Ошибка! Вероятно вы не указали компанию!")
+        return redirect('components')
+
+
+def update_price(request):
+    if request.method != 'POST':
+        return redirect('components')
+    form = Update_price_form(request.POST)
+    if not form.is_valid():
+        return redirect('components')
+    component = form.cleaned_data.get("component")
+    price = form.cleaned_data.get("price")
+    record = Component.objects.get(marking=component.marking)
+    record.price = price
+    record.save()
+    messages.success(
+        request, f"Цена обновлена! Текущая цена {record.price} рублей."
+    )
+    return redirect('components')
