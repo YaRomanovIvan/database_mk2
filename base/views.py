@@ -2,13 +2,14 @@ from django.shortcuts import get_object_or_404, render, redirect
 import datetime
 from django.contrib import messages
 from django.db.models import Sum
-from .models import Post, Record_block, Type_block, Component
+from .models import Post, Record_block, Type_block, Component, Request
 from .filters import Block_filter, One_block_filter, Components_filter
 from .forms_block import Record_block_form, Type_block_form, Unit_form, Send_block_form
 from .forms_components import (
     New_component_form,
     Edit_component_form, Update_amount_form, Update_price_form
 )
+from .forms_order import Create_request_form
 
 
 def index(request):
@@ -358,3 +359,16 @@ def update_price(request):
         request, f"Цена обновлена! Текущая цена {record.price} рублей."
     )
     return redirect('components')
+
+
+# -----------------------------------------------------------------------------------------------------
+# ------------------------------------ Заявки и заказы ------------------------------------------------
+
+
+def request_component(request):
+    queryset = Request.objects.all()
+    context = {
+        'queryset': queryset,
+        'create_request_form': Create_request_form(),
+    }
+    return render(request, 'request_components.html', context)

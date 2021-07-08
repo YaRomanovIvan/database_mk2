@@ -43,24 +43,23 @@
           {% csrf_token %}
           <div class="modal-body">
             {% if form.subject.errors %}
-    <ol>
-    {% for error in form.subject.errors %}
-        <li><strong>{{ error|escape }}</strong></li>
-    {% endfor %}
-    </ol>
-{% endif %}
+              <ol>
+              {% for error in form.subject.errors %}
+                  <li><strong>{{ error|escape }}</strong></li>
+              {% endfor %}
+              </ol>
+            {% endif %}
             {{ record_block_form.number_block.errors }}
-              {{ record_block_form.number_block.label_tag }}
-              {{ record_block_form.number_block }}
-              {{ record_block_form.name_block.label_tag }}
-              {{ record_block_form.name_block }}
-              {{ record_block_form.serial_number.label_tag }}
-              {{ record_block_form.serial_number }}
-              {{ record_block_form.region.label_tag }}
-              {{ record_block_form.region }}
-              {{ record_block_form.note.label_tag }}
-              {{ record_block_form.note|addclass:'form-control form-control-sm' }}
-
+            {{ record_block_form.number_block.label_tag }}
+            {{ record_block_form.number_block }}
+            {{ record_block_form.name_block.label_tag }}
+            {{ record_block_form.name_block }}
+            {{ record_block_form.serial_number.label_tag }}
+            {{ record_block_form.serial_number }}
+            {{ record_block_form.region.label_tag }}
+            {{ record_block_form.region }}
+            {{ record_block_form.note.label_tag }}
+            {{ record_block_form.note|addclass:'form-control form-control-sm' }}
           </div>
           <div class="modal-footer">
             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>

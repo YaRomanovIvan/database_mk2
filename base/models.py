@@ -1,6 +1,7 @@
 from django.contrib.auth import get_user_model
 from django.core import validators
 from django.db import models
+from django.db.models.base import Model
 from django.db.models.deletion import SET_NULL
 
 User = get_user_model()
@@ -313,91 +314,62 @@ class Maker(models.Model):
         ordering = ["-id"]
 
 
-class Order(models.Model):
-    """ модель заказанных компонентов. 
-    //в разработке """
-    ready = "получен"
-    ship = "заказан"
-    CHOICE = [
-        (ship, "заказан"),
-        (ready, "получен"),
-    ]
-    id = models.AutoField(
-        primary_key=True,
-        verbose_name="id",
-    )
-    component = models.ForeignKey(
-        Component,
-        on_delete=models.CASCADE,
-        verbose_name="Наименование компонента",
-        related_name="order_components",
-    )
-    amount = models.IntegerField(
-        validators=[validators.MinValueValidator(1)],
-        verbose_name="Количество",
-    )
-    order_date = models.DateField(
-        auto_now_add=True, verbose_name="Дата заказа"
-    )
-    period = models.CharField(
-        max_length=15, blank=True, null=True, verbose_name="Срок поставки"
-    )
+class Status_Request(models.Model):
     status = models.CharField(
-        max_length=15,
-        null=True,
-        choices=CHOICE,
-        default=ship,
-        verbose_name="Состояние",
+        max_length=25,
+        verbose_name='Наименование'
     )
-    date_add = models.DateField(blank=True, null=True, verbose_name="Получено")
-
-    class Meta:
-        verbose_name_plural = "Заказы"
-        verbose_name = "Заказ"
-        ordering = ["-id"]
-
-
-class Applications_status(models.Model):
-    name = models.CharField(max_length=20, verbose_name="Статус заказа")
 
     def __str__(self):
-        return self.name
+        return self.status
+
+    class Meta:
+        verbose_name_plural = "Статусы заявок"
+        verbose_name = "Статус"
+        ordering = ["id"]
 
 
-class Applications(models.Model):
-    """ модель  """
+class Request(models.Model):
     component = models.ForeignKey(
         Component,
-        on_delete=models.CASCADE,
-        verbose_name="Наименование компонента",
-        related_name="applications_components",
+        on_delete=SET_NULL,
+        verbose_name='Наименование компонента',
+        related_name='component_request',
+        null=True,
     )
     amount = models.PositiveIntegerField(
-        validators=[validators.MinValueValidator(1)],
-        verbose_name="Количество",
+        verbose_name='Количество',
     )
-    date_add = models.DateField(auto_now_add=True, verbose_name="Получено")
-    user = models.CharField(
-        max_length=35,
-        verbose_name="Пользователь",
+    created = models.DateField(
+        auto_now_add=True,
+        verbose_name='Дата заявки',
     )
     status = models.ForeignKey(
-        Applications_status,
-        on_delete=models.DO_NOTHING,
-        verbose_name="Статус",
-        related_name="appl_status",
+        Status_Request,
+        on_delete=SET_NULL,
+        verbose_name='Статус заявки',
+        related_name='status_request',
+        null=True,
+    )
+    user = models.ForeignKey(
+        User,
+        on_delete=SET_NULL,
+        verbose_name='Пользователь',
+        related_name='user_request',
+        null=True,
     )
     note = models.CharField(
-        max_length=50,
-        blank=True,
-        null=True,
-        verbose_name="Примечание",
+        max_length=100,
+        verbose_name='Примечание',
     )
+
+    def __str__(self):
+        return f'{self.component}, {self.user}, {self.created}'
 
     class Meta:
         verbose_name_plural = "Заявки"
         verbose_name = "Заявка"
-        ordering = ["-id"]
+        ordering = ["-created"]
 
 
 class Defect_statement(models.Model):

@@ -80,3 +80,9 @@ class Send_block_form(forms.ModelForm):
     class Meta:
         model = Record_block
         fields = ("passed",)
+
+
+class Repair_block(forms.ModelForm):
+    class Meta:
+        model = Record_block
+        fields = ('__all__')

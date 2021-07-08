@@ -35,4 +35,5 @@ urlpatterns = [
     path('components/new_component/,', views.new_component, name='new_component'),
     path('components/update_amount/', views.update_amount, name='update_amount'),
     path('components/update_price/', views.update_price, name='update_price'),
+    path('order/request/', views.request_component, name='request_component'),
 ]

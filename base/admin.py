@@ -1,7 +1,7 @@
 from django.contrib import admin
 
-from .models import (Applications, Applications_status, Component, Maker,
-                     Maker_company, Order, Record_block, Record_component,
+from .models import (Component, Maker, Status_Request, Request,
+                     Maker_company, Record_block, Record_component,
                      Type_block, Unit, Post)
 
 
@@ -90,34 +90,6 @@ class MakerAdmin(admin.ModelAdmin):
     empty_value_display = "--пусто--"
 
 
-class OrderAdmin(admin.ModelAdmin):
-    list_display = (
-        "id",
-        "component",
-        "amount",
-        "order_date",
-        "date_add",
-    )
-    list_filter = ("id", "component", "order_date", "date_add")
-    empty_value_display = "--пусто--"
-
-
-class ApplicationsAdmin(admin.ModelAdmin):
-    list_display = (
-        "id",
-        "component",
-        "amount",
-        "user",
-        "date_add",
-        "status",
-    )
-    empty_value_display = "--пусто--"
-
-
-class Applications_statusAdmin(admin.ModelAdmin):
-    list_display = ("id", "name")
-
-
 class Maker_companyAdmin(admin.ModelAdmin):
     list_display = (
         "id",
@@ -130,6 +102,25 @@ class Maker_companyAdmin(admin.ModelAdmin):
     empty_value_display = "--пусто--"
 
 
+class RequestAdmin(admin.ModelAdmin):
+    list_display = (
+        'id',
+        'component',
+        'created',
+        'user',
+        'status',
+    )
+    empty_value_display = "--пусто--"
+
+
+class Status_RequestAdmin(admin.ModelAdmin):
+    list_display = (
+        'id',
+        'status',
+    )
+    empty_value_display = "--пусто--"
+
+
 admin.site.register(Post, PostAdmin)
 admin.site.register(Component, ComponentsAdmin)
 admin.site.register(Type_block, Type_blockAdmin)
@@ -137,7 +128,6 @@ admin.site.register(Unit, UnitAdmin)
 admin.site.register(Record_block, Record_blockAdmin)
 admin.site.register(Record_component, Record_componentsAdmin)
 admin.site.register(Maker, MakerAdmin)
-admin.site.register(Order, OrderAdmin)
 admin.site.register(Maker_company, Maker_companyAdmin)
-admin.site.register(Applications, ApplicationsAdmin)
-admin.site.register(Applications_status, Applications_statusAdmin)
+admin.site.register(Request, RequestAdmin)
+admin.site.register(Status_Request, Status_RequestAdmin)
