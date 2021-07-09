@@ -382,7 +382,6 @@ def create_request(request):
     form = Create_request_form(request.POST)
     user = get_object_or_404(User, username=request.user)
     if not form.is_valid():
-        print(form.errors)
         return redirect('request_component')
     create = form.save(commit=False)
     component = form.cleaned_data.get("component")
@@ -401,5 +400,24 @@ def create_request(request):
     form.save()
     messages.success(
         request, f"Заявка на компонент <b>{create.component}</b> создана!"
+    )
+    return redirect('request_component')
+
+
+def edit_request(request, pk):
+    """ Редактирование заявки """
+    get = get_object_or_404(Request, pk=pk)
+    form = Create_request_form(instance=get)
+    if get.user != request.user:
+        messages.error(request, 'Вы не являетесь автором заявки!')
+        return redirect('request_component')
+    if request.method != 'POST':
+        return render(request, 'edit_request.html', {'form':form})
+    form = Create_request_form(request.POST, instance=get)
+    if not form.is_valid():
+        return render(request, 'edit_request.html', {'form':form})
+    form.save()
+    messages.success(
+        request, 'Заявка отредактирована!'
     )
     return redirect('request_component')

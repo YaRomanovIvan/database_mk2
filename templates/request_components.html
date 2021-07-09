@@ -72,7 +72,12 @@
         <tbody>
         {% for bb in queryset %}
         <tr>
-            <th scope="row"><input class="form-check-input" type="checkbox" name="checkbox" value="{{ bb.pk }}" id='{{ bb.pk }}'>&nbsp<a href="{% url 'block_info' bb.pk %}">{{ bb.pk }}</a></th>
+            <th scope="row">
+              <input class="form-check-input" type="checkbox" name="checkbox" value="{{ bb.pk }}" id='{{ bb.pk }}'>&nbsp{{ bb.pk }}
+              {% if request.user == bb.user %}
+              <a href="{% url 'edit_request' bb.pk %}">ред.</a>
+              {% endif %}
+            </th>
             <td>{{ bb.component }}</td>
             <td>{{ bb.amount }}</td>
             <td>{{ bb.created|date:"d.m.Y" }}</td>

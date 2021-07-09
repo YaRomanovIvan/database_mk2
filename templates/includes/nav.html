@@ -2,10 +2,18 @@
   <div class="col">
       <h2 class="fst-italic"><span style="color:red">Т</span>ранс<span style="color:red">Р</span>ем<span style="color:red">К</span>ом</h2>
   </div>
-  <div class="col text-end mt-3">
-      <a href="#" class="pe-2">Пользователь: РомановИЮ</a>
-      <a href="#" class="pe-2">Вход</a>
-      <a href="#" class="pe-2">Выход</a>
+  <div class="col text-end mt-2">
+    {% if user.is_authenticated %}
+    <div>
+      <a href="{% url 'password_change' %}" class="btn btn-outline-primary">Изменить пароль</a>&nbsp
+      <a href="{% url 'logout' %}" class="btn btn-outline-primary">Выход</a>
+    </div>
+    {% else %}
+    <div>
+      <a href="{% url 'login' %}" class="btn btn-outline-primary">Войти</a>&nbsp
+      <a href="{% url 'signup' %}" class="btn btn-outline-primary">Создать аккаунт</a>
+    </div>
+    {% endif %}
   </div>
 </div>
 <hr class="mb-1">
