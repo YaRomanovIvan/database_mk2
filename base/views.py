@@ -366,6 +366,7 @@ def update_price(request):
 
 
 def request_component(request):
+    """ просмотр заявок """
     queryset = Request.objects.all()
     context = {
         'queryset': queryset,
@@ -375,6 +376,7 @@ def request_component(request):
 
 
 def create_request(request):
+    """ Создание заявки на компонент """
     if request.method != 'POST':
         return redirect('request_component')
     form = Create_request_form(request.POST)
@@ -383,6 +385,18 @@ def create_request(request):
         print(form.errors)
         return redirect('request_component')
     create = form.save(commit=False)
+    component = form.cleaned_data.get("component")
+    request_component = Request.objects.filter(
+        user=user, component=component, status="ожидает"
+    ).exists()
+    if request_component:
+        messages.error(
+            request, 
+                f"Вы уже создали заявку на компонент <b>{component}</b>.<br>" +
+                f"Отредактируйте существующию заявку, либо дождитесь рассмотрения."
+            
+        )
+        return redirect('request_component')
     create.user = user
     form.save()
     messages.success(

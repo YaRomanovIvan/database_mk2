@@ -320,7 +320,7 @@ class Request(models.Model):
     commit = "получен"
     CHOICE = [
         (wait, "ожидает"),
-        (ready, "готов"),
+        (ready, "обработан"),
         (commit, "получен"),
     ]
     component = models.ForeignKey(
