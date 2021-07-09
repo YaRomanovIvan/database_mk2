@@ -1,8 +1,22 @@
 {% extends "base.html" %}
+{% load user_filters %}
 {% block title %}Заявки на компоненты{% endblock %}
 
 {% block content %}
+<style>
+.select2-close-mask{
+    z-index: 2099;
+}
+.select2-dropdown{
+    z-index: 3051;
+}
+</style>
 <h1 class='text-center'>Заявки</h1>
+
+<div class='container'>
+  {% include 'includes/messages.html' %}
+</div>
+
 <hr>
 <!-- Кнопки, открывающие модальные окна форм -->
 <nav class="navbar">
@@ -20,22 +34,21 @@
         <h5 class="modal-title" id="staticBackdropLabel">Создать заявку</h5>
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
-      <form action='{% url "add_new_record_block" %}' method='POST'>
+      <form action='{% url "create_request" %}' method='POST'>
         {% csrf_token %}
         <div class="modal-body">
-            {% if form.subject.errors %}
-              <ol>
-              {% for error in form.subject.errors %}
-                  <li><strong>{{ error|escape }}</strong></li>
-              {% endfor %}
-              </ol>
-            {% endif %}
-            {{ record_block_form.number_block.errors }}
-            {{ record_block_form.number_block.label_tag }}
+            {{ create_request_form.component.errors }}
+            {{ create_request_form.component.label_tag }}
+            {{ create_request_form.component|addclass:"form-control form-control-sm" }}
+            {{ create_request_form.amount.label_tag }}
+            {{ create_request_form.amount|addclass:"form-control form-control-sm" }}
+            {{ create_request_form.note.label_tag }}
+            {{ create_request_form.note|addclass:"form-control form-control-sm" }}
+            {{ create_request_form.status.as_hidden }}
         </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-          <button type="submit" class="btn btn-primary">Добавить</button>
+          <button type="submit" class="btn btn-primary">Создать</button>
         </div>
       </form>
     </div>
@@ -65,10 +78,17 @@
             <td>{{ bb.created|date:"d.m.Y" }}</td>
             <td>{{ bb.status }}</td>
             <td>{{ bb.user.last_name }}</td>
-            <td>{{ bb.note }}</td>
+            <td>{{ bb.note|default_if_none:'' }}</td>
         </tr>
         {% endfor %}
         </tbody>
       </table>
 </div>
+
+<script>
+  $(document).ready(function() {
+      $('#id_component').select2({ width: '100%' });
+  });
+</script>
+
 {% endblock %}

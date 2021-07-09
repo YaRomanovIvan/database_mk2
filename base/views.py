@@ -2,7 +2,7 @@ from django.shortcuts import get_object_or_404, render, redirect
 import datetime
 from django.contrib import messages
 from django.db.models import Sum
-from .models import Post, Record_block, Type_block, Component, Request
+from .models import Post, Record_block, Type_block, Component, Request, User
 from .filters import Block_filter, One_block_filter, Components_filter
 from .forms_block import Record_block_form, Type_block_form, Unit_form, Send_block_form
 from .forms_components import (
@@ -372,3 +372,20 @@ def request_component(request):
         'create_request_form': Create_request_form(),
     }
     return render(request, 'request_components.html', context)
+
+
+def create_request(request):
+    if request.method != 'POST':
+        return redirect('request_component')
+    form = Create_request_form(request.POST)
+    user = get_object_or_404(User, username=request.user)
+    if not form.is_valid():
+        print(form.errors)
+        return redirect('request_component')
+    create = form.save(commit=False)
+    create.user = user
+    form.save()
+    messages.success(
+        request, f"Заявка на компонент <b>{create.component}</b> создана!"
+    )
+    return redirect('request_component')

@@ -314,22 +314,15 @@ class Maker(models.Model):
         ordering = ["-id"]
 
 
-class Status_Request(models.Model):
-    status = models.CharField(
-        max_length=25,
-        verbose_name='Наименование'
-    )
-
-    def __str__(self):
-        return self.status
-
-    class Meta:
-        verbose_name_plural = "Статусы заявок"
-        verbose_name = "Статус"
-        ordering = ["id"]
-
-
 class Request(models.Model):
+    wait = "ожидает"
+    ready = "обработан"
+    commit = "получен"
+    CHOICE = [
+        (wait, "ожидает"),
+        (ready, "готов"),
+        (commit, "получен"),
+    ]
     component = models.ForeignKey(
         Component,
         on_delete=SET_NULL,
@@ -344,12 +337,12 @@ class Request(models.Model):
         auto_now_add=True,
         verbose_name='Дата заявки',
     )
-    status = models.ForeignKey(
-        Status_Request,
-        on_delete=SET_NULL,
+    status = models.CharField(
+        max_length=25,
         verbose_name='Статус заявки',
-        related_name='status_request',
         null=True,
+        choices=CHOICE,
+        default=wait,
     )
     user = models.ForeignKey(
         User,
@@ -357,10 +350,13 @@ class Request(models.Model):
         verbose_name='Пользователь',
         related_name='user_request',
         null=True,
+        blank=True,
     )
     note = models.CharField(
         max_length=100,
         verbose_name='Примечание',
+        blank=True,
+        null=True,
     )
 
     def __str__(self):
@@ -369,7 +365,7 @@ class Request(models.Model):
     class Meta:
         verbose_name_plural = "Заявки"
         verbose_name = "Заявка"
-        ordering = ["-created"]
+        ordering = ["-pk"]
 
 
 class Defect_statement(models.Model):

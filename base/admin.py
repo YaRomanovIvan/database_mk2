@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from .models import (Component, Maker, Status_Request, Request,
+from .models import (Component, Maker, Request,
                      Maker_company, Record_block, Record_component,
                      Type_block, Unit, Post)
 
@@ -113,14 +113,6 @@ class RequestAdmin(admin.ModelAdmin):
     empty_value_display = "--пусто--"
 
 
-class Status_RequestAdmin(admin.ModelAdmin):
-    list_display = (
-        'id',
-        'status',
-    )
-    empty_value_display = "--пусто--"
-
-
 admin.site.register(Post, PostAdmin)
 admin.site.register(Component, ComponentsAdmin)
 admin.site.register(Type_block, Type_blockAdmin)
@@ -130,4 +122,3 @@ admin.site.register(Record_component, Record_componentsAdmin)
 admin.site.register(Maker, MakerAdmin)
 admin.site.register(Maker_company, Maker_companyAdmin)
 admin.site.register(Request, RequestAdmin)
-admin.site.register(Status_Request, Status_RequestAdmin)
