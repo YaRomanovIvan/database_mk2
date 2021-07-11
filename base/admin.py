@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from .models import (Component, Maker, Request,
+from .models import (Component, Maker, Request, Order,
                      Maker_company, Record_block, Record_component,
                      Type_block, Unit, Post)
 
@@ -113,6 +113,17 @@ class RequestAdmin(admin.ModelAdmin):
     empty_value_display = "--пусто--"
 
 
+class OrderAdmin(admin.ModelAdmin):
+    list_display = (
+        'id',
+        'invoice_number',
+        'date_processing',
+        'date_order',
+        'date_receipt',
+    )
+    empty_value_display = "--пусто--"
+
+
 admin.site.register(Post, PostAdmin)
 admin.site.register(Component, ComponentsAdmin)
 admin.site.register(Type_block, Type_blockAdmin)
@@ -122,3 +133,4 @@ admin.site.register(Record_component, Record_componentsAdmin)
 admin.site.register(Maker, MakerAdmin)
 admin.site.register(Maker_company, Maker_companyAdmin)
 admin.site.register(Request, RequestAdmin)
+admin.site.register(Order, OrderAdmin)

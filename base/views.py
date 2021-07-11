@@ -421,3 +421,4 @@ def edit_request(request, pk):
         request, 'Заявка отредактирована!'
     )
     return redirect('request_component')
+

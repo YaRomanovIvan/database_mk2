@@ -368,6 +368,41 @@ class Request(models.Model):
         ordering = ["-pk"]
 
 
+class Order(models.Model):
+
+    component = models.ManyToManyField(
+        Request,
+        verbose_name='Компоненты',
+        related_name='order_component',
+    )
+    date_processing = models.DateField(
+        auto_now_add=True,
+        verbose_name='Дата обработки заявки'
+    )
+    date_order = models.DateField(
+        verbose_name='Дата заказа'
+    )
+    date_receipt = models.DateField(
+        verbose_name='Дата получения',
+        blank=True,
+        null=True,
+    )
+    invoice_number = models.CharField(
+        max_length=100,
+        verbose_name='Номер счета',
+    )
+
+    def __str__(self):
+        return self.invoice_number
+    
+    class Meta:
+        verbose_name_plural = "Заказы"
+        verbose_name = "Заказ"
+        ordering = ["-pk"]
+
+
+
+
 class Defect_statement(models.Model):
     """ модель учета дефектных блоков. """
     id = models.AutoField(
