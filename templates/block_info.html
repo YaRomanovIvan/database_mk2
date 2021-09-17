@@ -32,6 +32,7 @@ thead th {
                 <th scope="col" style="width: 5%">Учетный номер</th>
                 <th style="min-width: 350px;" scope="col">Наименование блока</th>
                 <th scope="col" style="width: 5%">Зав. номер</th>
+                <th scope="col" style="width: 5%">Производитель</th>
                 <th scope="col" style="width: 11%">Участок</th>
                 <th scope="col" style="width: 5%">Дата приема</th>
                 <th scope="col" style="width: 5%">Дата ремонта</th>
@@ -45,6 +46,7 @@ thead th {
                 <th scope="row">{{ about_block.number_block }}</th>
                 <td>{{ about_block.name_block }}</td>
                 <td>{{ about_block.serial_number }}</td>
+                <td>{{ about_block.name_block.maker }}</td>
                 <td>{{ about_block.region }}</td>
                 <td>{{ about_block.date_add|date:"d.m.Y" }}</td>
                 <td>{{ about_block.date_repair|date:"d.m.Y" }}</td>
@@ -96,11 +98,11 @@ thead th {
             <div class="row" style="max-width: 600px;">
                 <button type="button" class="btn btn-success nav-link zoom-menu mb-2" data-bs-toggle="modal" data-bs-target="#add_components_for_type_block">Привязать или удалить компоненты</button>
                 {% if about_block.date_shipment %}
-                <button type="button" class="btn btn-warning nav-link zoom-menu mb-2 disabled" data-bs-toggle="modal" data-bs-target="#create_type_block">Ремонт (блок уже отправлен)</button>
+                <button type="button" class="btn btn-warning nav-link zoom-menu mb-2 disabled" data-bs-toggle="modal" data-bs-target="#repair_block">Ремонт (блок уже отправлен)</button>
                 <button type="button" class="btn btn-outline-primary nav-link zoom-menu mb-2 disabled" data-bs-toggle="modal" data-bs-target="#send_block">Редактировать (блок уже отправлен)</button>
                 <button type="button" class="btn btn-outline-danger nav-link zoom-menu mb-2 disabled" data-bs-toggle="modal" data-bs-target="#create_new_region">Дефектная ведомость (блок уже отправлен)</button>
                 {% else %}
-                <button type="button" class="btn btn-warning nav-link zoom-menu mb-2" data-bs-toggle="modal" data-bs-target="#create_type_block">Ремонт</button>
+                <button type="button" class="btn btn-warning nav-link zoom-menu mb-2" data-bs-toggle="modal" data-bs-target="#repair_block">Ремонт</button>
                 <button type="button" class="btn btn-outline-primary nav-link zoom-menu mb-2" data-bs-toggle="modal" data-bs-target="#send_block">Редактировать</button>
                 <button type="button" class="btn btn-outline-danger nav-link zoom-menu mb-2" data-bs-toggle="modal" data-bs-target="#create_new_region">Дефектная ведомость</button>
                 {% endif %}
@@ -110,7 +112,7 @@ thead th {
 
 </div>
 
-<!-- Модальное окно добавления нового типа блока -->
+<!-- Модальное окно привязки/отвязки компонентов к блоку -->
 <div class="modal fade" id="add_components_for_type_block" data-bs-backdrop="static" data-bs-keyboard="false" aria-labelledby="staticBackdropLabel" aria-hidden="true">
     <div class="modal-dialog">
       <div class="modal-content">
@@ -124,6 +126,7 @@ thead th {
             {{ type_block_form.name_block.as_hidden }}
             <label for="{{ type_block_form.components.id_for_label }}">Привязать или удалить компонент:</label>
             {{ type_block_form.components }}
+
           </div>
           <div class="modal-footer">
             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Закрыть</button>
@@ -134,9 +137,88 @@ thead th {
     </div>
 </div>
 
+<!-- Модальное окно ремонта -->
+<div class="modal fade" id="repair_block" data-bs-backdrop="static" data-bs-keyboard="false" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="staticBackdropLabel">Ремонт</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <form action='{% url "repair_block" about_block.pk %}' method='POST'>
+          {% csrf_token %}
+          <div class="modal-body">
+            <scope>Поля не обязательны для заполнения, для продолжения нажмите "применить"</scope>
+            <br>
+            <label for="{{ repair_block_form.note.id_for_label }}">Примечание:</label>
+            {{ repair_block_form.note }}
+            <br>
+            <div class='row'> 
+              <div class="col">
+                <label for="{{ repair_block_form.components.id_for_label }}">Компонент:</label>
+                {{ repair_block_form.components }}
+              </div>
+              <div class="col-2">
+                <label for="{{ repair_block_form.components.id_for_label }}">Количество:</label>
+                {{ repair_block_form.amount }}
+              </div>
+              <div class="col-2">
+                <input type="button" class="btn btn-secondary mt-3" id="elem" value="Добавить">
+              </div>
+            </div>
+            <br>
+            <div class="row" id='repair_div'>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Закрыть</button>
+            <button type="submit" class="btn btn-primary">Применить</button>
+          </div>
+        </form>
+      </div>
+    </div>
+</div>
+
+
 <script>
     $(document).ready(function() {
         $('#id_record_component').select2({width: '100%',});
     });
+
+
+    document.addEventListener("DOMContentLoaded", function() {
+      var count = 1
+      document.getElementById("elem").onclick = function() {
+        var component_index = document.getElementById("id_name_component").options.selectedIndex;
+        var name = document.getElementById("id_name_component").options[component_index].text;
+        var amount = document.getElementById("id_amount_component").value;
+        let div = document.createElement('div');
+        div.className = "row text-center";
+        div.innerHTML = `
+          <br></br>
+          <div class="col">
+            <input id="idcomponent_${count}" class="form-control form-control-sm" name="namecomponent" value="${name}" hidden>
+            <input class="form-control form-control-sm" value="${name}" disabled>
+          </div>
+          <div class="col-2">
+            <input id="idcomponent_${count}" class="form-control form-control-sm" name="amountcomponent" value="${amount}" hidden>
+            <input class="form-control form-control-sm" value="${amount}" disabled>
+          </div>
+          <div class="col-2">
+            <button type="button" class="btn  btn-secondary" onclick="delNode(this)">Убрать</button>
+          </div>
+        `;
+        repair_div.appendChild(div);
+        ++count;
+        $('#id_name_component option').prop('selected', function() {
+        return this.defaultSelected;
+    });
+      };
+    });
+    
+
+    function delNode(el){el.parentNode.parentNode.remove()}
+
 </script>
+
 {% endblock %}

@@ -1,15 +1,17 @@
+from django.forms import fields
 from django.shortcuts import get_object_or_404, render, redirect
 import datetime
 from django.contrib import messages
 from django.db.models import Sum
-from .models import Post, Record_block, Type_block, Component, Request, User
+from .models import Post, Record_block, Type_block, Component, Request, User, Record_component
 from .filters import Block_filter, One_block_filter, Components_filter
-from .forms_block import Record_block_form, Type_block_form, Unit_form, Send_block_form
+from .forms_block import Record_block_form, Repair_block_form, Type_block_form, Unit_form, Send_block_form
 from .forms_components import (
     New_component_form,
     Edit_component_form, Update_amount_form, Update_price_form
 )
 from .forms_order import Create_request_form
+from .utils import calculate_component
 
 
 def index(request):
@@ -222,10 +224,18 @@ def block_info(request, pk):
     """ информация о блоке """
     about_block = get_object_or_404(Record_block, pk=pk)
     block = get_object_or_404(Type_block, name_block=about_block.name_block)
+    form = Repair_block_form()
+    default_choice = [('', '-------------'),]
+    choices = [
+        (name.pk, name.type_component + ' ' + name.marking + ' ' + name.note) for name in block.components.all()
+    ]
+    form.fields['components'].choices = default_choice + choices
+
     context = {
         'about_block': about_block,
         'type_block_form': Type_block_form(instance=block),
         'record_block_form': Record_block_form(instance=about_block),
+        'repair_block_form': form,
     }
     return render(request, 'block_info.html', context)
 
@@ -249,6 +259,120 @@ def add_components_for_block(request, pk):
     return redirect("block_info", pk)
 
 
+def repair_block(request, pk):
+    if request.method != 'POST':
+        return redirect("block_info", pk)
+    form = Repair_block_form(request.POST)
+    print(form.errors)
+    if not form.is_valid():
+        messages.error(
+            request, "Что-то пошло не так!"
+        )
+        return redirect("block_info", pk)
+    components = list(
+            zip(
+                request.POST.getlist("namecomponent"),
+                request.POST.getlist("amountcomponent"),
+            ),
+        )
+    block = get_object_or_404(Record_block, pk=pk)
+    date = datetime.datetime.today()
+    note = request.POST.get('note')
+    if not components:
+        block.date_repair = date
+        block.note = note
+        block.save()
+        messages.success(
+            request, "Готово!!"
+        )
+        return redirect("block_info", pk)
+    for component, amount in components:
+        if int(amount) < 1 or not amount:
+            messages.error(
+            request, (
+                    f"Компоненто <b>{component}</b> не был списан!<br>"
+                    "Количество не может быть меньше 1!"
+                )
+            )
+            return redirect("block_info", pk)
+        marking = component.split(' ')
+        record = Component.objects.get(
+            type_component=marking[0],
+            marking=marking[1],
+        )
+        result = calculate_component(
+            record.amount_trk,
+            record.amount_eis,
+            record.amount_vts,
+            int(amount),
+        )
+        if result["spent_trk"] != 0:
+            record.amount_trk -= result["spent_trk"]
+            add_record_component = Record_component(
+            component=record,
+            block=block,
+            company="ТРК",
+            amount=result["spent_trk"],
+            )
+            if (
+                record.amount_trk >= 0
+                and result["amount"] == 0
+                ):
+                add_record_component.save()
+                record.save()
+            else:
+                messages.error(
+                    request,
+                    f"Нет такого количества компонента {record.marking} ",
+                    )
+                return redirect("block_info", pk)
+        if result["spent_eis"] != 0:
+            record.amount_eis -= result["spent_eis"]
+            add_record_component = Record_component(
+                component=record,
+                block=block,
+                company="ЭИС",
+                amount=result["spent_eis"],
+            )
+            if (
+                record.amount_eis >= 0
+                and result["amount"] == 0
+            ):
+                add_record_component.save()
+                record.save()
+            else:
+                messages.error(
+                    request,
+                    f"Нет такого количества компонента {record.marking}",
+                )
+                return redirect("block_info", pk)
+        if result["spent_vts"] != 0:
+            record.amount_vts -= result["spent_vts"]
+            add_record_component = Record_component(
+                component=record,
+                block=block,
+                company="ВТС",
+                amount=result["spent_vts"],
+            )
+            if (
+                record.amount_vts >= 0
+                and result["amount"] == 0
+            ):
+                add_record_component.save()
+                record.save()
+            else:
+                messages.error(
+                    request,
+                    f"Нет такого количества компонента {record.marking} ",
+                )
+                return redirect("block_info", pk)
+    block.date_repair = date
+    block.note = note
+    block.save()
+    messages.success(
+        request, 'Готово!'
+    )
+    return redirect("block_info", pk)
 
 # -----------------------------------------------------------------------------------------------------
 # ------------------------------------ Компоненты -----------------------------------------------------

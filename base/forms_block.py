@@ -1,3 +1,4 @@
+from typing import DefaultDict
 from django import forms
 from .models import Component, Type_block, Unit, Record_block
 
@@ -72,7 +73,7 @@ class Record_block_form(forms.ModelForm):
 class Send_block_form(forms.ModelForm):
     passed = forms.CharField(
         label="Водитель",
-        help_text='Петро В.В."',
+        help_text='Петров В.В."',
         widget=forms.TextInput(
             attrs={"class": "form-control form-control-sm"}
         ),
@@ -82,7 +83,23 @@ class Send_block_form(forms.ModelForm):
         fields = ("passed",)
 
 
-class Repair_block(forms.ModelForm):
-    class Meta:
-        model = Record_block
-        fields = ('__all__')
+class Repair_block_form(forms.Form):
+    components = forms.ChoiceField(
+        required=False,
+        label="Наименование компонента",
+        widget=forms.Select(attrs={"class": "form-control form-control-sm", "id": "id_name_component",}),
+    )
+    amount = forms.IntegerField(
+        required=False,
+        label='Количество',
+        widget=forms.NumberInput(
+            attrs={"class": "form-control form-control-sm",  "id": "id_amount_component", "value": "1"}
+        ),
+    )
+    note = forms.CharField(
+        label="Примечание",
+        required=False,
+        widget=forms.TextInput(
+            attrs={"class": "form-control form-control-sm"}
+        ),
+    )
