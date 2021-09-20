@@ -1,6 +1,6 @@
 from django import forms
 import django_filters
-from .models import Record_block, Component
+from .models import Record_block, Component, Record_component
 
 
 class One_block_filter(django_filters.FilterSet):
@@ -93,4 +93,18 @@ class Components_filter(django_filters.FilterSet):
             'amount_vts',
             'summ',
             'price',
+        )
+
+
+class Record_components_filter(django_filters.FilterSet):
+    date_add = django_filters.DateFromToRangeFilter()
+    component = django_filters.ModelMultipleChoiceFilter(
+        queryset=Component.objects.all()
+    )
+    class Meta:
+        model = Record_component
+        fields = (
+            'component',
+            'company',
+            'date_add',
         )

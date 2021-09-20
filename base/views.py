@@ -1,16 +1,15 @@
-from django.forms import fields
 from django.shortcuts import get_object_or_404, render, redirect
 import datetime
 from django.contrib import messages
 from django.db.models import Sum
-from .models import Post, Record_block, Type_block, Component, Request, User, Record_component
-from .filters import Block_filter, One_block_filter, Components_filter
+from .models import Post, Record_block, Type_block, Component, User, Record_component
+from .filters import Block_filter, One_block_filter, Components_filter, Record_components_filter
 from .forms_block import Record_block_form, Repair_block_form, Type_block_form, Unit_form, Send_block_form
 from .forms_components import (
     New_component_form,
     Edit_component_form, Update_amount_form, Update_price_form
 )
-from .forms_order import Create_request_form
+#from .forms_order import Create_request_form
 from .utils import calculate_component
 
 
@@ -230,12 +229,18 @@ def block_info(request, pk):
         (name.pk, name.type_component + ' ' + name.marking + ' ' + name.note) for name in block.components.all()
     ]
     form.fields['components'].choices = default_choice + choices
+    components = about_block.record_block.all()
+    total = 0
+    for record in components:
+        total += record.component.price * record.amount
 
     context = {
         'about_block': about_block,
         'type_block_form': Type_block_form(instance=block),
         'record_block_form': Record_block_form(instance=about_block),
         'repair_block_form': form,
+        'components': components,
+        'total': total,
     }
     return render(request, 'block_info.html', context)
 
@@ -254,16 +259,16 @@ def add_components_for_block(request, pk):
         return redirect("block_info", pk)
     type_block_form.save()
     messages.success(
-        request, 'Компоненты привязаны!'
+        request, 'Привязанные компоненты изменились!'
     )
     return redirect("block_info", pk)
 
 
 def repair_block(request, pk):
+    """ Ремонт блока """
     if request.method != 'POST':
         return redirect("block_info", pk)
     form = Repair_block_form(request.POST)
-    print(form.errors)
     if not form.is_valid():
         messages.error(
             request, "Что-то пошло не так!"
@@ -281,6 +286,11 @@ def repair_block(request, pk):
     if not components:
         block.date_repair = date
         block.note = note
+        block.status = "готов"
+        if request.user.first_name and request.user.last_name:
+            first_name = request.user.first_name
+            last_name = request.user.last_name
+            block.FIO = f"{first_name} {last_name}"
         block.save()
         messages.success(
             request, "Готово!!"
@@ -368,6 +378,11 @@ def repair_block(request, pk):
                 return redirect("block_info", pk)
     block.date_repair = date
     block.note = note
+    block.status = "готов"
+    if request.user.first_name and request.user.last_name:
+            first_name = request.user.first_name
+            last_name = request.user.last_name
+            block.FIO = f"{first_name} {last_name}"
     block.save()
     messages.success(
         request, 'Готово!'
@@ -485,64 +500,90 @@ def update_price(request):
     return redirect('components')
 
 
+def return_component(request, pk, block):
+    """ вернуть компонент, списанный на блок """
+    record_component = get_object_or_404(Record_component, pk=pk)
+    component = record_component.component
+    if record_component.company == "ЭИС":
+        component.amount_eis += record_component.amount
+        record_component.delete()
+        component.save()
+    if record_component.company == "ТРК":
+        component.amount_trk += record_component.amount
+        record_component.delete()
+        component.save()
+    if record_component.company == "ВТС":
+        component.amount_vts += record_component.amount
+        record_component.delete()
+        component.save()
+    messages.success(request, "Компонент возвращен, изменения сохранены.")
+    return redirect("block_info", block)
+
+
+def usage_components(request):
+    components = Component.objects.all()
+    usage_components = Record_component.objects.all()
+    usage_filter = Record_components_filter(request.GET, queryset=usage_components)
+    return render(request, 'usage_components.html', {'usage_filter': usage_filter, 'components':components})
+
 # -----------------------------------------------------------------------------------------------------
 # ------------------------------------ Заявки и заказы ------------------------------------------------
 
 
-def request_component(request):
-    """ просмотр заявок """
-    queryset = Request.objects.all()
-    context = {
-        'queryset': queryset,
-        'create_request_form': Create_request_form(),
-    }
-    return render(request, 'request_components.html', context)
+#def request_component(request):
+#    """ просмотр заявок """
+#    queryset = Request.objects.all()
+#    context = {
+#        'queryset': queryset,
+#        'create_request_form': Create_request_form(),
+#    }
+#    return render(request, 'request_components.html', context)
 
 
-def create_request(request):
-    """ Создание заявки на компонент """
-    if request.method != 'POST':
-        return redirect('request_component')
-    form = Create_request_form(request.POST)
-    user = get_object_or_404(User, username=request.user)
-    if not form.is_valid():
-        return redirect('request_component')
-    create = form.save(commit=False)
-    component = form.cleaned_data.get("component")
-    request_component = Request.objects.filter(
-        user=user, component=component, status="ожидает"
-    ).exists()
-    if request_component:
-        messages.error(
-            request, 
-                f"Вы уже создали заявку на компонент <b>{component}</b>.<br>" +
-                f"Отредактируйте существующию заявку, либо дождитесь рассмотрения."
-            
-        )
-        return redirect('request_component')
-    create.user = user
-    form.save()
-    messages.success(
-        request, f"Заявка на компонент <b>{create.component}</b> создана!"
-    )
-    return redirect('request_component')
+#def create_request(request):
+#    """ Создание заявки на компонент """
+#    if request.method != 'POST':
+#        return redirect('request_component')
+#    form = Create_request_form(request.POST)
+#    user = get_object_or_404(User, username=request.user)
+#    if not form.is_valid():
+#        return redirect('request_component')
+#    create = form.save(commit=False)
+#    component = form.cleaned_data.get("component")
+#    request_component = Request.objects.filter(
+#        user=user, component=component, status="ожидает"
+#    ).exists()
+#    if request_component:
+#        messages.error(
+#            request, 
+#                f"Вы уже создали заявку на компонент <b>{component}</b>.<br>" +
+#                f"Отредактируйте существующию заявку, либо дождитесь рассмотрения."
+#            
+#        )
+#        return redirect('request_component')
+#    create.user = user
+#    form.save()
+#    messages.success(
+#        request, f"Заявка на компонент <b>{create.component}</b> создана!"
+#    )
+#    return redirect('request_component')
 
 
-def edit_request(request, pk):
-    """ Редактирование заявки """
-    get = get_object_or_404(Request, pk=pk)
-    form = Create_request_form(instance=get)
-    if get.user != request.user:
-        messages.error(request, 'Вы не являетесь автором заявки!')
-        return redirect('request_component')
-    if request.method != 'POST':
-        return render(request, 'edit_request.html', {'form':form})
-    form = Create_request_form(request.POST, instance=get)
-    if not form.is_valid():
-        return render(request, 'edit_request.html', {'form':form})
-    form.save()
-    messages.success(
-        request, 'Заявка отредактирована!'
-    )
-    return redirect('request_component')
+#def edit_request(request, pk):
+#    """ Редактирование заявки """
+#    get = get_object_or_404(Request, pk=pk)
+#    form = Create_request_form(instance=get)
+#    if get.user != request.user:
+#        messages.error(request, 'Вы не являетесь автором заявки!')
+#        return redirect('request_component')
+#    if request.method != 'POST':
+#        return render(request, 'edit_request.html', {'form':form})
+#    form = Create_request_form(request.POST, instance=get)
+#    if not form.is_valid():
+#        return render(request, 'edit_request.html', {'form':form})
+#    form.save()
+#    messages.success(
+#        request, 'Заявка отредактирована!'
+#    )
+#    return redirect('request_component')
 

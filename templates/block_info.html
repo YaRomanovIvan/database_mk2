@@ -67,27 +67,21 @@ thead th {
                 <tr>
                     <th scope="col">Списанные компоненты</th>
                     <th scope="col">В количестве</th>
-                    <th scope="col">На сумму</th>
+                    {% if not about_block.date_shipment %}
+                      <th scope="col"></th>
+                    {% endif %}
                 </tr>
             </thead>
             <tbody>
+              {% for record in components %}
                 <tr>
-                    <td>Наименование компонента}</td>
-                    <td>Кол-во шт.</td>
-                    <td>На сумму р.</td>
+                    <td>{{ record.component }}</td>
+                    <td>{{ record.amount }} шт. ({{ record.company }})</td>
+                    {% if not about_block.date_shipment %}
+                      <td class="text-center"><a href="{% url 'return_component' record.pk about_block.number_block %}">вернуть</a>
+                    {% endif %}
                 </tr>
-                <tr>
-                    <td>Наименование компонента}</td>
-                    <td>Кол-во шт.</td>
-                    <td>На сумму р.</td>
-                </tr>
-                <tr>
-                    <td>Наименование компонента}</td>
-                    <td>Кол-во шт.</td>
-                    <td>На сумму р.</td>
-                </tr>
-                <td></td><td><strong>Итого:</strong></td>
-                <td>Общая сумма р.</td>
+              {% endfor %}
             </tbody>
         </table>
         {% include 'includes/messages.html' %}
