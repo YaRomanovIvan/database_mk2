@@ -389,6 +389,25 @@ def repair_block(request, pk):
     )
     return redirect("block_info", pk)
 
+
+def edit_record_block(request, pk):
+    block = get_object_or_404(Record_block, pk=pk)
+    context = {
+        'form': Record_block_form(instance=block),
+        'block': block,
+    }
+    if request.method != "POST":
+        return render(request, 'edit_record_block.html', context)
+    form = Record_block_form(request.POST, instance=block)
+    if not form.is_valid():
+        messages.error(
+            request, f'{form.errors}'
+        )
+        return render(request, 'edit_record_block.html', context)
+    form.save()
+    return redirect('block_info', pk)
+
+    
 # -----------------------------------------------------------------------------------------------------
 # ------------------------------------ Компоненты -----------------------------------------------------
 

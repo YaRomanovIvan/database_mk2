@@ -31,6 +31,7 @@ urlpatterns = [
         views.add_components_for_block,
         name='add_components_for_block',
     ),
+    path('block_info/edit_block/<int:pk>/', views.edit_record_block, name='edit_block'),
     path(
         'block_info/repair_block/<int:pk>/', 
         views.repair_block, 

@@ -97,7 +97,7 @@ thead th {
                 <button type="button" class="btn btn-outline-danger nav-link zoom-menu mb-2 disabled" data-bs-toggle="modal" data-bs-target="#create_new_region">Дефектная ведомость (блок уже отправлен)</button>
                 {% else %}
                 <button type="button" class="btn btn-warning nav-link zoom-menu mb-2" data-bs-toggle="modal" data-bs-target="#repair_block">Ремонт</button>
-                <button type="button" class="btn btn-outline-primary nav-link zoom-menu mb-2" data-bs-toggle="modal" data-bs-target="#send_block">Редактировать</button>
+                <a href="{% url 'edit_block' about_block.pk %}" type="button" class="btn btn-outline-primary nav-link zoom-menu mb-2">Редактировать</a>
                 <button type="button" class="btn btn-outline-danger nav-link zoom-menu mb-2" data-bs-toggle="modal" data-bs-target="#create_new_region">Дефектная ведомость</button>
                 {% endif %}
             </div>
