@@ -94,11 +94,11 @@ thead th {
                 {% if about_block.date_shipment %}
                 <button type="button" class="btn btn-warning nav-link zoom-menu mb-2 disabled" data-bs-toggle="modal" data-bs-target="#repair_block">Ремонт (блок уже отправлен)</button>
                 <button type="button" class="btn btn-outline-primary nav-link zoom-menu mb-2 disabled" data-bs-toggle="modal" data-bs-target="#send_block">Редактировать (блок уже отправлен)</button>
-                <button type="button" class="btn btn-outline-danger nav-link zoom-menu mb-2 disabled" data-bs-toggle="modal" data-bs-target="#create_new_region">Дефектная ведомость (блок уже отправлен)</button>
+                <button type="button" class="btn btn-outline-danger nav-link zoom-menu mb-2 disabled" data-bs-toggle="modal" data-bs-target="#create_defect">Дефектная ведомость (блок уже отправлен)</button>
                 {% else %}
                 <button type="button" class="btn btn-warning nav-link zoom-menu mb-2" data-bs-toggle="modal" data-bs-target="#repair_block">Ремонт</button>
                 <a href="{% url 'edit_block' about_block.pk %}" type="button" class="btn btn-outline-primary nav-link zoom-menu mb-2">Редактировать</a>
-                <button type="button" class="btn btn-outline-danger nav-link zoom-menu mb-2" data-bs-toggle="modal" data-bs-target="#create_new_region">Дефектная ведомость</button>
+                <button type="button" class="btn btn-outline-danger nav-link zoom-menu mb-2" data-bs-toggle="modal" data-bs-target="#create_defect">Дефектная ведомость</button>
                 {% endif %}
             </div>
         </nav>
@@ -163,6 +163,43 @@ thead th {
             <br>
             <div class="row" id='repair_div'>
             </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Закрыть</button>
+            <button type="submit" class="btn btn-primary">Применить</button>
+          </div>
+        </form>
+      </div>
+    </div>
+</div>
+
+
+<!-- Модальное окно дефектной ведомости -->
+<div class="modal fade" id="create_defect" data-bs-backdrop="static" data-bs-keyboard="false" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="staticBackdropLabel">Создать дефектную ведомость</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <form action='{% url "create_defective_statement" about_block.pk %}' method='POST'>
+          {% csrf_token %}
+          <div class="modal-body">
+            <p>Создание дефектной ведомости автоматически изменит статус блока на "неисправен"<p>
+            <p>Требуется заполнить одно поле "Неисправность"<p>
+            {% for field in defect_form %}
+                <div class="fieldWrapper">
+                    {% if field.name == 'number_block' %}
+                        {{ field.as_hidden }}
+                    {% else %}
+                        {{ field.errors }}
+                        {{ field.label_tag }} {{ field|addclass:"form-control form-control-sm" }}
+                        {% if field.help_text %}
+                            <p class="help">{{ field.help_text|safe }}</p>
+                        {% endif %}
+                    {% endif %}
+                </div>
+            {% endfor %}
           </div>
           <div class="modal-footer">
             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Закрыть</button>

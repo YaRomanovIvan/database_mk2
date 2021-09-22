@@ -413,6 +413,7 @@ class Defect_statement(models.Model):
         Record_block,
         on_delete=models.CASCADE,
         verbose_name="Блок",
+        related_name="defect_block",
     )
     region = models.ForeignKey(
         Unit,

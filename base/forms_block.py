@@ -1,6 +1,6 @@
 from typing import DefaultDict
 from django import forms
-from .models import Component, Type_block, Unit, Record_block
+from .models import Component, Type_block, Unit, Record_block, Defect_statement
 
 
 class Type_block_form(forms.ModelForm):
@@ -103,3 +103,25 @@ class Repair_block_form(forms.Form):
             attrs={"class": "form-control form-control-sm"}
         ),
     )
+
+
+class Defect_statement_form(forms.ModelForm):
+    defect_2 = forms.CharField(
+        required=False,
+        label="Неисправность 2",
+    )
+    defect_3 = forms.CharField(
+        required=False,
+        label="Неисправность 3",
+    )
+    result = forms.CharField(
+        label="Заключение",
+        help_text=(
+            "<i>Требует ремонта производителя,</i> <br>"
+            "<i>требует регулировки/настройки, <br>не подлежит востановлению</i>"
+        ),
+    )
+
+    class Meta:
+        model = Defect_statement
+        fields = ("defect_1", "defect_2", "defect_3", "result")

@@ -5,50 +5,53 @@
 {% block content %}
 <h1 class="text-center">Учет использованных компонентов</h1>
 <hr>
-<div class="ms-3 me-3">
+<div class="container">
   <h3>Фильтр</h3>
     <form method="GET">
-      <div class="row">
-          <div class="col">
-              <div>
-                  <div class="form-group is-valid">
-                      <label for="id_component">Компоненты</label>
-                      <select name="component" class="form-control" title="" id="id_component" multiple>
-                          {% for name in components %}
-                          <option value="{{ name.pk }}">
-                              {{ name.type_component }}
-                              {{ name.marking }}
-                              {{ name.note }}
-                          </option>
-                          {% endfor %}
-                      </select>
-                  </div>
-              </div>
-              <div>
-                  <div class="form-group">
-                      <label for="id_company">Компания</label>
-                      <select name="company" class="form-control" id="id_company">
-                          <option value="">--------</option>
-                          <option value="ЭИС">ЭИС</option>
-                          <option value="ТРК">ТРК</option>
-                          <option value="ВТС">ВТС</option>
-                      </select>
-                  </div>
-              </div>
-          </div>
 
-          <div class="col">
-              <div class="form-group">
-                  <label for="id_date_add_0">Дата учета с</label>
-                  <input type="date" name="date_add_after" class="form-control" placeholder="Дата учета" title="" id="id_date_add_0">
-              </div>
-              <div class="form-group">
-                  <label for="id_date_add_1">по</label>
-                  <input type="date" name="date_add_before" class="form-control" placeholder="Дата учета" title="" id="id_date_add_1">
-              </div>
-          </div>
-      </div>
-      <button type="submit" class="btn btn-primary btn-sm">Применить фильтр</button>
+        <div class="row">
+            <div class="col">
+                <div>
+                    <div class="form-group is-valid">
+                        <label for="id_component">Компоненты</label>
+                        <select name="component" class="form-control" title="" id="id_component" multiple>
+                            {% for name in components %}
+                                <option value="{{ name.pk }}">
+                                {{ name.type_component }}
+                                {{ name.marking }}
+                                {{ name.note }}
+                                </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-3">
+                <div class="form-group">
+                    <label for="id_date_add_0">Дата учета с</label>
+                    <input type="date" name="date_add_after" class="form-control" placeholder="Дата учета" title="" id="id_date_add_0">
+                </div>
+                <div class="form-group">
+                    <label for="id_date_add_1">по</label>
+                    <input type="date" name="date_add_before" class="form-control" placeholder="Дата учета" title="" id="id_date_add_1">
+                </div>
+            </div>
+            <div class='col-3'>
+                <div class="form-group">
+                    <label for="id_company">Компания</label>
+                    <select name="company" class="form-control" id="id_company">
+                      <option value="">--------</option>
+                      <option value="ЭИС">ЭИС</option>
+                      <option value="ТРК">ТРК</option>
+                      <option value="ВТС">ВТС</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <button type="submit" class="btn btn-primary mt-4">Применить фильтр</button>
+                </div>
+            </div>
+        </div>
     </form>
 </div>
 

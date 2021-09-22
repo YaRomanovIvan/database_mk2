@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+{% block title %}Дефектные ведомости{% endblock %}
+
+{% block content %}
+<h1 class="text-center">Дефектные ведомости</h1>
+<hr>
+<div class="ms-3 me-3">
+  <table class="table table-sm table-bordered table-hover">
+      <thead>
+        <tr>
+          <th scope="col" style="width: 25%">Номер и наименование блока</th>
+          <th scope="col" style="width: 10%">Участок</th>
+          <th scope="col" style="width: 10%">Дата</th>
+          <th scope="col" style="width: 12%">Заключение</th>
+          <th scope="col" style="width: 21%">Неисправность</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for record in qs %}
+        <tr>
+            <td>{{ record.block }}</td>
+            <td>{{ record.region }}</td>
+            <td>{{ record.date_add }}</td>
+            <td>{{ record.result }}</td>
+            <td>{{ record.defect_1 }}</td>
+        </tr>
+        {%endfor%}
+      </tbody>
+  </table>
+</div>
+{% endblock %}

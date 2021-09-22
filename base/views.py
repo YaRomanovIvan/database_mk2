@@ -2,15 +2,15 @@ from django.shortcuts import get_object_or_404, render, redirect
 import datetime
 from django.contrib import messages
 from django.db.models import Sum
-from .models import Post, Record_block, Type_block, Component, User, Record_component
+from .models import Defect_statement, Post, Record_block, Type_block, Component, User, Record_component
 from .filters import Block_filter, One_block_filter, Components_filter, Record_components_filter
-from .forms_block import Record_block_form, Repair_block_form, Type_block_form, Unit_form, Send_block_form
+from .forms_block import Defect_statement_form, Record_block_form, Repair_block_form, Type_block_form, Unit_form, Send_block_form
 from .forms_components import (
     New_component_form,
     Edit_component_form, Update_amount_form, Update_price_form
 )
 #from .forms_order import Create_request_form
-from .utils import calculate_component
+from .utils import calculate_component, create_statement
 
 
 def index(request):
@@ -213,7 +213,8 @@ def commit_send_block(request):
         block = Record_block.objects.get(pk=id)
         block.passed = passed
         block.date_shipment = date_shipment
-        block.status = 'отправлен'
+        if block.status != 'неисправен':
+            block.status = 'отправлен'
         block.save()
     messages.success(request, "Блоки отправлены!")
     return redirect("records_block")
@@ -238,6 +239,7 @@ def block_info(request, pk):
         'about_block': about_block,
         'type_block_form': Type_block_form(instance=block),
         'record_block_form': Record_block_form(instance=about_block),
+        'defect_form': Defect_statement_form(),
         'repair_block_form': form,
         'components': components,
         'total': total,
@@ -391,6 +393,7 @@ def repair_block(request, pk):
 
 
 def edit_record_block(request, pk):
+    """ редактирования записанного блока """
     block = get_object_or_404(Record_block, pk=pk)
     context = {
         'form': Record_block_form(instance=block),
@@ -406,6 +409,56 @@ def edit_record_block(request, pk):
         return render(request, 'edit_record_block.html', context)
     form.save()
     return redirect('block_info', pk)
+
+
+def view_defective_statement(request):
+    """ страница просмотра дефектных ведомостей """
+    qs = Defect_statement.objects.all()
+    context = {
+        'qs': qs,
+    }
+    return render(request, 'defect_statement.html', context)
+
+
+def create_defective_statement(request, pk):
+    """ создание дефектной ведомости """
+    block = get_object_or_404(Record_block, pk=pk)
+    if block.defect_block.exists():
+        messages.error(
+            request,
+            'Дефектная ведомость уже создана!<br>'
+            'Ознакомьтесь в разделе "дефектные ведомости"'
+        )
+        return redirect('block_info', pk)
+    if block.status == 'отправлен':
+        messages.error(
+            request,
+            'Блок уже отправлен! Вы не можете...'
+        )
+        return redirect('block_info', pk)
+    defect_form = Defect_statement_form(request.POST)
+    if not defect_form.is_valid():
+        messages.error(
+            request, "Что-то пошло не так! Форма не прошла проверку!"
+        )
+        return redirect('block_info', pk)
+    block.status = 'неисправен'
+    block.date_repair = datetime.datetime.today()
+    block.save()
+    defect = defect_form.save(commit=False)
+    defect.block = block
+    defect.date_add = datetime.datetime.today()
+    defect.region = block.region
+    create_statement(block, defect_form.cleaned_data)
+    defect_form.save()
+    messages.success(
+        request,
+        'Блок отмечен, дефектная ведомость успешно создана!'
+    )
+    return redirect('block_info', pk)
+
+    
+
 
     
 # -----------------------------------------------------------------------------------------------------

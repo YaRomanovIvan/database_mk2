@@ -1,3 +1,8 @@
+import datetime
+import os
+from openpyxl import load_workbook
+
+
 def calculate_component(amount_trk, amount_eis, amount_vts, amount):
     spent_eis = 0
     spent_trk = 0
@@ -25,3 +30,30 @@ def calculate_component(amount_trk, amount_eis, amount_vts, amount):
     result["spent_vts"] = spent_vts
     result["amount"] = amount
     return result
+
+
+def create_statement(block, cleaned_data):
+    path_template = os.path.join(
+        os.getcwd(), "base/Statement/Defect.xlsx"
+    )
+    wb = load_workbook(filename=path_template)
+    dest_filename = (
+        f"{block.number_block}_{block.serial_number}_{block.name_block}_{block.region}.xlsx"
+    )
+    sheet = wb["Лист1"]
+    sheet["B5"].value = block.number_block
+    sheet["D5"].value = block.date_repair
+    sheet["A17"].value = str(block.name_block)
+    sheet["I20"].value = block.serial_number
+    sheet["C20"].value = str(block.region)
+    sheet["B26"].value = cleaned_data['defect_1']
+    sheet["B28"].value = cleaned_data['defect_2']
+    sheet["B30"].value = cleaned_data['defect_3']
+    sheet["C47"].value = cleaned_data['result']
+    path_save = os.path.join(
+        os.getcwd(),
+        "base/Statement/Defects/{}".format(
+            dest_filename.replace("/", "")
+        ),
+    )
+    wb.save(path_save)

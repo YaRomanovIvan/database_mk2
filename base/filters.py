@@ -63,7 +63,7 @@ class Components_filter(django_filters.FilterSet):
         label='Маркировка',
         widget=forms.TextInput(
             attrs={
-                'placeholder': '78L05, LTO100F20R, IRF640N и т.п.'
+                'placeholder': '78L05/LTO100F20R/IRF640N и т.п.'
             }
         )
     )
