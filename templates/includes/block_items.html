@@ -51,7 +51,7 @@ thead th {
             <td>{{ bb.note|default_if_none:"" }}</td>
         </tr>
         {% elif bb.status == 'готов' and bb.date_repair != null %}
-        <tr class="text-info">
+        <tr class="text-primary">
             <th scope="row"><input class="form-check-input" type="checkbox" name="checkbox" value="{{bb.pk}}" id='{{bb.pk}}'>&nbsp<a href="{% url 'block_info' bb.pk %}">{{bb.pk}}</a></th>
             <td>{{ bb.name_block }}</td>
             <td>{{ bb.serial_number }}</td>

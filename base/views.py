@@ -227,13 +227,10 @@ def block_info(request, pk):
     form = Repair_block_form()
     default_choice = [('', '-------------'),]
     choices = [
-        (name.pk, name.type_component + ' ' + name.marking + ' ' + name.note) for name in block.components.all()
+        ('', name.type_component + ' ' + name.marking + ' ' + name.note) for name in block.components.all()
     ]
     form.fields['components'].choices = default_choice + choices
     components = about_block.record_block.all()
-    total = 0
-    for record in components:
-        total += record.component.price * record.amount
 
     context = {
         'about_block': about_block,
@@ -242,7 +239,6 @@ def block_info(request, pk):
         'defect_form': Defect_statement_form(),
         'repair_block_form': form,
         'components': components,
-        'total': total,
     }
     return render(request, 'block_info.html', context)
 
@@ -272,6 +268,7 @@ def repair_block(request, pk):
         return redirect("block_info", pk)
     form = Repair_block_form(request.POST)
     if not form.is_valid():
+        print(form.errors)
         messages.error(
             request, "Что-то пошло не так!"
         )
@@ -408,6 +405,10 @@ def edit_record_block(request, pk):
         )
         return render(request, 'edit_record_block.html', context)
     form.save()
+    messages.success(
+        request,
+        'Изменения приняты!'
+    )
     return redirect('block_info', pk)
 
 

@@ -4,6 +4,7 @@
 {% block content %}
 <div class="container">
   <h1 class="text-center">Информация</h1>
+  <hr>
   {% for post in posts %}
   <div class="card text-center mb-4">
     {% load thumbnail %}
@@ -12,7 +13,7 @@
     {% endthumbnail %}
     <div class="card-body">
       <h5 class="card-title">{{ post.title }}</h5>
-      <p class="card-text">{{ post.text }}</p>
+      <p class="card-text">{{ post.text|safe }}</p>
     </div>
     <div class="card-footer text-muted">
       {{ post.pub_date }}
