@@ -231,7 +231,6 @@ def block_info(request, pk):
     ]
     form.fields['components'].choices = default_choice + choices
     components = about_block.record_block.all()
-
     context = {
         'about_block': about_block,
         'type_block_form': Type_block_form(instance=block),
@@ -239,6 +238,7 @@ def block_info(request, pk):
         'defect_form': Defect_statement_form(),
         'repair_block_form': form,
         'components': components,
+        'maker': block.maker,
     }
     return render(request, 'block_info.html', context)
 
@@ -282,10 +282,18 @@ def repair_block(request, pk):
     block = get_object_or_404(Record_block, pk=pk)
     date = datetime.datetime.today()
     note = request.POST.get('note')
+    repair_chekbox = request.POST.get('not_repair_date')
+    defect_checkbox = request.POST.get('not_defect_statement')
+    if repair_chekbox:
+        date = None
+    if defect_checkbox:
+        status = "неисправен"
+    else:
+        status = "готов"
     if not components:
         block.date_repair = date
         block.note = note
-        block.status = "готов"
+        block.status = status
         if request.user.first_name and request.user.last_name:
             first_name = request.user.first_name
             last_name = request.user.last_name
@@ -377,7 +385,7 @@ def repair_block(request, pk):
                 return redirect("block_info", pk)
     block.date_repair = date
     block.note = note
-    block.status = "готов"
+    block.status = status
     if request.user.first_name and request.user.last_name:
             first_name = request.user.first_name
             last_name = request.user.last_name
@@ -459,7 +467,8 @@ def create_defective_statement(request, pk):
     return redirect('block_info', pk)
 
     
-
+def view_block_maker(request):
+    return render(request, 'view_block_maker.html', {})
 
     
 # -----------------------------------------------------------------------------------------------------

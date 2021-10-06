@@ -46,7 +46,7 @@ thead th {
                 <th scope="row">{{ about_block.number_block }}</th>
                 <td>{{ about_block.name_block }}</td>
                 <td>{{ about_block.serial_number }}</td>
-                <td>{{ about_block.name_block.maker }}</td>
+                <td>{{ maker }}</td>
                 <td>{{ about_block.region }}</td>
                 <td>{{ about_block.date_add|date:"d.m.Y" }}</td>
                 <td>{{ about_block.date_repair|date:"d.m.Y" }}</td>
@@ -159,6 +159,15 @@ thead th {
               </div>
               <div class="col-2">
                 <input type="button" class="btn btn-secondary mt-3" id="elem" value="Добавить">
+              </div>
+            </div>
+            <br>
+            <div class="row">
+              <div class="col">
+                <input class="form-check-input" type="checkbox" name="not_repair_date" value="True" id='not_repair_date"'>&nbsp;Не ставить дату ремонта
+              </div>
+              <div class="col">
+                <input class="form-check-input" type="checkbox" name="not_defect_statement" value="True" id='not_defect_statement'>&nbsp;Отметить красным без ведомости
               </div>
             </div>
             <br>

@@ -1,6 +1,6 @@
 from django import forms
 import django_filters
-from .models import Record_block, Component, Record_component
+from .models import Record_block, Component, Record_component, Defect_statement
 
 
 class One_block_filter(django_filters.FilterSet):
@@ -106,5 +106,14 @@ class Record_components_filter(django_filters.FilterSet):
         fields = (
             'component',
             'company',
+            'date_add',
+        )
+
+
+class Defect_filter(django_filters.FilterSet):
+    class Meta:
+        model = Defect_statement
+        fields = (
+            'region',
             'date_add',
         )

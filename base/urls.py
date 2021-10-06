@@ -45,6 +45,7 @@ urlpatterns = [
     path('components/update_amount/', views.update_amount, name='update_amount'),
     path('components/update_price/', views.update_price, name='update_price'),
     path('components/usage_components/', views.usage_components, name='usage_components'),
+    path('maker/', views.view_block_maker, name='view_block_maker'),
 #    path('order/request/', views.request_component, name='request_component'),
 #    path('order/request/create/', views.create_request, name='create_request'),
 #    path('order/request/edit/<int:pk>/', views.edit_request, name='edit_request'),
