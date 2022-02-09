@@ -1,4 +1,3 @@
-import datetime
 import os
 from openpyxl import load_workbook
 
@@ -32,7 +31,7 @@ def calculate_component(amount_trk, amount_eis, amount_vts, amount):
     return result
 
 
-def create_statement(block, cleaned_data):
+def create_statement(block, cleaned_data, date):
     path_template = os.path.join(
         os.getcwd(), "base/Statement/Defect.xlsx"
     )
@@ -42,7 +41,7 @@ def create_statement(block, cleaned_data):
     )
     sheet = wb["Лист1"]
     sheet["B5"].value = block.number_block
-    sheet["D5"].value = block.date_repair
+    sheet["D5"].value = date
     sheet["A17"].value = str(block.name_block)
     sheet["I20"].value = block.serial_number
     sheet["C20"].value = str(block.region)

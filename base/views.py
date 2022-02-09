@@ -1,5 +1,7 @@
-from django.shortcuts import get_object_or_404, render, redirect
 import datetime
+import os
+from django.http import FileResponse
+from django.shortcuts import get_object_or_404, render, redirect
 from django.contrib import messages
 from django.db.models import Sum
 from .models import Defect_statement, Post, Record_block, Type_block, Component, User, Record_component
@@ -224,6 +226,10 @@ def block_info(request, pk):
     """ информация о блоке """
     about_block = get_object_or_404(Record_block, pk=pk)
     block = get_object_or_404(Type_block, name_block=about_block.name_block)
+    if Defect_statement.objects.filter(block=pk).exists():
+        defect = True
+    else:
+        defect = False
     form = Repair_block_form()
     default_choice = [('', '-------------'),]
     choices = [
@@ -239,6 +245,7 @@ def block_info(request, pk):
         'repair_block_form': form,
         'components': components,
         'maker': block.maker,
+        'defect': defect,
     }
     return render(request, 'block_info.html', context)
 
@@ -451,14 +458,15 @@ def create_defective_statement(request, pk):
             request, "Что-то пошло не так! Форма не прошла проверку!"
         )
         return redirect('block_info', pk)
+    date = datetime.datetime.today().strftime('%Y-%m-%d')
     block.status = 'неисправен'
     block.date_repair = datetime.datetime.today()
     block.save()
     defect = defect_form.save(commit=False)
     defect.block = block
-    defect.date_add = datetime.datetime.today()
+    defect.date_add = date
     defect.region = block.region
-    create_statement(block, defect_form.cleaned_data)
+    create_statement(block, defect_form.cleaned_data, date)
     defect_form.save()
     messages.success(
         request,
@@ -469,6 +477,26 @@ def create_defective_statement(request, pk):
     
 def view_block_maker(request):
     return render(request, 'view_block_maker.html', {})
+
+
+def open_defect_statement(request, pk):
+    block = get_object_or_404(Record_block, pk=pk)
+    
+    dest_filename = str(
+            f"{block.number_block}_{block.serial_number}_{block.name_block}_{block.region}.xlsx"
+        )
+    path_open = os.path.join(
+        os.getcwd(),
+        "base/Statement/Defects/{}".format(
+            dest_filename.replace("/", "")
+        ),
+    )
+    return FileResponse(
+        open(
+            path_open,
+            "rb",
+        )
+    )
 
     
 # -----------------------------------------------------------------------------------------------------

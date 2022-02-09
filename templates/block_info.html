@@ -98,7 +98,11 @@ thead th {
                 {% else %}
                 <button type="button" class="btn btn-warning nav-link zoom-menu mb-2" data-bs-toggle="modal" data-bs-target="#repair_block">Ремонт</button>
                 <a href="{% url 'edit_block' about_block.pk %}" type="button" class="btn btn-outline-primary nav-link zoom-menu mb-2">Редактировать</a>
-                <button type="button" class="btn btn-outline-danger nav-link zoom-menu mb-2" data-bs-toggle="modal" data-bs-target="#create_defect">Дефектная ведомость</button>
+                  {% if defect %}
+                    <a href="{% url 'open_defect_statement' about_block.pk %}" class="btn btn-outline-danger nav-link zoom-menu mb-2">Открыть ведомость</a>
+                  {% else %}
+                    <button type="button" class="btn btn-outline-danger nav-link zoom-menu mb-2" data-bs-toggle="modal" data-bs-target="#create_defect">Дефектная ведомость</button>
+                  {% endif %}
                 {% endif %}
             </div>
         </nav>

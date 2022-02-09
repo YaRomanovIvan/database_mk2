@@ -39,6 +39,7 @@ urlpatterns = [
     ),
     path('block/defective_statement/', views.view_defective_statement, name='defective_statement'),
     path('block/create_defective_statement/<int:pk>/', views.create_defective_statement, name='create_defective_statement'),
+    path('open_defect_statement/<int:pk>/', views.open_defect_statement, name='open_defect_statement'),
     path('return_component/<int:pk>/<int:block>/', views.return_component, name='return_component'),
     path('components/', views.view_components, name='components'),
     path('components/new_component/,', views.new_component, name='new_component'),
