@@ -103,6 +103,11 @@ thead th {
                   {% else %}
                     <button type="button" class="btn btn-outline-danger nav-link zoom-menu mb-2" data-bs-toggle="modal" data-bs-target="#create_defect">Дефектная ведомость</button>
                   {% endif %}
+                  {% if about_block.status == 'производитель' %}
+                    <button type="button" class="btn btn-outline-danger nav-link zoom-menu mb-2" data-bs-toggle="modal" data-bs-target="#send_maker_block">Вернуть от производителя</button>
+                  {% else %}
+                    <button type="button" class="btn btn-outline-danger nav-link zoom-menu mb-2" data-bs-toggle="modal" data-bs-target="#send_maker_block">Отправить производителю</button>
+                  {% endif %}
                 {% endif %}
             </div>
         </nav>
@@ -222,6 +227,41 @@ thead th {
         </form>
       </div>
     </div>
+</div>
+
+
+<!-- Модальное окно отправки блока производителю -->
+<div class="modal fade" id="send_maker_block" data-bs-backdrop="static" data-bs-keyboard="false" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="staticBackdropLabel">Отправить производителю</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <form action='{% url "send_block_maker" about_block.pk %}' method='POST'>
+        {% csrf_token %}
+        <div class="modal-body">
+          {% for field in maker_form %}
+              <div class="fieldWrapper">
+                  {% if field.name == 'reason' %}
+                      {{ field.errors }}
+                      {{ field.label_tag }} {{ field|addclass:"form-control form-control-sm" }}
+                      {% if field.help_text %}
+                          <p class="help">{{ field.help_text|safe }}</p>
+                      {% endif %}
+                  {% else %}
+                      {{ field.as_hidden }}
+                  {% endif %}
+              </div>
+          {% endfor %}
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Закрыть</button>
+          <button type="submit" class="btn btn-primary">Применить</button>
+        </div>
+      </form>
+    </div>
+  </div>
 </div>
 
 

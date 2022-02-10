@@ -3,10 +3,11 @@ import os
 from django.http import FileResponse
 from django.shortcuts import get_object_or_404, render, redirect
 from django.contrib import messages
+from django.contrib.auth.decorators import login_required
 from django.db.models import Sum
-from .models import Defect_statement, Post, Record_block, Type_block, Component, User, Record_component
-from .filters import Block_filter, One_block_filter, Components_filter, Record_components_filter
-from .forms_block import Defect_statement_form, Record_block_form, Repair_block_form, Type_block_form, Unit_form, Send_block_form
+from .models import Defect_statement, Post, Record_block, Type_block, Component, User, Record_component, Maker
+from .filters import Block_filter, One_block_filter, Components_filter, Record_components_filter, Maker_filter
+from .forms_block import Defect_statement_form, Record_block_form, Repair_block_form, Type_block_form, Unit_form, Send_block_form, MakerForm, Return_maker_block_form
 from .forms_components import (
     New_component_form,
     Edit_component_form, Update_amount_form, Update_price_form
@@ -71,6 +72,7 @@ def viewing_block(request):
     )
 
 
+@login_required
 def records_block(request):
     """ управление блоками """
     today = datetime.date.today()
@@ -124,6 +126,7 @@ def records_block(request):
     )
 
 
+@login_required
 def add_new_record_block(request):
     """ добавляем новый блок в ремонт """
     if request.method != "POST":
@@ -140,6 +143,7 @@ def add_new_record_block(request):
     return redirect("records_block")
 
 
+@login_required
 def add_new_type_block(request):
     """ добавляем новое наименование блока """
     if request.method != "POST":
@@ -157,6 +161,7 @@ def add_new_type_block(request):
     return redirect("records_block")
 
 
+@login_required
 def add_new_region(request):
     """ добавляем новый участок """
     if request.method != "POST":
@@ -173,6 +178,7 @@ def add_new_region(request):
     return redirect("records_block")
 
 
+@login_required
 def send_block(request):
     """ промежуточная страница отправки блоков """
     number_id = request.GET.getlist("checkbox")
@@ -196,6 +202,7 @@ def send_block(request):
     )
 
 
+@login_required
 def commit_send_block(request):
     """ отправка блоков """
     if request.method != 'POST':
@@ -222,6 +229,7 @@ def commit_send_block(request):
     return redirect("records_block")
 
 
+
 def block_info(request, pk):
     """ информация о блоке """
     about_block = get_object_or_404(Record_block, pk=pk)
@@ -242,6 +250,7 @@ def block_info(request, pk):
         'type_block_form': Type_block_form(instance=block),
         'record_block_form': Record_block_form(instance=about_block),
         'defect_form': Defect_statement_form(),
+        'maker_form': MakerForm(initial={'block': about_block, 'maker':block.maker}, instance=about_block),
         'repair_block_form': form,
         'components': components,
         'maker': block.maker,
@@ -250,6 +259,7 @@ def block_info(request, pk):
     return render(request, 'block_info.html', context)
 
 
+@login_required
 def add_components_for_block(request, pk):
     """ привязываем компоненты к блоку из информации о блоке """
     if request.method != "POST":
@@ -269,6 +279,7 @@ def add_components_for_block(request, pk):
     return redirect("block_info", pk)
 
 
+@login_required
 def repair_block(request, pk):
     """ Ремонт блока """
     if request.method != 'POST':
@@ -404,6 +415,7 @@ def repair_block(request, pk):
     return redirect("block_info", pk)
 
 
+@login_required
 def edit_record_block(request, pk):
     """ редактирования записанного блока """
     block = get_object_or_404(Record_block, pk=pk)
@@ -436,6 +448,7 @@ def view_defective_statement(request):
     return render(request, 'defect_statement.html', context)
 
 
+@login_required
 def create_defective_statement(request, pk):
     """ создание дефектной ведомости """
     block = get_object_or_404(Record_block, pk=pk)
@@ -476,27 +489,134 @@ def create_defective_statement(request, pk):
 
     
 def view_block_maker(request):
-    return render(request, 'view_block_maker.html', {})
+    today = datetime.date.today()
+    last_mounth = today - datetime.timedelta(days=30)
+    queryset = Maker.objects.filter(date_shipment_maker__range=(last_mounth, today))
+    data_filter = Maker_filter(request.GET, queryset=queryset)
+    return render(request, 'view_block_maker.html', {'data_filter': data_filter})
+
+
+def return_block_maker(request):
+    """ промежуточная страница возврата блоков """
+    number_id = request.GET.getlist("checkbox")
+    if not number_id:
+        messages.error(request, "Выберите блоки для отправки!")
+        return redirect("view_block_maker")
+    queryset = Maker.objects.filter(number_block__in=number_id)
+    data_filter = Maker_filter(request.GET, queryset=queryset)
+    cnt = data_filter.qs.count()
+
+    return render(
+        request,
+        "return_block_maker.html",
+        {
+            "data_filter": data_filter,
+            "cnt": cnt,
+            'return_block': Return_maker_block_form(),
+        },
+    )
+
+
+def commit_return_block_maker(request):
+    """ отправка блоков """
+    if request.method != 'POST':
+        return redirect('view_block_maker')
+    return_block = Return_maker_block_form(request.POST)
+    if not return_block.is_valid():
+        messages.error(request, "Что-то пошло не так!")
+        return redirect("view_block_maker")
+    number_id = request.POST.getlist("checkbox")
+    if not number_id:
+        messages.error(request, "Выберите блоки для отправки!")
+        return redirect("view_block_maker")
+    return_block.save(commit=False)
+    passed = return_block.cleaned_data.get("note_maker")
+    maker_status = return_block.cleaned_data.get("maker_status")
+    date_shipment = datetime.date.today()
+    if maker_status == 'забракован':
+        for id in number_id:
+            block = Maker.objects.get(number_block=id)
+            return_block = get_object_or_404(Record_block, pk=id)
+            block.note_maker = passed
+            block.date_add_maker = date_shipment
+            block.maker_status = maker_status
+            return_block.status = 'неисправен'
+            return_block.note = 'Забракован производителем'
+            return_block.date_repair = date_shipment
+            return_block.save()
+            block.save()
+            messages.success(request, "Блоки возвращены!")
+            return redirect("view_block_maker")
+    for id in number_id:
+        block = Maker.objects.get(number_block=id)
+        return_block = get_object_or_404(Record_block, pk=id)
+        block.note_maker = passed
+        block.date_add_maker = date_shipment
+        block.maker_status = maker_status
+        return_block.status = 'готов'
+        return_block.date_repair = date_shipment
+        return_block.save()
+        block.save()
+    messages.success(request, "Блоки возвращены!")
+    return redirect("view_block_maker")
+
+
+def send_block_maker(request, pk):
+    block = get_object_or_404(Record_block, pk=pk)
+    if request.method != 'POST':
+        return redirect('block_info', pk)
+    form = MakerForm(request.POST)
+    if Maker.objects.filter(block=block).exists():
+        messages.error(
+            request,
+            'Блок с таким номером уже отправлен производителю!'
+        )
+        return redirect('block_info', pk)
+    if not form.is_valid():
+        print(form.errors)
+        messages.error(
+            request,
+            f'Ошибка формы отправки блока производителю! {form.errors}',
+            form.errors
+        )
+        return redirect('block_info', pk)
+    form = form.save(commit=False)
+    form.date_shipment_maker = datetime.datetime.today().strftime('%Y-%m-%d')
+    form.maker_status = 'отправлен'
+    form.save()
+    block.status = 'производитель'
+    block.save()
+    messages.success(
+        request,
+        'Блок отправлен производителю для ремонта!'
+    )
+    return redirect('block_info', pk)
 
 
 def open_defect_statement(request, pk):
     block = get_object_or_404(Record_block, pk=pk)
-    
-    dest_filename = str(
-            f"{block.number_block}_{block.serial_number}_{block.name_block}_{block.region}.xlsx"
+    try:
+        dest_filename = str(
+                f"{block.number_block}_{block.serial_number}_{block.name_block}_{block.region}.xlsx"
+            )
+        path_open = os.path.join(
+            os.getcwd(),
+            "base/Statement/Defects/{}".format(
+                dest_filename.replace("/", "")
+            ),
         )
-    path_open = os.path.join(
-        os.getcwd(),
-        "base/Statement/Defects/{}".format(
-            dest_filename.replace("/", "")
-        ),
-    )
-    return FileResponse(
-        open(
-            path_open,
-            "rb",
+        return FileResponse(
+            open(
+                path_open,
+                "rb",
+            )
         )
-    )
+    except:
+        messages.error(
+            request,
+            'Ошибка! Файл ведомости поврежден!'
+        )
+        return redirect('block_info', pk)
 
     
 # -----------------------------------------------------------------------------------------------------
@@ -531,6 +651,7 @@ def view_components(request):
     return render(request, 'view_components.html', context)
 
 
+@login_required
 def new_component(request):
     """ создать (добавить) новый компонент """
     if request.method != 'POST':
@@ -548,6 +669,7 @@ def new_component(request):
     return redirect('components')
     
 
+@login_required
 def update_amount(request):
     """ изменить (прибавить) количество компонента """
     if request.method != 'POST':
@@ -592,6 +714,7 @@ def update_amount(request):
         return redirect('components')
 
 
+@login_required
 def update_price(request):
     """ изменение цены компонента """
     if request.method != 'POST':
@@ -610,6 +733,7 @@ def update_price(request):
     return redirect('components')
 
 
+@login_required
 def return_component(request, pk, block):
     """ вернуть компонент, списанный на блок """
     record_component = get_object_or_404(Record_component, pk=pk)

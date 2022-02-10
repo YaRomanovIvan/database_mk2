@@ -1,9 +1,150 @@
 {% extends "base.html" %}
+{% load user_filters %}
 {% block title %}Учет блоков{% endblock %}
 
 {% block content %}
 <h1 class="text-center">Ремонт производителя</h1>
 <hr>
+<div class='container'>
+    {% include 'includes/messages.html' %}
+  </div>
+<form class="ms-1 me-1" method='GET'>
+    {% csrf_token %}
+    <div class="row">
+      <div class="col-1" style="min-width: 150px;">
+        <div class="form-group is-valid">
+          <label for="id_number_block_0">Номер блока с</label>
+          <input type="number" name="number_block_min" class="form-control form-control-sm" placeholder="Номер блока" title="" id="id_number_block_0">
+        </div>
+        <div class="form-group is-valid">
+          <label for="id_number_block_1">по</label>
+          <input type="number" name="number_block_max" class="form-control form-control-sm" placeholder="Номер блока" title="" id="id_number_block_1">
+        </div>
+      </div>
+      <div class="col-3">
+        <label for="id_name_block">Тип блока</label>
+        {{ data_filter.form.name_block|addclass:"form-control form-control-sm" }}
+      </div>
+      <div class="col-1" style="min-width: 150px;">
+        <div class="form-group is-valid">
+            <label for="id_serial">Зав.№</label>
+            {{ data_filter.form.serial_number|addclass:"form-control form-control-sm" }}
+        </div>
+        <div class="form-group is-valid">
+            <label for="id_maker">Производитель</label>
+            {{ data_filter.form.maker|addclass:"form-control form-control-sm" }}
+        </div>
+      </div>
+      <div class="col-2" style="min-width: 150px;">
+        <label for="id_date_shipment_maker_0">Дата отправки с</label>
+        <input type="date" name="date_shipment_maker_after" class="form-control form-control-sm" placeholder="Дата ремонта" title="" id="id_date_shipment_maker_0">
+        <label for="id_date_shipment_maker_1">по</label>
+        <input type="date" name="date_shipment_maker_before" class="form-control form-control-sm" placeholder="Дата ремонта" title="" id="id_date_shipment_maker_1">
+      </div>
+      <div class="col-2" style="min-width: 150px;">
+        <label for="id_date_add_maker_0">Дата возврата c</label>
+        <input type="date" name="date_add_maker_after" class="form-control form-control-sm" placeholder="Дата приема" title="" id="id_date_add_maker_0">
+        <label for="id_date_add_maker_1">по</label>
+        <input type="date" name="date_add_maker_before" class="form-control form-control-sm" placeholder="Дата приема" title="" id="id_date_add_maker_1">
+      </div>
+      <div class="col" style="min-width: 150px;">
+        <label for="id_status">Статус</label>
+        {{ data_filter.form.maker_status|addclass:"form-control form-control-sm" }}
+        <div class="d-grid gap-2">
+          <button type="submit" class="btn btn-sm btn-dark mt-4" name="search_all">Поиск</button>
+        </div>
+      </div>
+    </div>
+  </form>
 
+  <hr>
+
+<style>
+    thead th {
+      position: sticky;
+      top: 0;
+      background: white;
+    }
+</style>
+    
+<form method='GET' action='{% url "return_block_maker" %}'>
+    <div class="ms-3 me-3">
+        {% csrf_token %}
+        <div class='ms-3 me-3'>
+          <button type="submit" class="btn btn-outline-success">Возврат указанных блоков</button>
+        </div>
+
+        <p>Количество блоков: {{ cnt }}</p>
+        <table class="table table-sm table-hover table-bordered ">
+            <thead>
+              <tr>
+                <th scope="col" style="width: 5%">Номер блока</th>
+                <th style="min-width: 350px; width: 25%" scope="col">Наименование блока</th>
+                <th scope="col" style="width: 5%">Зав. номер</th>
+                <th scope="col" style="width: 10%">Производитель</th>
+                <th scope="col" style="width: 8%">Дата отправки производителю</th>
+                <th scope="col" style="width: 8%">Дата возврата</th>
+                <th scope="col" style="width: 5%">Статус</th>
+                <th scope="col" style="max-width: 10px; ">Причина</th>
+                <th scope="col" style="max-width: 10px; ">Примечание</th>
+              </tr>
+            </thead>
+            <tbody>
+            {% for bb in data_filter.qs %}
+            {% if bb.maker_status == 'забракован' %}
+            <tr class="text-danger">
+                <th scope="row"><input class="form-check-input" type="checkbox" name="checkbox" value="{{ bb.number_block }}" id='{{ bb.number_block }}'>&nbsp<a href="{% url 'block_info' bb.number_block %}">{{ bb.number_block }}</a></th>
+                <td>{{ bb.name_block }}</td>
+                <td>{{ bb.serial_number|default_if_none:"" }}</td>
+                <td>{{ bb.maker }}</td>
+                <td>{{ bb.date_shipment_maker|date:"d.m.Y" }}</td>
+                <td>{{ bb.date_add_maker|date:"d.m.Y" }}</td>
+                <td>{{ bb.maker_status }}</td>
+                <td>{{ bb.reason|default_if_none:"" }}</td>
+                <td>{{ bb.note_maker|default_if_none:"" }}</td>
+            </tr>
+            {%elif bb.maker_status == 'отправлен'%}
+            <tr>
+                <th scope="row"><input class="form-check-input" type="checkbox" name="checkbox" value="{{ bb.number_block }}" id='{{ bb.number_block }}'>&nbsp<a href="{% url 'block_info' bb.number_block %}">{{ bb.number_block }}</a></th>
+                <td>{{ bb.name_block }}</td>
+                <td>{{ bb.serial_number|default_if_none:"" }}</td>
+                <td>{{ bb.maker }}</td>
+                <td>{{ bb.date_shipment_maker|date:"d.m.Y" }}</td>
+                <td>{{ bb.date_add_maker|date:"d.m.Y" }}</td>
+                <td>{{ bb.maker_status }}</td>
+                <td>{{ bb.reason|default_if_none:"" }}</td>
+                <td>{{ bb.note_maker|default_if_none:"" }}</td>
+            </tr>
+            {% elif bb.maker_status == 'возвращен' %}
+            <tr class="text-primary">
+                <th scope="row"><input class="form-check-input" type="checkbox" name="checkbox" value="{{ bb.number_block }}" id='{{ bb.number_block }}'>&nbsp<a href="{% url 'block_info' bb.number_block %}">{{ bb.number_block }}</a></th>
+                <td>{{ bb.name_block }}</td>
+                <td>{{ bb.serial_number|default_if_none:"" }}</td>
+                <td>{{ bb.maker }}</td>
+                <td>{{ bb.date_shipment_maker|date:"d.m.Y" }}</td>
+                <td>{{ bb.date_add_maker|date:"d.m.Y" }}</td>
+                <td>{{ bb.maker_status }}</td>
+                <td>{{ bb.reason|default_if_none:"" }}</td>
+                <td>{{ bb.note_maker|default_if_none:"" }}</td>
+            </tr>
+            {% endif %}
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+</form>
+
+<script>
+  $(document).ready(function() {
+      $('#id_record_block').select2({ width: '100%' });
+  });
+  $(document).ready(function() {
+      $('#id_name_block').select2({ width: '100%' });
+  });
+  $(document).ready(function() {
+      $('.component_multiple_select2').select2({ width: '100%', height: '100%' });
+  });
+</script>
 
 {% endblock %}

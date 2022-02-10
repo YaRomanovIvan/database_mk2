@@ -1,0 +1,118 @@
+{% extends "base.html" %}
+{% load user_filters %}
+{% block title %}Возврат блоков от производителя{% endblock %}
+
+{% block content %}
+<h1 class="text-center">Возврат блоков от производителя</h1>
+
+<form method='POST' action="{% url 'commit_return_block_maker' %}">
+
+<div class="ms-3 me-3">
+    <p>Количество блоков: {{ cnt }}</p>
+        <table class="table table-sm table-hover table-bordered ">
+            <thead>
+              <tr>
+                <th scope="col" style="width: 5%">Номер блока</th>
+                <th style="min-width: 350px; width: 25%" scope="col">Наименование блока</th>
+                <th scope="col" style="width: 5%">Зав. номер</th>
+                <th scope="col" style="width: 10%">Производитель</th>
+                <th scope="col" style="width: 8%">Дата отправки производителю</th>
+                <th scope="col" style="width: 8%">Дата возврата</th>
+                <th scope="col" style="width: 5%">Статус</th>
+                <th scope="col" style="max-width: 10px; ">Причина</th>
+                <th scope="col" style="max-width: 10px; ">Примечание</th>
+              </tr>
+            </thead>
+            <tbody>
+            {% for bb in data_filter.qs %}
+            {% if bb.maker_status == 'забракован' %}
+            <tr class="text-danger">
+              <th scope="row"><input class="form-check-input" type="checkbox" name="checkbox" value="{{ bb.number_block }}" id='{{ bb.number_block }}'>&nbsp<a href="{% url 'block_info' bb.number_block %}">{{ bb.number_block }}</a></th>
+              <td>{{ bb.name_block }}</td>
+              <td>{{ bb.serial_number|default_if_none:"" }}</td>
+              <td>{{ bb.maker }}</td>
+              <td>{{ bb.date_shipment_maker|date:"d.m.Y" }}</td>
+              <td>{{ bb.date_add_maker|date:"d.m.Y" }}</td>
+              <td>{{ bb.maker_status }}</td>
+              <td>{{ bb.reason|default_if_none:"" }}</td>
+              <td>{{ bb.note_maker|default_if_none:"" }}</td>
+            </tr>
+            {%elif bb.maker_status == 'отправлен'%}
+            <tr>
+              <th scope="row"><input class="form-check-input" type="checkbox" name="checkbox" value="{{ bb.number_block }}" id='{{ bb.number_block }}'>&nbsp<a href="{% url 'block_info' bb.number_block %}">{{ bb.number_block }}</a></th>
+              <td>{{ bb.name_block }}</td>
+              <td>{{ bb.serial_number|default_if_none:"" }}</td>
+              <td>{{ bb.maker }}</td>
+              <td>{{ bb.date_shipment_maker|date:"d.m.Y" }}</td>
+              <td>{{ bb.date_add_maker|date:"d.m.Y" }}</td>
+              <td>{{ bb.maker_status }}</td>
+              <td>{{ bb.reason|default_if_none:"" }}</td>
+              <td>{{ bb.note_maker|default_if_none:"" }}</td>
+            </tr>
+            {% elif bb.maker_status == 'возвращен' %}
+            <tr class="text-primary">
+              <th scope="row"><input class="form-check-input" type="checkbox" name="checkbox" value="{{ bb.number_block }}" id='{{ bb.number_block }}'>&nbsp<a href="{% url 'block_info' bb.number_block %}">{{ bb.number_block }}</a></th>
+              <td>{{ bb.name_block }}</td>
+              <td>{{ bb.serial_number|default_if_none:"" }}</td>
+              <td>{{ bb.maker }}</td>
+              <td>{{ bb.date_shipment_maker|date:"d.m.Y" }}</td>
+              <td>{{ bb.date_add_maker|date:"d.m.Y" }}</td>
+              <td>{{ bb.maker_status }}</td>
+              <td>{{ bb.reason|default_if_none:"" }}</td>
+              <td>{{ bb.note_maker|default_if_none:"" }}</td>
+            </tr>
+            {% endif %}
+            {% endfor %}
+            </tbody>
+        </table>
+</div>
+
+<br>
+<div class='me-3 ms-3'>
+    <p>Выделить всё <input id="select_all" type="checkbox" class="form-check-input"></p>
+    <button type="button" class="btn btn-outline-success nav-link zoom-menu mb-2" data-bs-toggle="modal" data-bs-target="#send_block">Отправить указанные блоки</button>
+</div>
+
+<div class="modal fade" id="send_block" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="staticBackdropLabel">Возврат блоков от производителя</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <form action='{% url "add_new_region" %}' method='POST'>
+          {% csrf_token %}
+          <div class="modal-body">
+            {% for field in return_block %}
+              {{ field.label }}
+              {{ field|addclass:"form-control form-control-sm" }}
+              <br>
+            {% endfor %}
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            <button type="submit" class="btn btn-primary">Вернуть</button>
+          </div>
+        </form>
+      </div>
+    </div>
+</div>
+
+</form>
+
+
+<script>
+document.getElementById('select_all')
+  .addEventListener('click', function (e) {
+    var els = document.querySelectorAll(
+      'input[name=checkbox]'
+    );
+
+    Array.prototype.forEach.call(els, function(cb){
+      cb.checked = e.target.checked;
+    });
+  })
+;
+</script>
+
+{% endblock %}

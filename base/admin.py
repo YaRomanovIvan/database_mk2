@@ -79,14 +79,16 @@ class Record_componentsAdmin(admin.ModelAdmin):
 class MakerAdmin(admin.ModelAdmin):
     list_display = (
         "id",
-        "block",
-        "date",
+        "number_block",
+        "name_block",
+        "serial_number",
         "maker",
-        "date_shipment",
-        "date_add",
-        "note",
+        "date_shipment_maker",
+        "date_add_maker",
+        "maker_status",
+        "reason",
     )
-    list_filter = ("id", "block", "date", "maker", "date_shipment", "date_add")
+    list_filter = ("id", "name_block", "maker", "date_shipment_maker", "date_add_maker", "maker_status")
     empty_value_display = "--пусто--"
 
 

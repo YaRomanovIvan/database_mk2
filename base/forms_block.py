@@ -1,6 +1,6 @@
 from typing import DefaultDict
 from django import forms
-from .models import Component, Type_block, Unit, Record_block, Defect_statement
+from .models import Component, Type_block, Unit, Record_block, Defect_statement, Maker
 
 
 class Type_block_form(forms.ModelForm):
@@ -125,3 +125,33 @@ class Defect_statement_form(forms.ModelForm):
     class Meta:
         model = Defect_statement
         fields = ("defect_1", "defect_2", "defect_3", "result")
+
+
+class MakerForm(forms.ModelForm):
+    number_block = forms.IntegerField(
+        label="Номер блока",
+        widget=forms.NumberInput(
+            attrs={"class": "form-control form-control-sm"}
+        ),
+    )
+    name_block = forms.ModelChoiceField(
+        label="Наименование блока",
+        queryset=Type_block.objects.all(),
+        widget=forms.Select(attrs={"id": "id_record_block", "class": "form-control form-control-sm",}),
+    )
+    class Meta:
+        model = Maker
+        fields = ("__all__")
+
+
+class Return_maker_block_form(forms.ModelForm):
+    note_maker = forms.CharField(
+        label="Примечание",
+        required=False,
+        widget=forms.TextInput(
+            attrs={"class": "form-control form-control-sm"}
+        ),
+    )
+    class Meta:
+        model = Maker
+        fields = ("note_maker", "maker_status")

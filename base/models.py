@@ -277,31 +277,61 @@ class Record_component(models.Model):
 
 class Maker(models.Model):
     """ модель учета блоков, отправленных на ремонт производителю. """
+    ready = "возвращен"
+    ship = "отправлен"
+    red = "забракован"
+    CHOICE = [
+        (ready, "возвращен"),
+        (ship, "отправлен"),
+        (red, "забракован"),
+    ]
     id = models.AutoField(primary_key=True, verbose_name="id")
     block = models.ForeignKey(
         Record_block,
         on_delete=models.CASCADE,
         verbose_name="Блок",
     )
-    date = models.DateField(
-        auto_now_add=True,
-        verbose_name="Дата учета",
+    number_block = models.PositiveIntegerField(
+        verbose_name='Номер блока'
+    )
+    name_block = models.CharField(
+        max_length=150,
+        verbose_name="Тип блока",
+    )
+    serial_number = models.CharField(
+        max_length=20,
+        null=True,
+        blank=True,
+        verbose_name="Заводской_номер",
     )
     maker = models.ForeignKey(
         Maker_company,
         on_delete=models.CASCADE,
+        verbose_name='Производитель',
     )
-    date_shipment = models.DateField(
+    date_shipment_maker = models.DateField(
         blank=True,
         null=True,
-        verbose_name="Дата отправки",
+        verbose_name="Дата отправки производителю",
     )
-    date_add = models.DateField(
+    date_add_maker = models.DateField(
         blank=True,
         null=True,
-        verbose_name="Дата приёма",
+        verbose_name="Дата возврата",
     )
-    note = models.CharField(
+    maker_status = models.CharField(
+        max_length=15,
+        choices=CHOICE,
+        default=ship,
+        verbose_name="Состояние",
+    )
+    reason = models.CharField(
+        max_length=65,
+        blank=True,
+        null=True,
+        verbose_name="Причина отправки",
+    )
+    note_maker = models.CharField(
         max_length=65,
         blank=True,
         null=True,

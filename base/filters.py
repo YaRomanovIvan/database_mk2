@@ -1,6 +1,6 @@
 from django import forms
 import django_filters
-from .models import Record_block, Component, Record_component, Defect_statement
+from .models import Record_block, Component, Record_component, Defect_statement, Maker, Type_block
 
 
 class One_block_filter(django_filters.FilterSet):
@@ -47,6 +47,21 @@ class Block_filter(django_filters.FilterSet):
             'status',
         ]
 
+
+class Maker_filter(django_filters.FilterSet):
+    number_block = django_filters.RangeFilter()
+    name_block = django_filters.ModelChoiceFilter(
+        label="Наименование блока",
+        queryset=Type_block.objects.all(),
+    )
+    serial_number = django_filters.CharFilter(
+        lookup_expr='icontains',
+    )
+    date_add = django_filters.DateFromToRangeFilter()
+    date_shipment = django_filters.DateFromToRangeFilter()
+    class Meta:
+        model = Maker
+        fields = ("__all__")
 
 class Components_filter(django_filters.FilterSet):
     type_component = django_filters.CharFilter(
