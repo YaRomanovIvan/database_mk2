@@ -64,6 +64,9 @@ class Record_block_form(forms.ModelForm):
         queryset=Unit.objects.all(),
         widget=forms.Select(attrs={"class": "form-control form-control-sm"}),
     )
+    date_add = forms.DateField(
+        required=False
+    )
 
     class Meta:
         model = Record_block

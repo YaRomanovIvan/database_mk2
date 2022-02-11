@@ -136,6 +136,8 @@ def add_new_record_block(request):
         print(record_block_form.errors)
         messages.error(request, "Ошибка формы!")
         return redirect("records_block")
+    record_block_form = record_block_form.save(commit=False)
+    record_block_form.date_add = datetime.datetime.today()
     record_block_form.save()
     messages.success(
         request, f'Блок с номером {request.POST["number_block"]} добавлен!'

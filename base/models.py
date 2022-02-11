@@ -191,7 +191,6 @@ class Record_block(models.Model):
         related_name="unit",
     )
     date_add = models.DateField(
-        auto_now_add=True,
         verbose_name="Дата приема",
     )
     date_repair = models.DateField(
