@@ -25,11 +25,15 @@ class ComponentsAdmin(admin.ModelAdmin):
 
 
 class Type_blockAdmin(admin.ModelAdmin):
-    list_display = ("id", "name_block", 'show_components')
-    list_filter = ("id", "name_block",)
+    list_display = ("id", "name_block", 'show_maker', 'show_components')
+    list_filter = ("name_block",)
+    search_fields = ['name_block__icontains']
 
     def show_components(self, obj):
         return "\n".join([a.marking for a in obj.components.all()])
+    
+    def show_maker(self, obj):
+        return obj.maker
 
 
 class UnitAdmin(admin.ModelAdmin):

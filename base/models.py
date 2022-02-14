@@ -276,12 +276,14 @@ class Record_component(models.Model):
 
 class Maker(models.Model):
     """ модель учета блоков, отправленных на ремонт производителю. """
+    wait = "ожидает"
     ready = "возвращен"
     ship = "отправлен"
     red = "забракован"
     CHOICE = [
-        (ready, "возвращен"),
+        (wait, "ожидает"),
         (ship, "отправлен"),
+        (ready, "возвращен"),
         (red, "забракован"),
     ]
     id = models.AutoField(primary_key=True, verbose_name="id")

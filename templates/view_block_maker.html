@@ -68,70 +68,14 @@
 </style>
     
 <form method='GET' action='{% url "return_block_maker" %}'>
-    <div class="ms-3 me-3">
         {% csrf_token %}
         <div class='ms-3 me-3'>
-          <button type="submit" class="btn btn-outline-success">Возврат указанных блоков</button>
+          <button type="submit" name="send_block" class="btn btn-outline-primary">Отправка указанных блоков</button>
+          <button type="submit" name="return" class="btn btn-outline-success">Возврат указанных блоков</button>
+          <button type="submit" name="defect" class="btn btn-outline-danger">Забраковать указанные блокои</button>
         </div>
 
-        <p>Количество блоков: {{ cnt }}</p>
-        <table class="table table-sm table-hover table-bordered ">
-            <thead>
-              <tr>
-                <th scope="col" style="width: 5%">Номер блока</th>
-                <th style="min-width: 350px; width: 25%" scope="col">Наименование блока</th>
-                <th scope="col" style="width: 5%">Зав. номер</th>
-                <th scope="col" style="width: 10%">Производитель</th>
-                <th scope="col" style="width: 8%">Дата отправки производителю</th>
-                <th scope="col" style="width: 8%">Дата возврата</th>
-                <th scope="col" style="width: 5%">Статус</th>
-                <th scope="col" style="max-width: 10px; ">Причина</th>
-                <th scope="col" style="max-width: 10px; ">Примечание</th>
-              </tr>
-            </thead>
-            <tbody>
-            {% for bb in data_filter.qs %}
-            {% if bb.maker_status == 'забракован' %}
-            <tr class="text-danger">
-                <th scope="row"><input class="form-check-input" type="checkbox" name="checkbox" value="{{ bb.number_block }}" id='{{ bb.number_block }}'>&nbsp<a href="{% url 'block_info' bb.number_block %}">{{ bb.number_block }}</a></th>
-                <td>{{ bb.name_block }}</td>
-                <td>{{ bb.serial_number|default_if_none:"" }}</td>
-                <td>{{ bb.maker }}</td>
-                <td>{{ bb.date_shipment_maker|date:"d.m.Y" }}</td>
-                <td>{{ bb.date_add_maker|date:"d.m.Y" }}</td>
-                <td>{{ bb.maker_status }}</td>
-                <td>{{ bb.reason|default_if_none:"" }}</td>
-                <td>{{ bb.note_maker|default_if_none:"" }}</td>
-            </tr>
-            {%elif bb.maker_status == 'отправлен'%}
-            <tr>
-                <th scope="row"><input class="form-check-input" type="checkbox" name="checkbox" value="{{ bb.number_block }}" id='{{ bb.number_block }}'>&nbsp<a href="{% url 'block_info' bb.number_block %}">{{ bb.number_block }}</a></th>
-                <td>{{ bb.name_block }}</td>
-                <td>{{ bb.serial_number|default_if_none:"" }}</td>
-                <td>{{ bb.maker }}</td>
-                <td>{{ bb.date_shipment_maker|date:"d.m.Y" }}</td>
-                <td>{{ bb.date_add_maker|date:"d.m.Y" }}</td>
-                <td>{{ bb.maker_status }}</td>
-                <td>{{ bb.reason|default_if_none:"" }}</td>
-                <td>{{ bb.note_maker|default_if_none:"" }}</td>
-            </tr>
-            {% elif bb.maker_status == 'возвращен' %}
-            <tr class="text-primary">
-                <th scope="row"><input class="form-check-input" type="checkbox" name="checkbox" value="{{ bb.number_block }}" id='{{ bb.number_block }}'>&nbsp<a href="{% url 'block_info' bb.number_block %}">{{ bb.number_block }}</a></th>
-                <td>{{ bb.name_block }}</td>
-                <td>{{ bb.serial_number|default_if_none:"" }}</td>
-                <td>{{ bb.maker }}</td>
-                <td>{{ bb.date_shipment_maker|date:"d.m.Y" }}</td>
-                <td>{{ bb.date_add_maker|date:"d.m.Y" }}</td>
-                <td>{{ bb.maker_status }}</td>
-                <td>{{ bb.reason|default_if_none:"" }}</td>
-                <td>{{ bb.note_maker|default_if_none:"" }}</td>
-            </tr>
-            {% endif %}
-            {% endfor %}
-            </tbody>
-        </table>
-    </div>
+        {% include 'includes/maker_block_item.html' %}
 
 </form>
 

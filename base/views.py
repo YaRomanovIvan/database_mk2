@@ -491,10 +491,16 @@ def create_defective_statement(request, pk):
 
     
 def view_block_maker(request):
+    if "search_all" in request.GET:
+        data_filter = Maker_filter(
+            request.GET, queryset=Maker.objects.all()
+        )
+        return render(request, 'view_block_maker.html', {'data_filter': data_filter})
     today = datetime.date.today()
     last_mounth = today - datetime.timedelta(days=30)
     queryset = Maker.objects.filter(date_shipment_maker__range=(last_mounth, today))
     data_filter = Maker_filter(request.GET, queryset=queryset)
+    print(queryset)
     return render(request, 'view_block_maker.html', {'data_filter': data_filter})
 
 
@@ -507,6 +513,13 @@ def return_block_maker(request):
     queryset = Maker.objects.filter(number_block__in=number_id)
     data_filter = Maker_filter(request.GET, queryset=queryset)
     cnt = data_filter.qs.count()
+    status_block = ''
+    if 'send_block' in request.GET:
+        status_block='send_block'
+    elif 'return' in request.GET:
+        status_block = 'return_block'
+    elif 'defect' in request.GET:
+        status_block = 'defect_block'
 
     return render(
         request,
@@ -515,6 +528,7 @@ def return_block_maker(request):
             "data_filter": data_filter,
             "cnt": cnt,
             'return_block': Return_maker_block_form(),
+            'status_block': status_block
         },
     )
 
@@ -533,34 +547,46 @@ def commit_return_block_maker(request):
         return redirect("view_block_maker")
     return_block.save(commit=False)
     passed = return_block.cleaned_data.get("note_maker")
-    maker_status = return_block.cleaned_data.get("maker_status")
     date_shipment = datetime.date.today()
-    if maker_status == 'забракован':
+    if "send_block" in request.POST:
+        for id in number_id:
+            block = Maker.objects.get(number_block=id)
+            return_block = get_object_or_404(Record_block, pk=id)
+            block.note_maker = passed
+            block.date_shipment_maker = date_shipment
+            block.maker_status = 'отправлен'
+            return_block.status = 'производитель'
+            return_block.save()
+            block.save()
+        messages.success(request, "Блоки отправлены!")
+        return redirect("view_block_maker")
+    if "return_block" in request.POST:
         for id in number_id:
             block = Maker.objects.get(number_block=id)
             return_block = get_object_or_404(Record_block, pk=id)
             block.note_maker = passed
             block.date_add_maker = date_shipment
-            block.maker_status = maker_status
+            block.maker_status = 'возвращен'
+            return_block.status = 'готов'
+            return_block.date_repair = date_shipment
+            return_block.save()
+            block.save()
+        messages.success(request, "Блоки возвращены!")
+        return redirect("view_block_maker")
+    if "defect_block" in request.POST:
+        for id in number_id:
+            block = Maker.objects.get(number_block=id)
+            return_block = get_object_or_404(Record_block, pk=id)
+            block.note_maker = passed
+            block.date_add_maker = date_shipment
+            block.maker_status = 'забракован'
             return_block.status = 'неисправен'
             return_block.note = 'Забракован производителем'
             return_block.date_repair = date_shipment
             return_block.save()
             block.save()
-            messages.success(request, "Блоки возвращены!")
-            return redirect("view_block_maker")
-    for id in number_id:
-        block = Maker.objects.get(number_block=id)
-        return_block = get_object_or_404(Record_block, pk=id)
-        block.note_maker = passed
-        block.date_add_maker = date_shipment
-        block.maker_status = maker_status
-        return_block.status = 'готов'
-        return_block.date_repair = date_shipment
-        return_block.save()
-        block.save()
-    messages.success(request, "Блоки возвращены!")
-    return redirect("view_block_maker")
+        messages.success(request, "Блоки возвращены!")
+        return redirect("view_block_maker")
 
 
 def send_block_maker(request, pk):
@@ -575,7 +601,6 @@ def send_block_maker(request, pk):
         )
         return redirect('block_info', pk)
     if not form.is_valid():
-        print(form.errors)
         messages.error(
             request,
             f'Ошибка формы отправки блока производителю! {form.errors}',
@@ -583,8 +608,7 @@ def send_block_maker(request, pk):
         )
         return redirect('block_info', pk)
     form = form.save(commit=False)
-    form.date_shipment_maker = datetime.datetime.today().strftime('%Y-%m-%d')
-    form.maker_status = 'отправлен'
+    form.maker_status = 'ожидает'
     form.save()
     block.status = 'производитель'
     block.save()
