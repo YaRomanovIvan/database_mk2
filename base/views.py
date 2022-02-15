@@ -498,9 +498,8 @@ def view_block_maker(request):
         return render(request, 'view_block_maker.html', {'data_filter': data_filter})
     today = datetime.date.today()
     last_mounth = today - datetime.timedelta(days=30)
-    queryset = Maker.objects.filter(status_maker='ожидает')
+    queryset = Maker.objects.filter(maker_status='ожидает')
     data_filter = Maker_filter(request.GET, queryset=queryset)
-    print(queryset)
     return render(request, 'view_block_maker.html', {'data_filter': data_filter})
 
 
