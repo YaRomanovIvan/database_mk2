@@ -9,25 +9,28 @@ thead th {
 </style>
 
 <div class="ms-3 me-3">
-        <table class="table table-sm table-hover table-bordered ">
+        <p>Количество блоков в выборке: {{ cnt }}</p>
+        <table class="table table-sm table-hover table-bordered text-center">
             <thead>
               <tr>
-                <th scope="col" style="width: 5%">Номер блока</th>
+                <th scope="col" style="width: 1%"></th>
+                <th scope="col" style="width: 7%">Учетный №</th>
                 <th style="min-width: 350px; width: 25%" scope="col">Наименование блока</th>
                 <th scope="col" style="width: 5%">Зав. номер</th>
-                <th scope="col" style="width: 10%">Производитель</th>
-                <th scope="col" style="width: 8%">Дата отправки производителю</th>
+                <th scope="col" style="width: 7%">Производитель</th>
+                <th scope="col" style="width: 8%">Дата отправки</th>
                 <th scope="col" style="width: 8%">Дата возврата</th>
                 <th scope="col" style="width: 5%">Статус</th>
-                <th scope="col">Причина</th>
-                <th scope="col">Примечание</th>
+                <th scope="col" style="width: 15%">Причина</th>
+                <th scope="col" style="width: 15%">Примечание</th>
               </tr>
             </thead>
             <tbody>
             {% for bb in data_filter.qs %}
             {% if bb.maker_status == 'забракован' %}
             <tr class="text-danger">
-              <th scope="row"><input class="form-check-input" type="checkbox" name="checkbox" value="{{ bb.number_block }}" id='{{ bb.number_block }}'>&nbsp<a href="{% url 'block_info' bb.number_block %}">{{ bb.number_block }}</a></th>
+              <td><input class="form-check-input" type="checkbox" name="checkbox" value="{{ bb.number_block }}" id='{{ bb.number_block }}'></td>
+              <td><a href="{% url 'block_info' bb.number_block %}">{{ bb.number_block }}</a></td>
               <td>{{ bb.name_block }}</td>
               <td>{{ bb.serial_number|default_if_none:"" }}</td>
               <td>{{ bb.maker }}</td>
@@ -39,7 +42,8 @@ thead th {
             </tr>
             {%elif bb.maker_status == 'отправлен'%}
             <tr>
-              <th scope="row"><input class="form-check-input" type="checkbox" name="checkbox" value="{{ bb.number_block }}" id='{{ bb.number_block }}'>&nbsp<a href="{% url 'block_info' bb.number_block %}">{{ bb.number_block }}</a></th>
+              <td><input class="form-check-input" type="checkbox" name="checkbox" value="{{ bb.number_block }}" id='{{ bb.number_block }}'></td>
+              <td><a href="{% url 'block_info' bb.number_block %}">{{ bb.number_block }}</a></td>
               <td>{{ bb.name_block }}</td>
               <td>{{ bb.serial_number|default_if_none:"" }}</td>
               <td>{{ bb.maker }}</td>
@@ -51,7 +55,8 @@ thead th {
             </tr>
             {% elif bb.maker_status == 'возвращен' %}
             <tr class="text-primary">
-              <th scope="row"><input class="form-check-input" type="checkbox" name="checkbox" value="{{ bb.number_block }}" id='{{ bb.number_block }}'>&nbsp<a href="{% url 'block_info' bb.number_block %}">{{ bb.number_block }}</a></th>
+              <td><input class="form-check-input" type="checkbox" name="checkbox" value="{{ bb.number_block }}" id='{{ bb.number_block }}'></td>
+              <td><a href="{% url 'block_info' bb.number_block %}">{{ bb.number_block }}</a></td>
               <td>{{ bb.name_block }}</td>
               <td>{{ bb.serial_number|default_if_none:"" }}</td>
               <td>{{ bb.maker }}</td>
@@ -63,7 +68,8 @@ thead th {
             </tr>
             {% elif bb.maker_status == 'ожидает' %}
             <tr class="text-orange">
-                <th scope="row"><input class="form-check-input" type="checkbox" name="checkbox" value="{{ bb.number_block }}" id='{{ bb.number_block }}'>&nbsp<a href="{% url 'block_info' bb.number_block %}">{{ bb.number_block }}</a></th>
+                <td><input class="form-check-input" type="checkbox" name="checkbox" value="{{ bb.number_block }}" id='{{ bb.number_block }}'></td>
+                <td><a href="{% url 'block_info' bb.number_block %}">{{ bb.number_block }}</a></td>
                 <td>{{ bb.name_block }}</td>
                 <td>{{ bb.serial_number|default_if_none:"" }}</td>
                 <td>{{ bb.maker }}</td>

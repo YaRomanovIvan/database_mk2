@@ -5,9 +5,10 @@
   <div class="col text-end mt-2">
     {% if user.is_authenticated %}
     <div>
-      <a href="{% url 'password_change' %}" class="btn btn-outline-primary">Изменить пароль</a>&nbsp
-      <a href="{% url 'logout' %}" class="btn btn-outline-primary">Выход</a>
-    </div>
+        <a href="#" class="btn btn-outline-primary">Профиль: {{ user.username }}</a>&nbsp
+        <a href="{% url 'password_change' %}" class="btn btn-outline-primary">Изменить пароль</a>&nbsp
+        <a href="{% url 'logout' %}" class="btn btn-outline-primary">Выход</a>
+      </div>
     {% else %}
     <div>
       <a href="{% url 'login' %}" class="btn btn-outline-primary">Войти</a>&nbsp

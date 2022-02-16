@@ -13,9 +13,11 @@ from .forms_components import (
     Edit_component_form, Update_amount_form, Update_price_form
 )
 #from .forms_order import Create_request_form
+from users.permissions import employee_permission, admin_permission
 from .utils import calculate_component, create_statement
 
 
+@login_required
 def index(request):
     """ главная страница с информацией """
     queryset = Post.objects.all()
@@ -25,6 +27,7 @@ def index(request):
     return render(request, 'index.html', context)
 
 
+@login_required
 def viewing_block(request):
     """ учет блоков. Информация о блоках в центре """
     today = datetime.date.today()
@@ -73,6 +76,7 @@ def viewing_block(request):
 
 
 @login_required
+@employee_permission
 def records_block(request):
     """ управление блоками """
     today = datetime.date.today()
@@ -127,6 +131,7 @@ def records_block(request):
 
 
 @login_required
+@employee_permission
 def add_new_record_block(request):
     """ добавляем новый блок в ремонт """
     if request.method != "POST":
@@ -146,6 +151,7 @@ def add_new_record_block(request):
 
 
 @login_required
+@employee_permission
 def add_new_type_block(request):
     """ добавляем новое наименование блока """
     if request.method != "POST":
@@ -164,6 +170,7 @@ def add_new_type_block(request):
 
 
 @login_required
+@employee_permission
 def add_new_region(request):
     """ добавляем новый участок """
     if request.method != "POST":
@@ -181,6 +188,7 @@ def add_new_region(request):
 
 
 @login_required
+@employee_permission
 def send_block(request):
     """ промежуточная страница отправки блоков """
     number_id = request.GET.getlist("checkbox")
@@ -205,6 +213,7 @@ def send_block(request):
 
 
 @login_required
+@employee_permission
 def commit_send_block(request):
     """ отправка блоков """
     if request.method != 'POST':
@@ -224,14 +233,15 @@ def commit_send_block(request):
         block = Record_block.objects.get(pk=id)
         block.passed = passed
         block.date_shipment = date_shipment
-        if block.status != 'неисправен':
-            block.status = 'отправлен'
+        if block.status != 'забракован':
+            block.status = 'выдан'
         block.save()
-    messages.success(request, "Блоки отправлены!")
+    messages.success(request, "Блоки выданы!")
     return redirect("records_block")
 
 
-
+@login_required
+@employee_permission
 def block_info(request, pk):
     """ информация о блоке """
     about_block = get_object_or_404(Record_block, pk=pk)
@@ -262,6 +272,7 @@ def block_info(request, pk):
 
 
 @login_required
+@employee_permission
 def add_components_for_block(request, pk):
     """ привязываем компоненты к блоку из информации о блоке """
     if request.method != "POST":
@@ -282,6 +293,7 @@ def add_components_for_block(request, pk):
 
 
 @login_required
+@employee_permission
 def repair_block(request, pk):
     """ Ремонт блока """
     if request.method != 'POST':
@@ -307,7 +319,7 @@ def repair_block(request, pk):
     if repair_chekbox:
         date = None
     if defect_checkbox:
-        status = "неисправен"
+        status = "забракован"
     else:
         status = "готов"
     if not components:
@@ -418,6 +430,7 @@ def repair_block(request, pk):
 
 
 @login_required
+@employee_permission
 def edit_record_block(request, pk):
     """ редактирования записанного блока """
     block = get_object_or_404(Record_block, pk=pk)
@@ -451,6 +464,7 @@ def view_defective_statement(request):
 
 
 @login_required
+@employee_permission
 def create_defective_statement(request, pk):
     """ создание дефектной ведомости """
     block = get_object_or_404(Record_block, pk=pk)
@@ -461,10 +475,10 @@ def create_defective_statement(request, pk):
             'Ознакомьтесь в разделе "дефектные ведомости"'
         )
         return redirect('block_info', pk)
-    if block.status == 'отправлен':
+    if block.status == 'выдан':
         messages.error(
             request,
-            'Блок уже отправлен! Вы не можете...'
+            'Блок уже выдан! Вы не можете...'
         )
         return redirect('block_info', pk)
     defect_form = Defect_statement_form(request.POST)
@@ -474,7 +488,7 @@ def create_defective_statement(request, pk):
         )
         return redirect('block_info', pk)
     date = datetime.datetime.today().strftime('%Y-%m-%d')
-    block.status = 'неисправен'
+    block.status = 'забракован'
     block.date_repair = datetime.datetime.today()
     block.save()
     defect = defect_form.save(commit=False)
@@ -489,18 +503,22 @@ def create_defective_statement(request, pk):
     )
     return redirect('block_info', pk)
 
-    
+
+@login_required
+@employee_permission    
 def view_block_maker(request):
     if "search_all" in request.GET:
         data_filter = Maker_filter(
             request.GET, queryset=Maker.objects.all()
         )
-        return render(request, 'view_block_maker.html', {'data_filter': data_filter})
+        cnt = data_filter.qs.count()
+        return render(request, 'view_block_maker.html', {'data_filter': data_filter, 'cnt': cnt,})
     today = datetime.date.today()
     last_mounth = today - datetime.timedelta(days=30)
     queryset = Maker.objects.filter(maker_status='ожидает')
     data_filter = Maker_filter(request.GET, queryset=queryset)
-    return render(request, 'view_block_maker.html', {'data_filter': data_filter})
+    cnt = data_filter.qs.count()
+    return render(request, 'view_block_maker.html', {'data_filter': data_filter, 'cnt': cnt,})
 
 
 def return_block_maker(request):
@@ -532,6 +550,8 @@ def return_block_maker(request):
     )
 
 
+@login_required
+@employee_permission
 def commit_return_block_maker(request):
     """ отправка блоков """
     if request.method != 'POST':
@@ -554,7 +574,7 @@ def commit_return_block_maker(request):
             block.note_maker = passed
             block.date_shipment_maker = date_shipment
             block.maker_status = 'отправлен'
-            return_block.status = 'производитель'
+            return_block.status = 'производителю'
             return_block.save()
             block.save()
         messages.success(request, "Блоки отправлены!")
@@ -579,7 +599,7 @@ def commit_return_block_maker(request):
             block.note_maker = passed
             block.date_add_maker = date_shipment
             block.maker_status = 'забракован'
-            return_block.status = 'неисправен'
+            return_block.status = 'забракован'
             return_block.note = 'Забракован производителем'
             return_block.date_repair = date_shipment
             return_block.save()
@@ -588,6 +608,8 @@ def commit_return_block_maker(request):
         return redirect("view_block_maker")
 
 
+@login_required
+@employee_permission
 def send_block_maker(request, pk):
     block = get_object_or_404(Record_block, pk=pk)
     if request.method != 'POST':
@@ -609,7 +631,7 @@ def send_block_maker(request, pk):
     form = form.save(commit=False)
     form.maker_status = 'ожидает'
     form.save()
-    block.status = 'производитель'
+    block.status = 'производителю'
     block.save()
     messages.success(
         request,
@@ -618,6 +640,8 @@ def send_block_maker(request, pk):
     return redirect('block_info', pk)
 
 
+@login_required
+@employee_permission
 def open_defect_statement(request, pk):
     block = get_object_or_404(Record_block, pk=pk)
     try:
@@ -648,6 +672,8 @@ def open_defect_statement(request, pk):
 # ------------------------------------ Компоненты -----------------------------------------------------
 
 
+@login_required
+@employee_permission
 def view_components(request):
     """ страница с информацие о компонентах и расходе за 30 дней. """
     components = Component.objects.annotate(
@@ -677,6 +703,7 @@ def view_components(request):
 
 
 @login_required
+@employee_permission
 def new_component(request):
     """ создать (добавить) новый компонент """
     if request.method != 'POST':
@@ -695,6 +722,7 @@ def new_component(request):
     
 
 @login_required
+@employee_permission
 def update_amount(request):
     """ изменить (прибавить) количество компонента """
     if request.method != 'POST':
@@ -740,6 +768,7 @@ def update_amount(request):
 
 
 @login_required
+@employee_permission
 def update_price(request):
     """ изменение цены компонента """
     if request.method != 'POST':
@@ -759,6 +788,7 @@ def update_price(request):
 
 
 @login_required
+@employee_permission
 def return_component(request, pk, block):
     """ вернуть компонент, списанный на блок """
     record_component = get_object_or_404(Record_component, pk=pk)
@@ -779,6 +809,8 @@ def return_component(request, pk, block):
     return redirect("block_info", block)
 
 
+@login_required
+@employee_permission
 def usage_components(request):
     components = Component.objects.all()
     usage_components = Record_component.objects.all()

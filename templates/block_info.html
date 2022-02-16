@@ -26,24 +26,24 @@ thead th {
 <hr>
 
 <div class="ms-3 me-3">
-    <table class="table table-sm table-hover">
+    <table class="table table-sm table-hover text-center">
         <thead>
           <tr>
-                <th scope="col" style="width: 5%">Учетный номер</th>
+                <th scope="col" style="width: 6%">Учетный №</th>
                 <th style="min-width: 350px;" scope="col">Наименование блока</th>
                 <th scope="col" style="width: 5%">Зав. номер</th>
                 <th scope="col" style="width: 5%">Производитель</th>
                 <th scope="col" style="width: 11%">Участок</th>
-                <th scope="col" style="width: 5%">Дата приема</th>
-                <th scope="col" style="width: 5%">Дата ремонта</th>
-                <th scope="col" style="width: 5%">Дата отправки</th>
+                <th scope="col" style="width: 7%">Дата приема</th>
+                <th scope="col" style="width: 7%">Дата ремонта</th>
+                <th scope="col" style="width: 7%">Дата отправки</th>
                 <th scope="col" style="width: 4%">Состояние</th>
                 <th scope="col" style="width: 26%">Примечание</th>
           </tr>
         </thead>
         <tbody>
             <tr>
-                <th scope="row">{{ about_block.number_block }}</th>
+                <td scope="row">{{ about_block.number_block }}</td>
                 <td>{{ about_block.name_block }}</td>
                 <td>{{ about_block.serial_number }}</td>
                 <td>{{ maker }}</td>
@@ -103,8 +103,8 @@ thead th {
                   {% else %}
                     <button type="button" class="btn btn-outline-danger nav-link zoom-menu mb-2" data-bs-toggle="modal" data-bs-target="#create_defect">Дефектная ведомость</button>
                   {% endif %}
-                  {% if about_block.status == 'производитель' %}
-                    <button type="button" class="btn btn-outline-danger nav-link zoom-menu mb-2" data-bs-toggle="modal" data-bs-target="#send_maker_block">Вернуть от производителя</button>
+                  {% if about_block.status == 'производителю' %}
+                    <button type="button" class="btn btn-outline-danger nav-link zoom-menu mb-2 disabled" data-bs-toggle="modal" data-bs-target="#send_maker_block">Отправлен производителю</button>
                   {% else %}
                     <button type="button" class="btn btn-outline-danger nav-link zoom-menu mb-2" data-bs-toggle="modal" data-bs-target="#send_maker_block">Отправить производителю</button>
                   {% endif %}

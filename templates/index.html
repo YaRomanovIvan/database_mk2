@@ -5,6 +5,9 @@
 <div class="container">
   <h1 class="text-center">Информация</h1>
   <hr>
+  {% if messages %}
+    {% include 'includes/messages.html' %}
+  {% endif %}
   {% for post in posts %}
   <div class="card text-center mb-4">
     {% load thumbnail %}
