@@ -11,13 +11,14 @@
 
 <br>
 <div class='me-3 ms-3'>
-    <p>Выделить всё <input id="select_all" type="checkbox" class="form-check-input"></p>
     {% if 'send_block' in request.GET %}
         <button type="button" name="send_block" class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#send_block">Отправка указанных блоков</button>
       {% elif 'return' in request.GET %}
         <button type="button" name="return" class="btn btn-outline-success" data-bs-toggle="modal" data-bs-target="#send_block">Возврат указанных блоков</button>
       {% elif 'defect' in request.GET %}
-        <button type="button" name="defect" class="btn btn-outline-danger" data-bs-toggle="modal" data-bs-target="#send_block">Забраковать указанные блокои</button>
+        <button type="button" name="defect" class="btn btn-outline-danger" data-bs-toggle="modal" data-bs-target="#send_block">Забраковать указанные блоки</button>
+      {% elif 'create_maker_xlsx' in request.GET %}
+        <button type="submit" name="create_maker_xlsx" class="btn btn-outline-danger">Созданть документ Excel</button>
     {% endif %}
 </div>
 
@@ -25,7 +26,15 @@
     <div class="modal-dialog">
       <div class="modal-content">
         <div class="modal-header">
-          <h5 class="modal-title" id="staticBackdropLabel">Возврат блоков от производителя</h5>
+          <h5 class="modal-title" id="staticBackdropLabel">
+            {% if 'send_block' in request.GET %}
+              Отправка указанных блоков
+            {% elif 'return' in request.GET %}
+              Возврат указанных блоков
+           {% elif 'defect' in request.GET %}
+              Забраковать указанные блоки
+            {% endif %}
+          </h5>
           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
         <form action='{% url "add_new_region" %}' method='POST'>
@@ -42,8 +51,8 @@
             {% endfor %}
           </div>
           <div class="modal-footer">
-            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-            <button type="submit" name={{ status_block }} class="btn btn-primary">{{ status_block }}</button>
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Закрыть</button>
+            <button type="submit" name={{ status_block }} class="btn btn-primary">Принять</button>
           </div>
         </form>
       </div>

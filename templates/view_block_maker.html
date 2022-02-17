@@ -8,6 +8,7 @@
 <div class='container'>
     {% include 'includes/messages.html' %}
   </div>
+
 <form class="ms-1 me-1" method='GET'>
     {% csrf_token %}
     <div class="row">
@@ -73,6 +74,7 @@
           <button type="submit" name="send_block" class="btn btn-outline-primary">Отправка указанных блоков</button>
           <button type="submit" name="return" class="btn btn-outline-success">Возврат указанных блоков</button>
           <button type="submit" name="defect" class="btn btn-outline-danger">Забраковать указанные блоки</button>
+          <button type="submit" name="create_maker_xlsx" class="btn btn-outline-danger">Созданть документ Excel</button>
         </div>
 
         {% include 'includes/maker_block_item.html' %}
@@ -89,6 +91,17 @@
   $(document).ready(function() {
       $('.component_multiple_select2').select2({ width: '100%', height: '100%' });
   });
+  document.getElementById('select_all')
+  .addEventListener('click', function (e) {
+    var els = document.querySelectorAll(
+      'input[name=checkbox]'
+    );
+
+    Array.prototype.forEach.call(els, function(cb){
+      cb.checked = e.target.checked;
+    });
+  })
+;
 </script>
 
 {% endblock %}

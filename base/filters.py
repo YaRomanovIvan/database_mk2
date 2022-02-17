@@ -1,10 +1,15 @@
 from django import forms
 import django_filters
-from .models import Record_block, Component, Record_component, Defect_statement, Maker, Type_block
+from .models import Maker_company, Record_block, Component, Record_component, Defect_statement, Maker, Type_block
 
 
 class One_block_filter(django_filters.FilterSet):
     number_block = django_filters.NumberFilter()
+    maker = django_filters.ModelChoiceFilter( queryset=Maker_company.objects.all(),
+        field_name='Производитель', method='get_maker', label="Производитель")
+
+    def get_maker(self, queryset, field_name, value):
+        return queryset.filter(name_block__maker=value)
 
     class Meta:
         model = Record_block
@@ -32,6 +37,11 @@ class Block_filter(django_filters.FilterSet):
     FIO = django_filters.CharFilter(
         lookup_expr='icontains',
     )
+    maker = django_filters.ModelChoiceFilter( queryset=Maker_company.objects.all(),
+        field_name='Производитель', method='get_maker', label="Производитель")
+
+    def get_maker(self, queryset, field_name, value):
+        return queryset.filter(name_block__maker=value)
 
     class Meta:
         model = Record_block
@@ -57,8 +67,8 @@ class Maker_filter(django_filters.FilterSet):
     serial_number = django_filters.CharFilter(
         lookup_expr='icontains',
     )
-    date_add = django_filters.DateFromToRangeFilter()
-    date_shipment = django_filters.DateFromToRangeFilter()
+    date_add_maker = django_filters.DateFromToRangeFilter()
+    date_shipment_maker = django_filters.DateFromToRangeFilter()
     class Meta:
         model = Maker
         fields = ("__all__")

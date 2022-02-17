@@ -14,7 +14,7 @@ from .forms_components import (
 )
 #from .forms_order import Create_request_form
 from users.permissions import employee_permission, admin_permission
-from .utils import calculate_component, create_statement
+from .utils import calculate_component, create_statement, create_repair_maker
 
 
 @login_required
@@ -33,18 +33,8 @@ def viewing_block(request):
     today = datetime.date.today()
     last_mounth = today - datetime.timedelta(days=30)
     if "one_block_filter" in request.GET:
-        data_filter = One_block_filter(
-            request.GET, queryset=Record_block.objects.all()
-        )
-        cnt = data_filter.qs.count()
-        return render(
-            request,
-            "viewing-block.html",
-            {
-                "data_filter": data_filter,
-                "cnt": cnt,
-            },
-        )
+        block = get_object_or_404(Record_block, pk=request.GET['number_block'])
+        return redirect('block_info', block.pk)
     if "search_all" in request.GET:
         data_filter = Block_filter(
             request.GET, queryset=Record_block.objects.all()
@@ -61,7 +51,7 @@ def viewing_block(request):
 
     queryset = Record_block.objects.prefetch_related(
         "name_block", "region"
-    ).filter(date_add__range=(last_mounth, today))
+    ).filter(date_add__range=(last_mounth, today))[:200]
     data_filter = Block_filter(request.GET, queryset=queryset)
     cnt = data_filter.qs.count()
 
@@ -82,18 +72,8 @@ def records_block(request):
     today = datetime.date.today()
     last_mounth = today - datetime.timedelta(days=30)
     if "one_block_filter" in request.GET:
-        data_filter = One_block_filter(
-            request.GET, queryset=Record_block.objects.all()
-        )
-        cnt = data_filter.qs.count()
-        return render(
-            request,
-            "viewing-block.html",
-            {
-                "data_filter": data_filter,
-                "cnt": cnt,
-            },
-        )
+        block = get_object_or_404(Record_block, pk=request.GET['number_block'])
+        return redirect('block_info', block.pk)
     if "search_all" in request.GET:
         data_filter = Block_filter(
             request.GET, queryset=Record_block.objects.all()
@@ -113,7 +93,7 @@ def records_block(request):
 
     queryset = Record_block.objects.prefetch_related(
         "name_block", "region"
-    ).filter(date_add__range=(last_mounth, today))
+    ).filter(date_add__range=(last_mounth, today))[:200]
     data_filter = Block_filter(request.GET, queryset=queryset)
     cnt = data_filter.qs.count()
 
@@ -537,6 +517,8 @@ def return_block_maker(request):
         status_block = 'return_block'
     elif 'defect' in request.GET:
         status_block = 'defect_block'
+    elif 'create_maker_xlsx' in request.GET:
+        status_block = 'create_maker_xlsx'
 
     return render(
         request,
@@ -606,7 +588,32 @@ def commit_return_block_maker(request):
             block.save()
         messages.success(request, "Блоки возвращены!")
         return redirect("view_block_maker")
-
+    if "create_maker_xlsx" in request.POST:
+        print(number_id)
+        qs = Maker.objects.filter(block__pk__in=number_id)
+        for i in qs:
+            print(i.number_block)
+        create_repair_maker(qs)
+        try:
+            dest_filename = "repair_maker.xlsx"
+            path_open = os.path.join(
+                os.getcwd(),
+                "base/Maker/{}".format(
+                    dest_filename.replace("/", "")
+                ),
+            )
+            return FileResponse(
+                open(
+                    path_open,
+                    "rb",
+                )
+            )
+        except:
+            messages.error(
+                request,
+                'Ошибка! Файл поврежден!'
+            )
+            return redirect("view_block_maker")
 
 @login_required
 @employee_permission
@@ -635,7 +642,7 @@ def send_block_maker(request, pk):
     block.save()
     messages.success(
         request,
-        'Блок отправлен производителю для ремонта!'
+        'Блок добавлен в список отправки!'
     )
     return redirect('block_info', pk)
 
