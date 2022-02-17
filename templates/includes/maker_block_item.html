@@ -41,7 +41,7 @@ thead th {
               <td style="text-align: left;">{{ bb.reason|default_if_none:"" }}</td>
             </tr>
             {%elif bb.maker_status == 'отправлен'%}
-            <tr>
+            <tr style="color:DarkGoldenRod;">
               <td><input class="form-check-input" type="checkbox" name="checkbox" value="{{ bb.number_block }}" id='{{ bb.number_block }}'></td>
               <td><a href="{% url 'block_info' bb.number_block %}">{{ bb.number_block }}</a></td>
               <td style="text-align: left;">{{ bb.name_block }}</td>
@@ -67,7 +67,7 @@ thead th {
               <td style="text-align: left;">{{ bb.reason|default_if_none:"" }}</td>
             </tr>
             {% elif bb.maker_status == 'ожидает' %}
-            <tr class="text-orange">
+            <tr>
                 <td><input class="form-check-input" type="checkbox" name="checkbox" value="{{ bb.number_block }}" id='{{ bb.number_block }}'></td>
                 <td><a href="{% url 'block_info' bb.number_block %}">{{ bb.number_block }}</a></td>
                 <td style="text-align: left;">{{ bb.name_block }}</td>

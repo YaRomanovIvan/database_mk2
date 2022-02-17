@@ -53,6 +53,19 @@ thead th {
             <td>{{ bb.status }}</td>
             <td style="text-align: left;">{{ bb.note|default_if_none:"" }}</td>
         </tr>
+        {%elif bb.status == 'производителю'%}
+        <tr style="color:DarkGoldenRod;">
+          <td><input class="form-check-input" type="checkbox" name="checkbox" value="{{bb.pk}}" id='{{bb.pk}}'></td>
+            <td scope="row"><a href="{% url 'block_info' bb.pk %}">{{bb.pk}}</a></td>
+            <td style="text-align: left;">{{ bb.name_block }}</td>
+            <td>{{ bb.serial_number }}</td>
+            <td>{{ bb.region }}</td>
+            <td>{{ bb.date_add|date:"d.m.Y" }}</td>
+            <td>{{ bb.date_repair|date:"d.m.Y" }}</td>
+            <td>{{ bb.date_shipment|date:"d.m.Y" }}</td>
+            <td>{{ bb.status }}</td>
+            <td style="text-align: left;">{{ bb.note|default_if_none:"" }}</td>
+        </tr>
         {% elif bb.status == 'готов' and bb.date_repair != null %}
         <tr class="text-primary">
           <td><input class="form-check-input" type="checkbox" name="checkbox" value="{{bb.pk}}" id='{{bb.pk}}'></td>
