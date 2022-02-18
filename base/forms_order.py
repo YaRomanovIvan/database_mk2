@@ -1,8 +1,8 @@
 from django import forms
-from .models import Request
+from .models import Order
 
 
 class Create_request_form(forms.ModelForm):
     class Meta:
-        model = Request
+        model = Order
         fields = ("__all__")

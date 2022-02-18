@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+{% load user_filters %}
+{% block title %}Заказы{% endblock %}
+
+{% block content %}
+<div class='container'>
+    <form  method='POST'>
+        {% csrf_token %}
+        <div class="row">
+            <div class='col'>
+            {{ processing_order_form.amount_order.errors }}
+            {{ processing_order_form.amount_order.label_tag }}
+            {{ processing_order_form.amount_order|addclass:"form-control form-control-sm" }}
+            </div>
+            <div class="col">
+                {{ processing_order_form.provider.label_tag }}
+                {{ processing_order_form.provider|addclass:"form-control form-control-sm" }}
+                {{ processing_order_form.status.as_hidden }}
+            </div>
+            <div class="col pt-4">
+                <button type="submit" class="btn btn-sm btn-primary btn-block">Обработать</button>
+            </div>
+        </div>
+</form>
+</div>
+
+{% endblock %}

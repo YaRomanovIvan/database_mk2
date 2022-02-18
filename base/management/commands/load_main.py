@@ -6,14 +6,14 @@ from django.core.management.base import BaseCommand
 from base.models import Record_block, Type_block, Unit
 from database.settings import BASE_DIR
 
-CSV_FILE_PATH = os.path.join(BASE_DIR, "baseTRK.csv")
+CSV_FILE_PATH = os.path.join(BASE_DIR, "baseTRKUTF8.csv")
 
 
 class Command(BaseCommand):
     help = "Load record block"
 
     def handle(self, *args, **options):
-        with open(CSV_FILE_PATH) as file:
+        with open(CSV_FILE_PATH, encoding='utf-8') as file:
             reader = csv.reader(file)
             for row in reader:
                 row = row[0].split(';')
@@ -38,7 +38,7 @@ class Command(BaseCommand):
                             FIO='admin',
                             date_repair=row[4],
                             date_shipment=row[5],
-                            status='отправлен',
+                            status='выдан',
                             note=row[7],
                             passed='Старые записи',
                         )
@@ -63,7 +63,7 @@ class Command(BaseCommand):
                             region=region,
                             date_add=row[3],
                             FIO='admin',
-                            status='ожидает',
+                            status='принят',
                             note=row[7],
                             passed='Старые записи',
                         )

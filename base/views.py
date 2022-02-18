@@ -1,18 +1,19 @@
 import datetime
+from multiprocessing import context
 import os
 from django.http import FileResponse
 from django.shortcuts import get_object_or_404, render, redirect
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.db.models import Sum
-from .models import Defect_statement, Post, Record_block, Type_block, Component, User, Record_component, Maker
-from .filters import Block_filter, One_block_filter, Components_filter, Record_components_filter, Maker_filter
+from .models import Defect_statement, Post, Record_block, Type_block, Component, User, Record_component, Maker, Order
+from .filters import Block_filter, Components_filter, Record_components_filter, Maker_filter
 from .forms_block import Defect_statement_form, Record_block_form, Repair_block_form, Type_block_form, Unit_form, Send_block_form, MakerForm, Return_maker_block_form
 from .forms_components import (
     New_component_form,
     Edit_component_form, Update_amount_form, Update_price_form
 )
-#from .forms_order import Create_request_form
+from .forms_order import Create_request_form
 from users.permissions import employee_permission, admin_permission
 from .utils import calculate_component, create_statement, create_repair_maker
 
@@ -502,10 +503,10 @@ def view_block_maker(request):
 
 
 def return_block_maker(request):
-    """ промежуточная страница возврата блоков """
+    """ промежуточная страница блоков производителей """
     number_id = request.GET.getlist("checkbox")
     if not number_id:
-        messages.error(request, "Выберите блоки для отправки!")
+        messages.error(request, "Выберите блоки!")
         return redirect("view_block_maker")
     queryset = Maker.objects.filter(number_block__in=number_id)
     data_filter = Maker_filter(request.GET, queryset=queryset)
@@ -828,43 +829,84 @@ def usage_components(request):
 # ------------------------------------ Заявки и заказы ------------------------------------------------
 
 
-#def request_component(request):
-#    """ просмотр заявок """
-#    queryset = Request.objects.all()
-#    context = {
-#        'queryset': queryset,
-#        'create_request_form': Create_request_form(),
-#    }
-#    return render(request, 'request_components.html', context)
+def view_order(request):
+    """ просмотр заявок """
+    queryset = Order.objects.all()
+    context = {
+        'queryset': queryset,
+        'create_request_form': Create_request_form(),
+        'processing_order_form': Create_request_form(),
+    }
+    return render(request, 'view_order.html', context)
 
 
-#def create_request(request):
-#    """ Создание заявки на компонент """
-#    if request.method != 'POST':
-#        return redirect('request_component')
-#    form = Create_request_form(request.POST)
-#    user = get_object_or_404(User, username=request.user)
-#    if not form.is_valid():
-#        return redirect('request_component')
-#    create = form.save(commit=False)
-#    component = form.cleaned_data.get("component")
-#    request_component = Request.objects.filter(
-#        user=user, component=component, status="ожидает"
-#    ).exists()
-#    if request_component:
-#        messages.error(
-#            request, 
-#                f"Вы уже создали заявку на компонент <b>{component}</b>.<br>" +
-#                f"Отредактируйте существующию заявку, либо дождитесь рассмотрения."
-#            
-#        )
-#        return redirect('request_component')
-#    create.user = user
-#    form.save()
-#    messages.success(
-#        request, f"Заявка на компонент <b>{create.component}</b> создана!"
-#    )
-#    return redirect('request_component')
+def create_request(request):
+    """ Создание заявки на компонент """
+    if request.method != 'POST':
+        return redirect('view_order')
+    form = Create_request_form(request.POST)
+    user = get_object_or_404(User, username=request.user)
+    if not form.is_valid():
+        return redirect('view_order')
+    create = form.save(commit=False)
+    date = datetime.datetime.today()
+    component = form.cleaned_data.get("component")
+    order_exists = Order.objects.filter(
+        component=component,
+        status='ожидает'
+    )
+    if order_exists:
+        for i in order_exists:
+            user_in_order = i.user.split(', ')
+    for i in order_exists:
+        print(i.user)
+        if user.last_name in i.user.split(', '):
+            messages.error(
+                request, 
+                    f"Вы уже создали заявку на компонент {component}"
+            )
+            return redirect('view_order')
+
+    if order_exists.exists():
+        order = get_object_or_404(Order,
+            component=component,
+            status='ожидает'
+        )
+        amount = form.cleaned_data.get("amount")
+        order.amount += amount
+        order.user += f', {user.last_name}'
+        order.save()
+        messages.success(
+            request, 
+            f"Заявка на компонент <b>{create.component}</b> уже существует!" +
+            f"Вы были присоеденены к заявке!"
+        )
+        return redirect('view_order')
+        
+    create.user = user.last_name
+    create.date_created = date
+    form.save()
+    messages.success(
+        request, f"Заявка на компонент <b>{create.component}</b> создана!"
+    )
+    return redirect('view_order')
+
+
+def processing_order(request, pk):
+    order = get_object_or_404(Order, pk=pk)
+    if request.method != 'POST':
+        context = {
+            'processing_order_form': Create_request_form(instance=order)
+        }
+        return render(request, 'processing_order.html', context)
+    form = Create_request_form(request.POST, instance=order)
+    if not form.is_valid():
+        return redirect('view_order')
+    context = {
+        'processing_order_form': Create_request_form(instance=order)
+    }
+    return render(request, 'processing_order.html', context)
+    
 
 
 #def edit_request(request, pk):

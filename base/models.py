@@ -76,7 +76,7 @@ class Component(models.Model):
         max_length=100,
         null=True,
         blank=True,
-        verbose_name="Примечание",
+        verbose_name="Корпус",
     )
     amount_eis = models.IntegerField(
         validators=[validators.MinValueValidator(0)],
@@ -345,13 +345,15 @@ class Maker(models.Model):
         ordering = ["-id"]
 
 
-class Request(models.Model):
+class Order(models.Model):
     wait = "ожидает"
-    ready = "обработан"
+    processing = "обработан"
+    order = "заказан"
     commit = "получен"
     CHOICE = [
         (wait, "ожидает"),
-        (ready, "обработан"),
+        (processing, "обработан"),
+        (order, "заказан"),
         (commit, "получен"),
     ]
     component = models.ForeignKey(
@@ -364,9 +366,41 @@ class Request(models.Model):
     amount = models.PositiveIntegerField(
         verbose_name='Количество',
     )
-    created = models.DateField(
-        auto_now_add=True,
+    amount_order = models.PositiveIntegerField(
+        verbose_name='Заказано',
+        blank=True,
+        null=True,
+    )
+    amount_commit = models.PositiveIntegerField(
+        verbose_name='Получено',
+        blank=True,
+        null=True,
+    )
+    date_created = models.DateField(
+        blank=True,
+        null=True,
         verbose_name='Дата заявки',
+    )
+    date_processing = models.DateField(
+        blank=True,
+        null=True,
+        verbose_name='Дата обработки',
+    )
+    date_order = models.DateField(
+        blank=True,
+        null=True,
+        verbose_name='Дата заказа',
+    )
+    date_commit = models.DateField(
+        blank=True,
+        null=True,
+        verbose_name='Дата получения',
+    )
+    provider = models.CharField(
+        max_length=100,
+        verbose_name='Поставщик',
+        blank=True,
+        null=True,
     )
     status = models.CharField(
         max_length=25,
@@ -375,13 +409,17 @@ class Request(models.Model):
         choices=CHOICE,
         default=wait,
     )
-    user = models.ForeignKey(
-        User,
-        on_delete=SET_NULL,
-        verbose_name='Пользователь',
-        related_name='user_request',
-        null=True,
+    invoice_number = models.CharField(
+        max_length=100,
+        verbose_name='Номер счета',
         blank=True,
+        null=True,
+    )
+    user = models.CharField(
+        max_length=180,
+        verbose_name='ФИО',
+        blank=True,
+        null=True,
     )
     note = models.CharField(
         max_length=100,
@@ -391,47 +429,12 @@ class Request(models.Model):
     )
 
     def __str__(self):
-        return f'{self.component}, {self.user}, {self.created}'
+        return f'{self.component}'
 
-    class Meta:
-        verbose_name_plural = "Заявки"
-        verbose_name = "Заявка"
-        ordering = ["-pk"]
-
-
-class Order(models.Model):
-
-    component = models.ManyToManyField(
-        Request,
-        verbose_name='Компоненты',
-        related_name='order_component',
-    )
-    date_processing = models.DateField(
-        auto_now_add=True,
-        verbose_name='Дата обработки заявки'
-    )
-    date_order = models.DateField(
-        verbose_name='Дата заказа'
-    )
-    date_receipt = models.DateField(
-        verbose_name='Дата получения',
-        blank=True,
-        null=True,
-    )
-    invoice_number = models.CharField(
-        max_length=100,
-        verbose_name='Номер счета',
-    )
-
-    def __str__(self):
-        return self.invoice_number
-    
     class Meta:
         verbose_name_plural = "Заказы"
         verbose_name = "Заказ"
         ordering = ["-pk"]
-
-
 
 
 class Defect_statement(models.Model):

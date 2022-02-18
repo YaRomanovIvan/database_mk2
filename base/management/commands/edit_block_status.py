@@ -15,6 +15,8 @@ class Command(BaseCommand):
         print('Ожидайте...')
         print('----------------------------')
         for get in qs:
+            if get.number_block == 93318:
+                break
             if get.status == 'отправлен':
                 get.status = ship
             elif get.status == 'ожидает':
@@ -23,6 +25,7 @@ class Command(BaseCommand):
                 get.status = maker
             elif get.status == 'неисправен':
                 get.status = red
+            print(get.number_block)
             get.save()
         print('----------------------------')
         print('Конец')
