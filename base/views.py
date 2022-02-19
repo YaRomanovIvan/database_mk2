@@ -805,7 +805,7 @@ def view_order(request):
         queryset=Order.objects.all()
     ).qs
     cnt = data_filter.count()
-    paginator = Paginator(data_filter, 2)
+    paginator = Paginator(data_filter, 50)
     page_number = request.GET.get("page")
     page = paginator.get_page(page_number)
 

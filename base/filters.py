@@ -150,6 +150,18 @@ class Order_filter(django_filters.FilterSet):
     date_created = django_filters.DateFromToRangeFilter()
     date_processing = django_filters.DateFromToRangeFilter()
     date_order = django_filters.DateFromToRangeFilter()
+    delivery_time = django_filters.CharFilter(
+        lookup_expr='icontains',
+        label='Срок поставки',
+    )
+    invoice_number = django_filters.CharFilter(
+        lookup_expr='icontains',
+        label='Номер счета',
+    )
+    provider = django_filters.CharFilter(
+        lookup_expr='icontains',
+        label='Поставщик',
+    )
     class Meta:
         model = Order
         fields = ('__all__')
