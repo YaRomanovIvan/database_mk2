@@ -45,29 +45,33 @@
     <br>
     <div class="row">
       <div class="col">
-        {{ data_filter_form.form.date_created.label_tag }}
-        {{ data_filter_form.form.date_created|addclass:"form-control form-control-sm" }}
+        <label for="id_date_created_0">Дата заявки c</label>
+        <input type="date" name="date_created_after" class="form-control form-control-sm" placeholder="Дата приема" title="" id="id_date_created_0">
+        <label for="id_date_created_1">по</label>
+        <input type="date" name="date_created_before" class="form-control form-control-sm" placeholder="Дата приема" title="" id="id_date_created_1">
       </div>
       <div class="col">
-        {{ data_filter_form.form.date_processing.label_tag }}
-        {{ data_filter_form.form.date_processing|addclass:"form-control form-control-sm" }}
+        <label for="id_date_processing_0">Дата обработки c</label>
+        <input type="date" name="date_processing_after" class="form-control form-control-sm" placeholder="Дата приема" title="" id="id_date_processing_0">
+        <label for="id_date_processing_1">по</label>
+        <input type="date" name="date_processing_before" class="form-control form-control-sm" placeholder="Дата приема" title="" id="id_date_processing_1">
       </div>
       <div class="col">
-        {{ data_filter_form.form.date_order.label_tag }}
-        {{ data_filter_form.form.date_order|addclass:"form-control form-control-sm" }}
+        <label for="id_date_order_0">Дата заказа c</label>
+        <input type="date" name="date_order_after" class="form-control form-control-sm" placeholder="Дата приема" title="" id="id_date_order_0">
+        <label for="id_date_order_1">по</label>
+        <input type="date" name="date_order_before" class="form-control form-control-sm" placeholder="Дата приема" title="" id="id_date_order_1">
       </div>
       <div class="col">
-        {{ data_filter_form.form.date_commit.label_tag }}
-        {{ data_filter_form.form.date_commit|addclass:"form-control form-control-sm" }}
-      </div>
-      <div class="col">
-        {{ data_filter_form.form.date_created.label_tag }}
-        {{ data_filter_form.form.date_created|addclass:"form-control form-control-sm" }}
+        <label for="id_date_commit_0">Дата заказа c</label>
+        <input type="date" name="date_commit_after" class="form-control form-control-sm" placeholder="Дата приема" title="" id="id_date_commit_0">
+        <label for="id_date_commit_1">по</label>
+        <input type="date" name="date_commit_before" class="form-control form-control-sm" placeholder="Дата приема" title="" id="id_date_commit_1">
       </div>
     </div>
     <br>
     <div class="row">
-        <button type="submit" class="btn btn-sm btn-primary btn-block">Применить</button>
+        <button type="submit" class="btn btn-dark btn-sm btn-primary btn-block">Применить</button>
     </div>
 
   </div>
