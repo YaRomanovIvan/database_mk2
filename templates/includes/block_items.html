@@ -26,7 +26,7 @@ thead th {
           </tr>
         </thead>
         <tbody>
-        {% for bb in data_filter.qs %}
+        {% for bb in page %}
         {% if bb.status == 'забракован' %}
         <tr class="text-danger">
             <td><input class="form-check-input" type="checkbox" name="checkbox" value="{{bb.pk}}" id='{{bb.pk}}'></td>

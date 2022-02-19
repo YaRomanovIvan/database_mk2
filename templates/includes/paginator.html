@@ -1,0 +1,26 @@
+{% load user_filters %}
+
+<nav aria-label="Переключение страниц">
+    <ul class="pagination">
+      {% if items.has_previous %}
+          <li class="page-item"><a class="page-link" href="{% my_url items.previous_page_number 'page' request.GET.urlencode  %}">Предыдущая</a></li>
+      {% else %}
+          <li class="page-item disabled"><a class="page-link" href="#" tabindex="-1" aria-disabled="true">Предыдущая</a></li>
+      {% endif %}
+      {% page_range as page_range %}
+      {% for i in page_range %}
+          {% if items.number == i %}
+          <li class="page-item active"><span class="page-link">{{ i }}<span class="sr-only"></span></span></li>
+          {% else %}
+          <li class="page-item"><a class="page-link" href="{% my_url i 'page' request.GET.urlencode  %}">{{ i }}</a></li>
+          {% endif %}
+      {% endfor %}
+      {% if items.has_next %}
+          <li class="page-item"><a class="page-link" href="{% my_url items.next_page_number 'page' request.GET.urlencode  %}">Следующая</a></li>
+      {% else %}
+          <li class="page-item disabled"><a class="page-link" href="#" tabindex="-1" aria-disabled="true">Следующая</a></li>
+      {% endif %}
+    </ul>
+</nav>
+
+

@@ -7,7 +7,18 @@
 {% include 'includes/block_filter.html' %}
 
 {% include 'includes/block_items.html' %}
-
+<div class="row">
+    <div class="col">
+    </div>
+    <div class="col">
+      {% if page.has_other_pages %}
+        {% include "includes/paginator.html" with items=page paginator=paginator%}
+      {% endif %}
+    </div>
+    <div class="col">
+    </div>
+</div>
+  
 <script>
 $(document).ready(function() {
     $('#id_name_block').select2();

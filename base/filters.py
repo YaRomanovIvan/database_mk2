@@ -1,6 +1,6 @@
 from django import forms
 import django_filters
-from .models import Maker_company, Record_block, Component, Record_component, Defect_statement, Maker, Type_block
+from .models import Maker_company, Record_block, Component, Record_component, Defect_statement, Maker, Type_block, Order
 
 
 class One_block_filter(django_filters.FilterSet):
@@ -73,6 +73,7 @@ class Maker_filter(django_filters.FilterSet):
         model = Maker
         fields = ("__all__")
 
+
 class Components_filter(django_filters.FilterSet):
     type_component = django_filters.CharFilter(
         lookup_expr='icontains',
@@ -142,3 +143,13 @@ class Defect_filter(django_filters.FilterSet):
             'region',
             'date_add',
         )
+
+    
+class Order_filter(django_filters.FilterSet):
+    date_commit = django_filters.DateFromToRangeFilter()
+    date_created = django_filters.DateFromToRangeFilter()
+    date_processing = django_filters.DateFromToRangeFilter()
+    date_order = django_filters.DateFromToRangeFilter()
+    class Meta:
+        model = Order
+        fields = ('__all__')

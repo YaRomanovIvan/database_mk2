@@ -18,6 +18,62 @@
 </div>
 <hr>
 
+<form method="get">
+  <div class="container">
+    <div class="row">
+      <div class="col-4">
+        {{ data_filter_form.form.component.label_tag }}
+        {{ data_filter_form.form.component|addclass:"form-control form-control-sm" }}
+      </div>
+      <div class="col">
+        {{ data_filter_form.form.delivery_time.label_tag }}
+        {{ data_filter_form.form.delivery_time|addclass:"form-control form-control-sm" }}
+      </div>
+      <div class="col">
+        {{ data_filter_form.form.provider.label_tag }}
+        {{ data_filter_form.form.provider|addclass:"form-control form-control-sm" }}
+      </div>
+      <div class="col">
+        {{ data_filter_form.form.status.label_tag }}
+        {{ data_filter_form.form.status|addclass:"form-control form-control-sm" }}
+      </div>
+      <div class="col">
+        {{ data_filter_form.form.invoice_number.label_tag }}
+        {{ data_filter_form.form.invoice_number|addclass:"form-control form-control-sm" }}
+      </div>
+    </div>
+    <br>
+    <div class="row">
+      <div class="col">
+        {{ data_filter_form.form.date_created.label_tag }}
+        {{ data_filter_form.form.date_created|addclass:"form-control form-control-sm" }}
+      </div>
+      <div class="col">
+        {{ data_filter_form.form.date_processing.label_tag }}
+        {{ data_filter_form.form.date_processing|addclass:"form-control form-control-sm" }}
+      </div>
+      <div class="col">
+        {{ data_filter_form.form.date_order.label_tag }}
+        {{ data_filter_form.form.date_order|addclass:"form-control form-control-sm" }}
+      </div>
+      <div class="col">
+        {{ data_filter_form.form.date_commit.label_tag }}
+        {{ data_filter_form.form.date_commit|addclass:"form-control form-control-sm" }}
+      </div>
+      <div class="col">
+        {{ data_filter_form.form.date_created.label_tag }}
+        {{ data_filter_form.form.date_created|addclass:"form-control form-control-sm" }}
+      </div>
+    </div>
+    <br>
+    <div class="row">
+        <button type="submit" class="btn btn-sm btn-primary btn-block">Применить</button>
+    </div>
+
+  </div>
+</form>
+<hr>
+
 <div class="modal fade" id="create_request" data-bs-backdrop="static" data-bs-keyboard="false"  aria-labelledby="staticBackdropLabel" aria-hidden="true">
   <div class="modal-dialog">
     <div class="modal-content">
@@ -54,15 +110,15 @@
 <form action="{% url 'order_components' %}" method='POST'>
   <div class='ms-3 me-3'>
     <button type="button" class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#create_request">Создать заявку</button>
-    <button type="button" class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#invoice_order">Заказать компоненты</button>
-    <button type="button" class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#commit_order">Получить компоненты</button>
+    <button type="button" class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#invoice_order">Сформировать заказ</button>
+    <button type="button" class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#commit_order">Принять поставку</button>
   </div>
   <hr>
   <div class="ms-3 me-3">
     <table class="table table-sm table-hover table-bordered text-center">
       <thead>
         <tr>
-          <th scope="col" style="width: 5%"></th>
+          <th scope="col" style="width: 3%"></th>
           <th style="min-width: 400px;" scope="col">Наименование компонента</th>
           <th scope="col">Количество</th>
           <th style="min-width: 112px;" scope="col">Дата заявки</th>
@@ -79,7 +135,7 @@
         </tr>
       </thead>
       <tbody>
-        {% for bb in queryset %}
+        {% for bb in page %}
         <tr>
           <th scope="row">
             <input class="form-check-input" type="checkbox" name="checkbox" value="{{ bb.pk }}" id='{{ bb.pk }}'>&nbsp{{ bb.pk }}
@@ -161,6 +217,20 @@
     </div>
   </div>
 </form>
+
+<br>
+
+<div class="row">
+  <div class="col">
+  </div>
+  <div class="col">
+    {% if page.has_other_pages %}
+      {% include "includes/paginator.html" with items=page paginator=paginator%}
+    {% endif %}
+  </div>
+  <div class="col">
+  </div>
+</div>
 
 <script>
   $(document).ready(function() {

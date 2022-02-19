@@ -1,13 +1,13 @@
 import datetime
-from multiprocessing import context
 import os
 from django.http import FileResponse
 from django.shortcuts import get_object_or_404, render, redirect
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.db.models import Sum
 from .models import Defect_statement, Post, Record_block, Type_block, Component, User, Record_component, Maker, Order
-from .filters import Block_filter, Components_filter, Record_components_filter, Maker_filter
+from .filters import Block_filter, Components_filter, Order_filter, Record_components_filter, Maker_filter
 from .forms_block import Defect_statement_form, Record_block_form, Repair_block_form, Type_block_form, Unit_form, Send_block_form, MakerForm, Return_maker_block_form
 from .forms_components import (
     New_component_form,
@@ -31,35 +31,21 @@ def index(request):
 @login_required
 def viewing_block(request):
     """ учет блоков. Информация о блоках в центре """
-    today = datetime.date.today()
-    last_mounth = today - datetime.timedelta(days=30)
     if "one_block_filter" in request.GET:
         block = get_object_or_404(Record_block, pk=request.GET['number_block'])
         return redirect('block_info', block.pk)
-    if "search_all" in request.GET:
-        data_filter = Block_filter(
-            request.GET, queryset=Record_block.objects.all()
-        )
-        cnt = data_filter.qs.count()
-        return render(
-            request,
-            "viewing-block.html",
-            {
-                "data_filter": data_filter,
-                "cnt": cnt,
-            },
-        )
-
-    queryset = Record_block.objects.prefetch_related(
-        "name_block", "region"
-    ).filter(date_add__range=(last_mounth, today))[:200]
+    queryset = Record_block.objects.all()
     data_filter = Block_filter(request.GET, queryset=queryset)
     cnt = data_filter.qs.count()
+    paginator = Paginator(data_filter.qs, 200)
+    page_number = request.GET.get("page")
+    page = paginator.get_page(page_number)
 
     return render(
         request,
         "viewing-block.html",
-        {
+        {   "page": page,
+            'paginator': paginator,
             "data_filter": data_filter,
             "cnt": cnt,
         },
@@ -75,33 +61,19 @@ def records_block(request):
     if "one_block_filter" in request.GET:
         block = get_object_or_404(Record_block, pk=request.GET['number_block'])
         return redirect('block_info', block.pk)
-    if "search_all" in request.GET:
-        data_filter = Block_filter(
-            request.GET, queryset=Record_block.objects.all()
-        )
-        cnt = data_filter.qs.count()
-        return render(
-            request,
-            "records-block.html",
-            {
-                "data_filter": data_filter,
-                "cnt": cnt,
-                "type_block_form": Type_block_form(),
-                "unit_form": Unit_form(),
-                "record_block_form": Record_block_form(),
-            },
-        )
-
-    queryset = Record_block.objects.prefetch_related(
-        "name_block", "region"
-    ).filter(date_add__range=(last_mounth, today))[:200]
+    queryset = Record_block.objects.all()
     data_filter = Block_filter(request.GET, queryset=queryset)
     cnt = data_filter.qs.count()
+    paginator = Paginator(data_filter.qs, 200)
+    page_number = request.GET.get("page")
+    page = paginator.get_page(page_number)
 
     return render(
         request,
         "records-block.html",
         {
+            "page": page,
+            'paginator': paginator,
             "data_filter": data_filter,
             "cnt": cnt,
             "type_block_form": Type_block_form(),
@@ -119,7 +91,6 @@ def add_new_record_block(request):
         return redirect("records_block")
     record_block_form = Record_block_form(request.POST)
     if not record_block_form.is_valid():
-        print(record_block_form.errors)
         messages.error(request, "Ошибка формы!")
         return redirect("records_block")
     record_block_form = record_block_form.save(commit=False)
@@ -829,9 +800,21 @@ def usage_components(request):
 
 def view_order(request):
     """ просмотр заявок """
-    queryset = Order.objects.all()
+    data_filter = Order_filter(
+        request.GET,
+        queryset=Order.objects.all()
+    ).qs
+    cnt = data_filter.count()
+    paginator = Paginator(data_filter, 2)
+    page_number = request.GET.get("page")
+    page = paginator.get_page(page_number)
+
     context = {
-        'queryset': queryset,
+        'data_filter': data_filter,
+        'cnt': cnt,
+        'paginator': paginator,
+        'page': page,
+        'data_filter_form': Order_filter(),
         'create_request_form': Create_request_form(),
         'processing_order_form': Create_request_form(),
         'invoice_number_form': Invoice_number_form(),
