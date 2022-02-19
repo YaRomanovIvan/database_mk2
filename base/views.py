@@ -13,7 +13,7 @@ from .forms_components import (
     New_component_form,
     Edit_component_form, Update_amount_form, Update_price_form
 )
-from .forms_order import Create_request_form
+from .forms_order import Create_request_form, Invoice_number_form
 from users.permissions import employee_permission, admin_permission
 from .utils import calculate_component, create_statement, create_repair_maker
 
@@ -592,8 +592,6 @@ def commit_return_block_maker(request):
     if "create_maker_xlsx" in request.POST:
         print(number_id)
         qs = Maker.objects.filter(block__pk__in=number_id)
-        for i in qs:
-            print(i.number_block)
         create_repair_maker(qs)
         try:
             dest_filename = "repair_maker.xlsx"
@@ -836,6 +834,8 @@ def view_order(request):
         'queryset': queryset,
         'create_request_form': Create_request_form(),
         'processing_order_form': Create_request_form(),
+        'invoice_number_form': Invoice_number_form(),
+        'incomplete_commit_order': Invoice_number_form(),
     }
     return render(request, 'view_order.html', context)
 
@@ -855,11 +855,7 @@ def create_request(request):
         component=component,
         status='ожидает'
     )
-    if order_exists:
-        for i in order_exists:
-            user_in_order = i.user.split(', ')
     for i in order_exists:
-        print(i.user)
         if user.last_name in i.user.split(', '):
             messages.error(
                 request, 
@@ -896,18 +892,139 @@ def processing_order(request, pk):
     order = get_object_or_404(Order, pk=pk)
     if request.method != 'POST':
         context = {
-            'processing_order_form': Create_request_form(instance=order)
+            'processing_order_form': Create_request_form(instance=order),
+            'order': order,
         }
         return render(request, 'processing_order.html', context)
     form = Create_request_form(request.POST, instance=order)
     if not form.is_valid():
-        return redirect('view_order')
+        print(form.errors)
+        context = {
+            'processing_order_form': Create_request_form(instance=order),
+            'order': order,
+        }
+        return render(request, 'processing_order.html', context)
+    form = form.save(commit=False)
+    date = datetime.datetime.today()
+    form.date_processing = date
+    form.status = 'обработан'
+    form.save()
     context = {
         'processing_order_form': Create_request_form(instance=order)
     }
-    return render(request, 'processing_order.html', context)
-    
+    return redirect('view_order')
 
+
+def commit_order(request):
+    number_id = request.POST.getlist("checkbox")
+    if not number_id:
+        messages.error(request, "Выберите заказы!")
+        return redirect("view_order")
+    error = []
+    order_date_commit = datetime.datetime.today()
+    for pk in number_id:
+        order = get_object_or_404(Order, pk=pk)
+        if order.status == 'заказан':
+            order.date_commit = order_date_commit
+            order.amount_commit = order.amount_order
+            order.status = "получен"
+            order.save()
+        else:
+            error.append(order.pk)
+    if error:
+        messages.error(
+            request,
+            f'Заявки {error} не могут быть обработаны! Проверьте их статус!'
+        )
+        return redirect("view_order")
+    messages.success(
+        request,
+        'Заявки успешно получены!'
+    )
+    return redirect("view_order")
+
+
+def order_components(request):
+    number_id = request.POST.getlist("checkbox")
+    if 'commit_order' in request.POST:
+        commit_order(request)
+        return redirect("view_order")
+    if not number_id:
+        messages.error(request, "Выберите заказы!")
+        return redirect("view_order")
+    if request.method != 'POST':
+        return redirect("view_order")
+    form = Invoice_number_form(request.POST)
+    if not form.is_valid():
+        return redirect("view_order")
+    invoice_number = form.cleaned_data['number']
+    delivery_time = form.cleaned_data['delivery_time']
+    date_order = datetime.datetime.today()
+    error = []
+    for pk in number_id:
+        order = get_object_or_404(Order, pk=pk)
+        if order.status == 'обработан':
+            order.date_order = date_order
+            order.invoice_number = invoice_number
+            order.delivery_time = delivery_time
+            order.status = "заказан"
+            order.save()
+        else:
+            error.append(order.pk)
+    if error:
+        messages.error(
+            request,
+            f'Заявки {error} не могут быть обработаны! Проверьте их статус!'
+        )
+        return redirect("view_order")
+    messages.success(
+        request,
+        'Заявки успешно заказаны!'
+    )
+    return redirect("view_order")
+
+
+def incomplete_commit_order(request, pk):
+    order = get_object_or_404(Order, pk=pk)
+    if request.method != 'POST':
+        context = {
+            'incomplete_commit_order': Create_request_form(instance=order),
+            'order': order,
+        }
+        return render(request, 'incomplete_commit_order.html', context)
+    form = Create_request_form(request.POST, instance=order)
+    if not form.is_valid():
+        context = {
+            'incomplete_commit_order': Create_request_form(instance=order),
+            'order': order,
+        }
+        return render(request, 'incomplete_commit_order.html', context)
+    form = form.save(commit=False)
+    date = datetime.datetime.today()
+    form.date_commit = date
+    form.status = 'получен'
+    form.save()
+    messages.success(
+        request,
+        'Заявка обработана! Компонент успешно получен!'
+    )
+    return redirect('view_order')
+        
+
+def cancel_order(request, pk):
+    order = get_object_or_404(Order, pk=pk)
+    if request.method != 'POST':
+        context = {
+            'order': order,
+        }
+        return render(request, 'cancel_order.html', context)
+    order.status = 'отменен'
+    order.save()
+    messages.warning(
+            request,
+            'Заявка отменена!'
+    )
+    return redirect('view_order')
 
 #def edit_request(request, pk):
 #    """ Редактирование заявки """

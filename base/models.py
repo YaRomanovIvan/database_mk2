@@ -396,6 +396,12 @@ class Order(models.Model):
         null=True,
         verbose_name='Дата получения',
     )
+    delivery_time = models.CharField(
+        max_length=15,
+        verbose_name='Срок поставки',
+        blank=True,
+        null=True,
+    )
     provider = models.CharField(
         max_length=100,
         verbose_name='Поставщик',

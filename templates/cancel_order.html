@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+{% load user_filters %}
+{% block title %}Заказы{% endblock %}
+
+{% block content %}
+<h1 class="text-center">Получение компонента</h1>
+<hr>
+<div>
+    <form  method='POST'>
+        {% csrf_token %}
+        <div class="row">
+            <div class="col">
+
+            </div>
+            <div class="col">
+                <p><b>Компонент:</b> {{ order.component }}</p>
+                <p><b>Требуется в количестве:</b> {{ order.amount }} шт.</p>
+                <p><b>Указано в заказе:</b> {{ order.amount_order }} шт.</p>
+                <p><b>Дата заявки:</b> {{ order.date_created }}</p>
+                <p><b>Фамилии:</b> {{ order.user }}</p>
+            </div>
+            <div class="col">
+                
+                <br>
+                <button type="submit" style="width: 100%;" name="cancel" class="btn btn-sm btn-primary btn-block">Отменить</button>
+            </div>
+            <div class="col">
+            </div>
+            <div class="col">
+
+            </div>
+        </div>
+</form>
+</div>
+
+{% endblock %}
