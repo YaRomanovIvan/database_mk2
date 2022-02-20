@@ -1,0 +1,30 @@
+
+    <th scope="row">
+      <input class="form-check-input" type="checkbox" name="checkbox" value="{{ bb.pk }}" id='{{ bb.pk }}'>&nbsp{{ bb.pk }}
+    </th>
+    <td style="text-align: left;">{{ bb.component }}</td>
+    <td>{{ bb.amount }}</td>
+    <td>{{ bb.date_created|date:"d.m.Y" }}</td>
+    {% if bb.date_processing %}
+    <td>{{ bb.date_processing|date:"d.m.Y" }}</td>
+    {% else %}
+    <td><a href='{% url "processing_order" bb.pk %}' class="btn btn-primary btn-sm">Обработать</a></td>
+    {% endif %}
+    <td>{{ bb.amount_order|default_if_none:"" }}</td>
+    <td>{{ bb.provider|default_if_none:"" }}</td>
+    <td>{{ bb.date_order|date:"d.m.Y" }}</td>
+    <td>{{ bb.invoice_number|default_if_none:"" }}</td>
+    {% if bb.status == 'заказан' %}
+    <td colspan="2">
+      <div class="btn-group" role="group" aria-label="Basic example">
+        <a href='{% url "incomplete_commit_order" bb.pk %}' name="commit" class="btn btn-primary btn-sm">Получить</a>
+        <a href='{% url "cancel_order" bb.pk %}' name="cancel" class="btn btn-danger btn-sm">Отменить</a>
+      </div>
+    </td>
+    {% else %}
+      <td>{{ bb.amount_commit|default_if_none:"" }}</td>
+      <td>{{ bb.date_commit|date:"d.m.Y" }}</td>
+    {% endif %}
+    <td>{{ bb.status|default_if_none:"" }}</td>
+    <td>{{ bb.delivery_time|default_if_none:"" }}</td>
+    <td>{{ bb.user|default_if_none:"" }}</td>

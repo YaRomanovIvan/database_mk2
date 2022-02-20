@@ -350,11 +350,13 @@ class Order(models.Model):
     processing = "обработан"
     order = "заказан"
     commit = "получен"
+    cancel = "отменен"
     CHOICE = [
         (wait, "ожидает"),
         (processing, "обработан"),
         (order, "заказан"),
         (commit, "получен"),
+        (cancel, "отменен"),
     ]
     component = models.ForeignKey(
         Component,

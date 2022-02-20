@@ -113,9 +113,9 @@
 
 <form action="{% url 'order_components' %}" method='POST'>
   <div class='ms-3 me-3'>
-    <button type="button" class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#create_request">Создать заявку</button>
-    <button type="button" class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#invoice_order">Сформировать заказ</button>
-    <button type="button" class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#commit_order">Принять поставку</button>
+    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#create_request">Создать заявку</button>
+    <button type="button" class="btn btn-warning" data-bs-toggle="modal" data-bs-target="#invoice_order">Сформировать заказ</button>
+    <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#commit_order">Принять поставку</button>
   </div>
   <hr>
   <div class="ms-3 me-3">
@@ -140,37 +140,27 @@
       </thead>
       <tbody>
         {% for bb in page %}
-        <tr>
-          <th scope="row">
-            <input class="form-check-input" type="checkbox" name="checkbox" value="{{ bb.pk }}" id='{{ bb.pk }}'>&nbsp{{ bb.pk }}
-          </th>
-          <td style="text-align: left;">{{ bb.component }}</td>
-          <td>{{ bb.amount }}</td>
-          <td>{{ bb.date_created|date:"d.m.Y" }}</td>
-          {% if bb.date_processing %}
-          <td>{{ bb.date_processing|date:"d.m.Y" }}</td>
+          {% if bb.status == 'отменен' %}
+            <tr class="text-danger">
+              {% include "includes/order_item_table.html" %}
+            </tr>
+          {% elif bb.status == 'обработан' %}
+            <tr style="color:DarkGoldenRod;">
+              {% include "includes/order_item_table.html" %}
+            </tr>
+          {% elif bb.status == 'заказан' %}
+            <tr class="text-primary">
+              {% include "includes/order_item_table.html" %}
+            </tr>
+          {% elif bb.status == 'получен' %}
+            <tr class="text-success">
+              {% include "includes/order_item_table.html" %}
+            </tr>
           {% else %}
-          <td><a href='{% url "processing_order" bb.pk %}' class="btn btn-primary btn-sm">Обработать</a></td>
+            <tr>
+              {% include "includes/order_item_table.html" %}
+            </tr>
           {% endif %}
-          <td>{{ bb.amount_order }}</td>
-          <td>{{ bb.provider }}</td>
-          <td>{{ bb.date_order|date:"d.m.Y" }}</td>
-          <td>{{ bb.invoice_number }}</td>
-          {% if bb.status == 'заказан' %}
-          <td colspan="2">
-            <div class="btn-group" role="group" aria-label="Basic example">
-              <a href='{% url "incomplete_commit_order" bb.pk %}' name="commit" class="btn btn-primary btn-sm">Получить</a>
-              <a href='{% url "cancel_order" bb.pk %}' name="cancel" class="btn btn-danger btn-sm">Отменить</a>
-            </div>
-          </td>
-          {% else %}
-            <td>{{ bb.amount_commit }}</td>
-            <td>{{ bb.date_commit|date:"d.m.Y" }}</td>
-          {% endif %}
-          <td>{{ bb.status }}</td>
-          <td>{{ bb.delivery_time }}</td>
-          <td>{{ bb.user }}</td>
-        </tr>
         {% endfor %}
       </tbody>
     </table>
