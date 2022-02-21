@@ -20,7 +20,7 @@
             </div>
             <div class="col">
                 {% for field in processing_order_form %}
-                    {% if field.name == 'amount_order' or field.name == 'provider' %}
+                    {% if field.name == 'amount_order' %}
                         <div class="fieldWrapper">
                             {{ field.errors }}
                             {{ field.label_tag }} {{ field|addclass:"form-control form-control-sm" }}

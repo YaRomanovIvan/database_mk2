@@ -352,6 +352,10 @@ class Order(models.Model):
     commit = "получен"
     under = "недопоставка"
     cancel = "отменен"
+    trk = "ТРК"
+    vts = "ВТС"
+    eis = "ЭИС"
+    default = "--------"
     CHOICE = [
         (wait, "ожидает"),
         (processing, "обработан"),
@@ -359,6 +363,12 @@ class Order(models.Model):
         (commit, "получен"),
         (cancel, "отменен"),
         (under, "недопоставка"),
+    ]
+    CHOICE_COMPANY = [
+        (trk, "ТРК"),
+        (vts, "ВТС"),
+        (eis, "ЭИС"),
+        (default, "--------")
     ]
     component = models.ForeignKey(
         Component,
@@ -424,6 +434,19 @@ class Order(models.Model):
         verbose_name='Номер счета',
         blank=True,
         null=True,
+    )
+    invoice_amount = models.FloatField(
+        verbose_name='Сумма счета',
+        blank=True,
+        null=True,
+    )
+    payer = models.CharField(
+        max_length=25,
+        verbose_name='Плательщик',
+        blank=True,
+        null=True,
+        choices=CHOICE_COMPANY,
+        default=default,
     )
     user = models.CharField(
         max_length=180,

@@ -916,11 +916,22 @@ def commit_order(request):
     order_date_commit = datetime.datetime.today()
     for pk in number_id:
         order = get_object_or_404(Order, pk=pk)
+        component = get_object_or_404(
+            Component, pk=order.component.pk
+
+        )
         if order.status == 'заказан':
             order.date_commit = order_date_commit
             order.amount_commit = order.amount_order
             order.status = "получен"
+            if order.payer == 'ЭИС':
+                component.amount_eis += order.amount_order
+            elif order.payer == 'ТРК':
+                component.amount_trk += order.amount_order
+            elif order.payer == 'ВТС':
+                component.amount_vts += order.amount_order
             order.save()
+            component.save()
         else:
             error.append(order.pk)
     if error:
@@ -952,6 +963,9 @@ def order_components(request):
     if not form.is_valid():
         return redirect("view_order")
     invoice_number = form.cleaned_data['number']
+    invoice_amount = form.cleaned_data['invoice_amount']
+    payer = form.cleaned_data['payer']
+    provider = form.cleaned_data['provider']
     delivery_time = form.cleaned_data['delivery_time']
     date_order = datetime.datetime.today()
     error = []
@@ -960,6 +974,9 @@ def order_components(request):
         if order.status == 'обработан':
             order.date_order = date_order
             order.invoice_number = invoice_number
+            order.invoice_amount = invoice_amount
+            order.payer = payer
+            order.provider = provider
             order.delivery_time = delivery_time
             order.status = "заказан"
             order.save()
@@ -997,6 +1014,12 @@ def incomplete_commit_order(request, pk):
         }
         return render(request, 'incomplete_commit_order.html', context)
     form = form.save(commit=False)
+    if form.amount_commit > form.amount_order:
+        messages.error(
+        request,
+        'Вы не можете получить больше, чем заказали!'
+        )
+        return redirect('view_order')
     if form.amount_commit < form.amount_order:
         Order.objects.create(
             component=form.component,
@@ -1008,18 +1031,26 @@ def incomplete_commit_order(request, pk):
             delivery_time=form.delivery_time,
             provider=form.provider,
             invoice_number=form.invoice_number,
+            invoice_amount=form.invoice_amount,
+            payer=form.payer,
             user=form.user,
             status='недопоставка'
         )
-    if form.amount_commit > form.amount_order:
-        messages.error(
-        request,
-        'Вы не можете получить больше, чем заказали!'
-        )
-        return redirect('view_order')
+    component = get_object_or_404(
+        Component, pk=order.component.pk
+
+    )
+    print(form.amount_commit)
+    if order.payer == 'ЭИС':
+        component.amount_eis += form.amount_commit
+    elif order.payer == 'ТРК':
+        component.amount_trk += form.amount_commit
+    elif order.payer == 'ВТС':
+        component.amount_vts += form.amount_commit
     form.date_commit = date
     form.status = 'получен'
-    form.save()
+    component.save()
+#    form.save()
     messages.success(
         request,
         'Заявка обработана! Компонент успешно получен!'
