@@ -459,18 +459,19 @@ def create_defective_statement(request, pk):
 @login_required
 @employee_permission    
 def view_block_maker(request):
-    if "search_all" in request.GET:
-        data_filter = Maker_filter(
-            request.GET, queryset=Maker.objects.all()
-        )
-        cnt = data_filter.qs.count()
-        return render(request, 'view_block_maker.html', {'data_filter': data_filter, 'cnt': cnt,})
-    today = datetime.date.today()
-    last_mounth = today - datetime.timedelta(days=30)
-    queryset = Maker.objects.filter(maker_status='ожидает')
+    queryset = Maker.objects.all()
     data_filter = Maker_filter(request.GET, queryset=queryset)
+    paginator = Paginator(data_filter.qs, 100)
+    page_number = request.GET.get("page")
+    page = paginator.get_page(page_number)
     cnt = data_filter.qs.count()
-    return render(request, 'view_block_maker.html', {'data_filter': data_filter, 'cnt': cnt,})
+    context = {
+        'data_filter': data_filter,
+        'cnt':cnt,
+        'page': page,
+        'paginator': paginator,
+    }
+    return render(request, 'view_block_maker.html', context)
 
 
 def return_block_maker(request):

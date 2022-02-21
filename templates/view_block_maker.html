@@ -81,6 +81,18 @@
 
 </form>
 
+<div class="row">
+  <div class="col">
+  </div>
+  <div class="col">
+    {% if page.has_other_pages %}
+      {% include "includes/paginator.html" with items=page paginator=paginator%}
+    {% endif %}
+  </div>
+  <div class="col">
+  </div>
+</div>
+
 <script>
   $(document).ready(function() {
       $('#id_record_block').select2({ width: '100%' });
