@@ -123,7 +123,7 @@
     <p>Заказов в выборке: {{ cnt }}</p>
 </div>
   <div class="ms-3 me-3">
-    <table class="table table-sm table-hover table-bordered text-center">
+    <table class="table table-sm table-hover table-bordered text-center" id="table_order">
       <thead>
         <tr>
           <th scope="col" style="width: 1%"><input id="select_all" type="checkbox" class="form-check-input"></th>
@@ -234,6 +234,9 @@
 <script>
   $(document).ready(function() {
       $('#id_component').select2({ width: '100%' });
+  });
+  $(document).ready(function() {
+      $('#id_component_create_order').select2({ width: '100%' });
   });
   document.getElementById('select_all')
   .addEventListener('click', function (e) {

@@ -807,6 +807,7 @@ def view_order(request):
         request.GET,
         queryset=Order.objects.all()
     ).qs
+    today = datetime.datetime.today()
     cnt = data_filter.count()
     paginator = Paginator(data_filter, 50)
     page_number = request.GET.get("page")
@@ -817,6 +818,7 @@ def view_order(request):
         'cnt': cnt,
         'paginator': paginator,
         'page': page,
+        'today': today,
         'data_filter_form': Order_filter(),
         'create_request_form': Create_request_form(),
         'processing_order_form': Create_request_form(),
@@ -888,7 +890,6 @@ def processing_order(request, pk):
         return render(request, 'processing_order.html', context)
     form = Create_request_form(request.POST, instance=order)
     if not form.is_valid():
-        print(form.errors)
         context = {
             'processing_order_form': Create_request_form(instance=order),
             'order': order,
@@ -964,6 +965,9 @@ def order_components(request):
         return redirect("view_order")
     invoice_number = form.cleaned_data['number']
     invoice_amount = form.cleaned_data['invoice_amount']
+    if not invoice_number or not invoice_amount:
+        messages.error(request, "Заполните поля!")
+        return redirect("view_order")
     payer = form.cleaned_data['payer']
     provider = form.cleaned_data['provider']
     delivery_time = form.cleaned_data['delivery_time']
@@ -1040,7 +1044,6 @@ def incomplete_commit_order(request, pk):
         Component, pk=order.component.pk
 
     )
-    print(form.amount_commit)
     if order.payer == 'ЭИС':
         component.amount_eis += form.amount_commit
     elif order.payer == 'ТРК':
@@ -1050,7 +1053,7 @@ def incomplete_commit_order(request, pk):
     form.date_commit = date
     form.status = 'получен'
     component.save()
-#    form.save()
+    form.save()
     messages.success(
         request,
         'Заявка обработана! Компонент успешно получен!'

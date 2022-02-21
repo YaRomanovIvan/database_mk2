@@ -13,7 +13,7 @@
     {% endif %}
     <td>{{ bb.amount_order|default_if_none:"" }}</td>
     <td>{{ bb.provider|default_if_none:"" }}</td>
-    <td>{{ bb.date_order|date:"d.m.Y" }}</td>
+    <td id="date_order_id_js">{{ bb.date_order|date:"d.m.Y" }}</td>
     <td>{{ bb.invoice_number|default_if_none:"" }}</td>
     {% if bb.status == 'заказан' or bb.status == 'недопоставка' %}
     <td colspan="2">

@@ -1,6 +1,6 @@
 from tabnanny import verbose
 from django import forms
-from .models import Order
+from .models import Order, Component
 
 
 class Create_request_form(forms.ModelForm):
@@ -18,18 +18,26 @@ class Create_request_form(forms.ModelForm):
         choices=CHOICE_COMPANY,
         required=False,
     )
+    component = forms.ModelChoiceField(
+        queryset=Component.objects.all(),
+        label='Компонент',
+        widget=forms.Select(
+            attrs={
+                'id':'id_component_create_order'
+            }
+        ),
+
+    )
     class Meta:
         model = Order
         fields = ("__all__")
 
 
 class Invoice_number_form(forms.Form):
-    UNK = '---------'
     TRK = 'ТРК'
     EIS = 'ЭИС'
     VTS = 'ВТС'
     COMPANY_CHOICE = (
-        (UNK, '---------'),
         (TRK, 'ТРК'),
         (EIS, 'ЭИС'),
         (VTS, 'ВТС'),
