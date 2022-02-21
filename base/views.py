@@ -799,6 +799,8 @@ def usage_components(request):
 # ------------------------------------ Заявки и заказы ------------------------------------------------
 
 
+@login_required
+@employee_permission
 def view_order(request):
     """ просмотр заявок """
     data_filter = Order_filter(
@@ -824,6 +826,8 @@ def view_order(request):
     return render(request, 'view_order.html', context)
 
 
+@login_required
+@employee_permission
 def create_request(request):
     """ Создание заявки на компонент """
     if request.method != 'POST':
@@ -872,6 +876,8 @@ def create_request(request):
     return redirect('view_order')
 
 
+@login_required
+@employee_permission
 def processing_order(request, pk):
     order = get_object_or_404(Order, pk=pk)
     if request.method != 'POST':
@@ -899,6 +905,8 @@ def processing_order(request, pk):
     return redirect('view_order')
 
 
+@login_required
+@employee_permission
 def commit_order(request):
     number_id = request.POST.getlist("checkbox")
     if not number_id:
@@ -928,6 +936,8 @@ def commit_order(request):
     return redirect("view_order")
 
 
+@login_required
+@employee_permission
 def order_components(request):
     number_id = request.POST.getlist("checkbox")
     if 'commit_order' in request.POST:
@@ -968,6 +978,8 @@ def order_components(request):
     return redirect("view_order")
 
 
+@login_required
+@employee_permission
 def incomplete_commit_order(request, pk):
     order = get_object_or_404(Order, pk=pk)
     if request.method != 'POST':
@@ -995,6 +1007,8 @@ def incomplete_commit_order(request, pk):
     return redirect('view_order')
         
 
+@login_required
+@employee_permission
 def cancel_order(request, pk):
     order = get_object_or_404(Order, pk=pk)
     if request.method != 'POST':
