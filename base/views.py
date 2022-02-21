@@ -989,6 +989,7 @@ def incomplete_commit_order(request, pk):
         }
         return render(request, 'incomplete_commit_order.html', context)
     form = Create_request_form(request.POST, instance=order)
+    date = datetime.datetime.today()
     if not form.is_valid():
         context = {
             'incomplete_commit_order': Create_request_form(instance=order),
@@ -996,7 +997,26 @@ def incomplete_commit_order(request, pk):
         }
         return render(request, 'incomplete_commit_order.html', context)
     form = form.save(commit=False)
-    date = datetime.datetime.today()
+    if form.amount_commit < form.amount_order:
+        Order.objects.create(
+            component=form.component,
+            amount=form.amount,
+            amount_order=form.amount_order - form.amount_commit,
+            date_created=form.date_created,
+            date_processing=form.date_processing,
+            date_order=date,
+            delivery_time=form.delivery_time,
+            provider=form.provider,
+            invoice_number=form.invoice_number,
+            user=form.user,
+            status='недопоставка'
+        )
+    if form.amount_commit > form.amount_order:
+        messages.error(
+        request,
+        'Вы не можете получить больше, чем заказали!'
+        )
+        return redirect('view_order')
     form.date_commit = date
     form.status = 'получен'
     form.save()
@@ -1016,6 +1036,7 @@ def cancel_order(request, pk):
             'order': order,
         }
         return render(request, 'cancel_order.html', context)
+    order.amount_commit = 0
     order.status = 'отменен'
     order.save()
     messages.warning(

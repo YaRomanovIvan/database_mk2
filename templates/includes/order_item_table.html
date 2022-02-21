@@ -1,7 +1,8 @@
 
     <th scope="row">
-      <input class="form-check-input" type="checkbox" name="checkbox" value="{{ bb.pk }}" id='{{ bb.pk }}'>&nbsp{{ bb.pk }}
+      <input class="form-check-input" type="checkbox" name="checkbox" value="{{ bb.pk }}" id='{{ bb.pk }}'>
     </th>
+    <td>{{ bb.pk }}</td>
     <td style="text-align: left;">{{ bb.component }}</td>
     <td>{{ bb.amount }}</td>
     <td>{{ bb.date_created|date:"d.m.Y" }}</td>
@@ -14,7 +15,7 @@
     <td>{{ bb.provider|default_if_none:"" }}</td>
     <td>{{ bb.date_order|date:"d.m.Y" }}</td>
     <td>{{ bb.invoice_number|default_if_none:"" }}</td>
-    {% if bb.status == 'заказан' %}
+    {% if bb.status == 'заказан' or bb.status == 'недопоставка' %}
     <td colspan="2">
       <div class="btn-group" role="group" aria-label="Basic example">
         <a href='{% url "incomplete_commit_order" bb.pk %}' name="commit" class="btn btn-primary btn-sm">Получить</a>

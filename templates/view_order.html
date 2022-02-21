@@ -20,6 +20,7 @@
 
 <form method="get">
   <div class="container">
+    <h3>Фильтр:</h3>
     <div class="row">
       <div class="col-4">
         {{ data_filter_form.form.component.label_tag }}
@@ -115,7 +116,7 @@
   <div class='ms-3 me-3'>
     <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#create_request">Создать заявку</button>
     <button type="button" class="btn btn-warning" data-bs-toggle="modal" data-bs-target="#invoice_order">Сформировать заказ</button>
-    <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#commit_order">Принять поставку</button>
+    <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#commit_order">Принять весь заказ</button>
   </div>
   <hr>
   <div class='ms-3 me-3'>
@@ -125,7 +126,8 @@
     <table class="table table-sm table-hover table-bordered text-center">
       <thead>
         <tr>
-          <th scope="col" style="width: 3%"></th>
+          <th scope="col" style="width: 1%"><input id="select_all" type="checkbox" class="form-check-input"></th>
+          <th style="width: 3%">№</th>
           <th style="min-width: 400px;" scope="col">Наименование компонента</th>
           <th scope="col">Количество</th>
           <th style="min-width: 112px;" scope="col">Дата заявки</th>
@@ -202,9 +204,9 @@
         </div>
         <div class="modal-body">
           <p><i>Внимание!</i></p>
-          <p><i>Только если заказанное количество соответсвует товарной накладной!</i></p>
+          <p><i>Не забудьте выбрать позиции!</i></p>
           <p><i>Полученное количество выставится согласно количеству, указанному в столбце "заказано"!</i></p>
-          <p><i>В ином случае заявку следует обработать в ручную!</i></p>
+          <p><i>В ином случае заявку следует обработать вручную!</i></p>
         </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Закрыть</button>
