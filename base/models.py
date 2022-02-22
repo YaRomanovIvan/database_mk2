@@ -349,6 +349,7 @@ class Order(models.Model):
     wait = "ожидает"
     processing = "обработан"
     order = "заказан"
+    paid = "оплачен"
     commit = "получен"
     under = "недопоставка"
     cancel = "отменен"
@@ -360,6 +361,7 @@ class Order(models.Model):
         (wait, "ожидает"),
         (processing, "обработан"),
         (order, "заказан"),
+        (paid, "оплачен"),
         (commit, "получен"),
         (cancel, "отменен"),
         (under, "недопоставка"),

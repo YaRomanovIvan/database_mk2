@@ -13,7 +13,7 @@ from .forms_components import (
     New_component_form,
     Edit_component_form, Update_amount_form, Update_price_form
 )
-from .forms_order import Create_request_form, Invoice_number_form
+from .forms_order import Create_request_form, Invoice_number_form, Confirmation_form
 from users.permissions import employee_permission, admin_permission
 from .utils import calculate_component, create_statement, create_repair_maker
 
@@ -1079,21 +1079,54 @@ def cancel_order(request, pk):
     )
     return redirect('view_order')
 
-#def edit_request(request, pk):
-#    """ Редактирование заявки """
-#    get = get_object_or_404(Request, pk=pk)
-#    form = Create_request_form(instance=get)
-#    if get.user != request.user:
-#        messages.error(request, 'Вы не являетесь автором заявки!')
-#        return redirect('request_component')
-#    if request.method != 'POST':
-#        return render(request, 'edit_request.html', {'form':form})
-#    form = Create_request_form(request.POST, instance=get)
-#    if not form.is_valid():
-#        return render(request, 'edit_request.html', {'form':form})
-#    form.save()
-#    messages.success(
-#        request, 'Заявка отредактирована!'
-#    )
-#    return redirect('request_component')
+def edit_order(request, pk):
+    """ Редактирование заявки """
+    get = get_object_or_404(Order, pk=pk)
+    form = Create_request_form(instance=get)
+    if request.method != 'POST':
+        return render(request, 'edit_order.html', {'form':form})
+    form = Create_request_form(request.POST, instance=get)
+    if not form.is_valid():
+        return render(request, 'edit_order.html', {'form':form})
+    form.save()
+    messages.success(
+        request, 'Заявка отредактирована!'
+    )
+    return redirect('view_order')
+
+
+def order_confirmation(request):
+    if request.method != 'POST':
+        form = Confirmation_form()
+        return render(request, 'order_confirmation_form.html', {'form': form})
+    form = Confirmation_form(request.POST)
+    if not form.is_valid():
+        return render(request, 'order_confirmation_form.html', {'form': form})
+    invoice_number = form.cleaned_data['invoice_number']
+    order = Order.objects.filter(invoice_number=invoice_number, status='заказан')
+    cnt = order.count()
+    return render(request, 'order_confirmation_commit.html', {'page':order, 'cnt':cnt})
+
+
+def confirmation_commit(request):
+    number_id = request.POST.getlist("checkbox")
+    if not number_id:
+        messages.error(
+        request, 'На странице подтвеждения оплаты не были выбраны позиции!'
+        )
+        return redirect('view_order')
+    for pk in number_id:
+        order = get_object_or_404(Order, pk=pk)
+        if order.status != 'заказан':
+            messages.error(
+                request, 'Статус одного из заказов не прошел проверку! Статус должен быть "заказан"!'
+            )
+            return redirect('view_order')
+        order.status = 'оплачен'
+        order.save()
+    messages.success(
+        request,
+        'Позиции успешно изменили статус на "оплачено"!'
+    )
+    return redirect('view_order')
 

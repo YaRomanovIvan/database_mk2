@@ -104,7 +104,7 @@
           {% endfor %}
         </div>
         <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Закрыть</button>
           <button type="submit" class="btn btn-primary">Создать</button>
         </div>
       </form>
@@ -116,6 +116,7 @@
   <div class='ms-3 me-3'>
     <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#create_request">Создать заявку</button>
     <button type="button" class="btn btn-warning" data-bs-toggle="modal" data-bs-target="#invoice_order">Сформировать заказ</button>
+    <a href="{% url 'confirmation_form' %}" class="btn btn-info">Подтвердить оплату</a>
     <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#commit_order">Принять весь заказ</button>
   </div>
   <hr>
@@ -159,6 +160,10 @@
             </tr>
           {% elif bb.status == 'получен' %}
             <tr class="text-success">
+              {% include "includes/order_item_table.html" %}
+            </tr>
+          {% elif bb.status == 'оплачен' %}
+            <tr style="color:DarkViolet;">
               {% include "includes/order_item_table.html" %}
             </tr>
           {% else %}

@@ -56,5 +56,7 @@ urlpatterns = [
     path('order/order_components/', views.order_components, name='order_components'),
     path('order/incomplete_commit_order/<int:pk>/', views.incomplete_commit_order, name='incomplete_commit_order'),
     path('order/cancel_order/<int:pk>/', views.cancel_order, name='cancel_order'),
-#    path('order/request/edit/<int:pk>/', views.edit_request, name='edit_request'),
+    path('order/edit/<int:pk>/', views.edit_order, name='edit_order'),
+    path('order/confirmation_form/', views.order_confirmation, name='confirmation_form'),
+    path('order/confirmation_commit/', views.confirmation_commit, name='confirmation_commit'),
 ]

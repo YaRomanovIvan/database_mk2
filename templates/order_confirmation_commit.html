@@ -1,0 +1,95 @@
+{% extends "base.html" %}
+{% load user_filters %}
+{% block title %}Заказы{% endblock %}
+
+{% block content %}
+<style>
+.select2-close-mask{
+    z-index: 2099;
+}
+.select2-dropdown{
+    z-index: 3051;
+}
+</style>
+<h1 class='text-center'>Подтверждение оплаты</h1>
+
+<div class='container'>
+  {% include 'includes/messages.html' %}
+</div>
+<hr>
+
+<form action='{% url "confirmation_commit" %}' method='POST'>
+    {% csrf_token %}
+    <div class='ms-3 me-3'>
+        <button type='submit' class="btn btn-warning">Подтвердить оплату</button>
+    </div>
+    <div class='ms-3 me-3'>
+        <p>Заказов в выборке: {{ cnt }}</p>
+    </div>
+      <div class="ms-3 me-3">
+        <table class="table table-sm table-hover table-bordered text-center" id="table_order">
+          <thead>
+            <tr>
+              <th scope="col" style="width: 1%"><input id="select_all" type="checkbox" class="form-check-input"></th>
+              <th style="width: 3%">№</th>
+              <th style="min-width: 400px;" scope="col">Наименование компонента</th>
+              <th scope="col">Количество</th>
+              <th style="min-width: 112px;" scope="col">Дата заявки</th>
+              <th style="min-width: 135px;" scope="col">Дата обработки</th>
+              <th style="min-width: 45px;" scope="col">Заказано</th>
+              <th scope="col">Поставщик</th>
+              <th style="min-width: 112px;" scope="col">Дата заказа</th>
+              <th style="min-width: 112px;" scope="col">Номер счета</th>
+              <th scope="col">Получено</th>
+              <th style="min-width: 140px;" scope="col">Дата получения</th>
+              <th scope="col">Статус</th>
+              <th style="min-width: 135px;" scope="col">Срок поставки</th>
+              <th scope="col">Фамилии</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for bb in page %}
+                <tr>
+                  {% include "includes/order_item_table.html" %}
+                </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+    </div>
+</form>
+
+<br>
+
+<div class="row">
+  <div class="col">
+  </div>
+  <div class="col">
+    {% if page.has_other_pages %}
+      {% include "includes/paginator.html" with items=page paginator=paginator%}
+    {% endif %}
+  </div>
+  <div class="col">
+  </div>
+</div>
+
+<script>
+  $(document).ready(function() {
+      $('#id_component').select2({ width: '100%' });
+  });
+  $(document).ready(function() {
+      $('#id_component_create_order').select2({ width: '100%' });
+  });
+  document.getElementById('select_all')
+  .addEventListener('click', function (e) {
+    var els = document.querySelectorAll(
+      'input[name=checkbox]'
+    );
+
+    Array.prototype.forEach.call(els, function(cb){
+      cb.checked = e.target.checked;
+    });
+  })
+;
+</script>
+
+{% endblock %}

@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+{% load user_filters %}
+{% block title %}Подтвердить оплату{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class='row'>
+        <div class='col'>
+        </div>
+        <div class='col'>
+            <h1>Подтвердить оплату</h1>
+            <form method="POST">
+                {% csrf_token %}
+                {% for field in form %}
+                    <div class="fieldWrapper">
+                        {{ field.errors }}
+                        {{ field.label_tag }} {{ field|addclass:"form-control form-control-sm" }}
+                        {% if field.help_text %}
+                            <p class="help"><i>{{ field.help_text|safe }}</i></p>
+                        {% endif %}
+                    </div>
+                {% endfor %}
+                <br>
+                <button type="submit" class="btn btn-primary">Подтвердить</button>
+            </form>
+        </div>
+        <div class='col'>
+        </div>
+    </div>
+</div>
+{% endblock %}

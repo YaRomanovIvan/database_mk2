@@ -66,3 +66,10 @@ class Invoice_number_form(forms.Form):
         required=False,
     )
     
+
+class Confirmation_form(forms.Form):
+    invoice_number = forms.CharField(
+        label="Номер счета",
+        help_text='Укажите номер счета',
+        required=False,
+    )
