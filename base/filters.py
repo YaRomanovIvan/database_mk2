@@ -66,9 +66,14 @@ class Maker_filter(django_filters.FilterSet):
     )
     serial_number = django_filters.CharFilter(
         lookup_expr='icontains',
+        method='get_serial_number',
     )
     date_add_maker = django_filters.DateFromToRangeFilter()
     date_shipment_maker = django_filters.DateFromToRangeFilter()
+
+    def get_serial_number(self, queryset, field_name, value):
+        return queryset.filter(block__serial_number=value)
+    
     class Meta:
         model = Maker
         fields = ("__all__")
