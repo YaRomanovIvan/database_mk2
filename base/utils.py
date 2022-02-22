@@ -70,9 +70,9 @@ def create_repair_maker(qs):
                      top=Side(style='thin'), 
                      bottom=Side(style='thin'))
     for record in qs:
-        sheet["A" + str(cnt)].value = record.number_block
-        sheet["B" + str(cnt)].value = record.name_block
-        sheet["C" + str(cnt)].value = record.serial_number
+        sheet["A" + str(cnt)].value = str(record.block.number_block)
+        sheet["B" + str(cnt)].value = str(record.block.name_block)
+        sheet["C" + str(cnt)].value = str(record.block.serial_number)
         sheet["D" + str(cnt)].value = str(record.block.region)
         sheet["E" + str(cnt)].value = str(record.maker)
         sheet["F" + str(cnt)].value = record.block.date_add

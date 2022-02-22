@@ -29,11 +29,11 @@ thead th {
             {% for bb in page %}
             {% if bb.maker_status == 'забракован' %}
             <tr class="text-danger">
-              <td><input class="form-check-input" type="checkbox" name="checkbox" value="{{ bb.number_block }}" id='{{ bb.number_block }}'></td>
-              <td><a href="{% url 'block_info' bb.number_block %}">{{ bb.number_block }}</a></td>
-              <td style="text-align: left;">{{ bb.name_block }}</td>
-              <td>{{ bb.serial_number|default_if_none:"" }}</td>
-              <td>{{ bb.maker }}</td>
+              <td><input class="form-check-input" type="checkbox" name="checkbox" value="{{ bb.block.number_block }}" id='{{ bb.block.number_block }}'></td>
+              <td><a href="{% url 'block_info' bb.block.number_block %}">{{ bb.block.number_block }}</a></td>
+              <td style="text-align: left;">{{ bb.block.name_block }}</td>
+              <td>{{ bb.block.serial_number|default_if_none:"" }}</td>
+              <td>{{ bb.block.maker }}</td>
               <td>{{ bb.block.region }}</td>
               <td>{{ bb.date_shipment_maker|date:"d.m.Y" }}</td>
               <td>{{ bb.date_add_maker|date:"d.m.Y" }}</td>
@@ -42,11 +42,11 @@ thead th {
             </tr>
             {%elif bb.maker_status == 'отправлен'%}
             <tr style="color:DarkGoldenRod;">
-              <td><input class="form-check-input" type="checkbox" name="checkbox" value="{{ bb.number_block }}" id='{{ bb.number_block }}'></td>
-              <td><a href="{% url 'block_info' bb.number_block %}">{{ bb.number_block }}</a></td>
-              <td style="text-align: left;">{{ bb.name_block }}</td>
-              <td>{{ bb.serial_number|default_if_none:"" }}</td>
-              <td>{{ bb.maker }}</td>
+              <td><input class="form-check-input" type="checkbox" name="checkbox" value="{{ bb.block.number_block }}" id='{{ bb.block.number_block }}'></td>
+              <td><a href="{% url 'block_info' bb.block.number_block %}">{{ bb.block.number_block }}</a></td>
+              <td style="text-align: left;">{{ bb.block.name_block }}</td>
+              <td>{{ bb.block.serial_number|default_if_none:"" }}</td>
+              <td>{{ bb.block.maker }}</td>
               <td>{{ bb.block.region }}</td>
               <td>{{ bb.date_shipment_maker|date:"d.m.Y" }}</td>
               <td>{{ bb.date_add_maker|date:"d.m.Y" }}</td>
@@ -55,11 +55,11 @@ thead th {
             </tr>
             {% elif bb.maker_status == 'возвращен' %}
             <tr class="text-primary">
-              <td><input class="form-check-input" type="checkbox" name="checkbox" value="{{ bb.number_block }}" id='{{ bb.number_block }}'></td>
-              <td><a href="{% url 'block_info' bb.number_block %}">{{ bb.number_block }}</a></td>
-              <td style="text-align: left;">{{ bb.name_block }}</td>
-              <td>{{ bb.serial_number|default_if_none:"" }}</td>
-              <td>{{ bb.maker }}</td>
+              <td><input class="form-check-input" type="checkbox" name="checkbox" value="{{ bb.block.number_block }}" id='{{ bb.block.number_block }}'></td>
+              <td><a href="{% url 'block_info' bb.block.number_block %}">{{ bb.block.number_block }}</a></td>
+              <td style="text-align: left;">{{ bb.block.name_block }}</td>
+              <td>{{ bb.block.serial_number|default_if_none:"" }}</td>
+              <td>{{ bb.block.maker }}</td>
               <td>{{ bb.block.region }}</td>
               <td>{{ bb.date_shipment_maker|date:"d.m.Y" }}</td>
               <td>{{ bb.date_add_maker|date:"d.m.Y" }}</td>
@@ -68,16 +68,16 @@ thead th {
             </tr>
             {% elif bb.maker_status == 'ожидает' %}
             <tr>
-                <td><input class="form-check-input" type="checkbox" name="checkbox" value="{{ bb.number_block }}" id='{{ bb.number_block }}'></td>
-                <td><a href="{% url 'block_info' bb.number_block %}">{{ bb.number_block }}</a></td>
-                <td style="text-align: left;">{{ bb.name_block }}</td>
-                <td>{{ bb.serial_number|default_if_none:"" }}</td>
-                <td>{{ bb.maker }}</td>
-                <td>{{ bb.block.region }}</td>
-                <td>{{ bb.date_shipment_maker|date:"d.m.Y" }}</td>
-                <td>{{ bb.date_add_maker|date:"d.m.Y" }}</td>
-                <td>{{ bb.maker_status }}</td>
-                <td style="text-align: left;">{{ bb.reason|default_if_none:"" }}</td>
+              <td><input class="form-check-input" type="checkbox" name="checkbox" value="{{ bb.block.number_block }}" id='{{ bb.block.number_block }}'></td>
+              <td><a href="{% url 'block_info' bb.block.number_block %}">{{ bb.block.number_block }}</a></td>
+              <td style="text-align: left;">{{ bb.block.name_block }}</td>
+              <td>{{ bb.block.serial_number|default_if_none:"" }}</td>
+              <td>{{ bb.block.maker }}</td>
+              <td>{{ bb.block.region }}</td>
+              <td>{{ bb.date_shipment_maker|date:"d.m.Y" }}</td>
+              <td>{{ bb.date_add_maker|date:"d.m.Y" }}</td>
+              <td>{{ bb.maker_status }}</td>
+              <td style="text-align: left;">{{ bb.reason|default_if_none:"" }}</td>
             </tr>
             {% endif %}
             {% endfor %}
