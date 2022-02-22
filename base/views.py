@@ -498,6 +498,7 @@ def return_block_maker(request):
         "return_block_maker.html",
         {
             "data_filter": data_filter,
+            "page": data_filter.qs,
             "cnt": cnt,
             'return_block': Return_maker_block_form(),
             'status_block': status_block
