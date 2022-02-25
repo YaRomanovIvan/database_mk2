@@ -698,6 +698,26 @@ def new_component(request):
         request, 'Компонент добавлен успешно!'
     )
     return redirect('components')
+
+
+def edit_component(request, pk):
+    """ Редикатирование компонента """
+    component = get_object_or_404(Component, pk=pk)
+    form = Edit_component_form(instance=component)
+    if request.method != 'POST':
+        return render(
+            request, 'edit_component.html', {'form': form}
+        )
+    form = Edit_component_form(request.POST, instance=component)
+    if not form.is_valid():
+        return render(
+            request, 'edit_component.html', {'form': form}
+        )
+    form.save()
+    messages.success(
+        request, f'Компонент "{component}" изменен успешно!'
+    )
+    return redirect('components')
     
 
 @login_required

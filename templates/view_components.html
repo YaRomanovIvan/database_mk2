@@ -138,7 +138,7 @@
         <tbody>
             {% for record, cnt in result %}
             <tr>
-                <td><a href="#">ред.</a></td>
+                <td><a href="{% url 'edit_component' record.pk %}">ред.</a></td>
                 <td>{{ record.type_component }}
                     {{ record.marking }}
                     {{ record.note|default_if_none:"" }}  
