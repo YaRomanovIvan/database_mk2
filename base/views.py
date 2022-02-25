@@ -657,7 +657,7 @@ def view_components(request):
     """ страница с информацие о компонентах и расходе за 30 дней. """
     components = Component.objects.annotate(
         summ=Sum("amount_trk") + Sum("amount_eis") + Sum("amount_vts")
-    ).order_by("summ")
+    ).order_by("summ", "type_component", "marking")
     component_filter = Components_filter(
         request.GET,
         queryset=components,
