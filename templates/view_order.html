@@ -90,17 +90,17 @@
         {% csrf_token %}
         <div class="modal-body">
           {% for field in processing_order_form %}
-          {% if field.name == 'component' or field.name == 'amount' %}
-          <div class="fieldWrapper">
-            {{ field.errors }}
-            {{ field.label_tag }} {{ field|addclass:"form-control form-control-sm" }}
-            {% if field.help_text %}
-            <p class="help">{{ field.help_text|safe }}</p>
+            {% if field.name == 'component' or field.name == 'amount' or field.name == 'note' %}
+            <div class="fieldWrapper">
+              {{ field.errors }}
+              {{ field.label_tag }} {{ field|addclass:"form-control form-control-sm" }}
+              {% if field.help_text %}
+              <p class="help"><i>{{ field.help_text|safe }}</i></p>
+              {% endif %}
+            </div>
+            {% else %}
+            {{ field.as_hidden }}
             {% endif %}
-          </div>
-          {% else %}
-          {{ field.as_hidden }}
-          {% endif %}
           {% endfor %}
         </div>
         <div class="modal-footer">

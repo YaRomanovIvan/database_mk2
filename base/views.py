@@ -922,7 +922,7 @@ def commit_order(request):
             Component, pk=order.component.pk
 
         )
-        if order.status == 'заказан':
+        if order.status == 'оплачен':
             order.date_commit = order_date_commit
             order.amount_commit = order.amount_order
             order.status = "получен"

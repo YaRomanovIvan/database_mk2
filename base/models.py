@@ -469,7 +469,7 @@ class Order(models.Model):
     class Meta:
         verbose_name_plural = "Заказы"
         verbose_name = "Заказ"
-        ordering = [models.F('date_processing').desc(nulls_first=True)]
+        ordering = [models.F('date_processing').desc(nulls_first=True), 'provider', 'date_created', 'invoice_number']
 
 
 class Defect_statement(models.Model):

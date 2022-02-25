@@ -26,7 +26,11 @@ class Create_request_form(forms.ModelForm):
                 'id':'id_component_create_order'
             }
         ),
-
+    )
+    note = forms.CharField(
+        label='Ссылка',
+        help_text='Укажите ссылку на компонент в магазине. <br> Поле необязательно для заполнения.',
+        required=False
     )
     class Meta:
         model = Order
