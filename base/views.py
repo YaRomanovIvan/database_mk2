@@ -296,10 +296,20 @@ def repair_block(request, pk):
                 )
             )
             return redirect("block_info", pk)
+
         marking = component.split(' ')
+        record_check = Component.objects.filter(
+            marking__in=marking
+        ).exists()
+        if not record_check:
+            messages.error(
+            request, (
+                    f"Компонент <b>{component}</b> не существует! Возможно вы оставили поле пустым?"
+                )
+            )
+            return redirect("block_info", pk)
         record = Component.objects.get(
-            type_component=marking[0],
-            marking=marking[1],
+            marking__in=marking,
         )
         result = calculate_component(
             record.amount_trk,
@@ -307,6 +317,13 @@ def repair_block(request, pk):
             record.amount_vts,
             int(amount),
         )
+        print(result)
+        if result["spent_trk"] == 0 and result["spent_eis"] == 0 and result["spent_vts"] == 0:
+            messages.error(
+                    request,
+                    f"Склад с компонентом {record.marking} пуст! Вы не можете его списать! ",
+                    )
+            return redirect("block_info", pk)
         if result["spent_trk"] != 0:
             record.amount_trk -= result["spent_trk"]
             add_record_component = Record_component(
