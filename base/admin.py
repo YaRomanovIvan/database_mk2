@@ -20,7 +20,7 @@ class ComponentsAdmin(admin.ModelAdmin):
         "amount_vts",
         "price",
     )
-    list_filter = ("id", "type_component", "marking", "note")
+    search_fields = ['type_component__icontains', 'marking__icontains', 'note__icontains',]
     empty_value_display = "--пусто--"
 
 
@@ -56,15 +56,9 @@ class Record_blockAdmin(admin.ModelAdmin):
         "passed",
     )
     list_filter = (
-        "name_block__name_block",
-        "region",
-        "date_add",
-        "date_repair",
-        "date_shipment",
         "FIO",
-        "status",
-        "passed",
     )
+    search_fields = ['number_block', 'name_block__name_block__icontains']
     empty_value_display = "--пусто--"
 
 
@@ -77,7 +71,9 @@ class Record_componentsAdmin(admin.ModelAdmin):
         "amount",
         "date_add",
     )
-    list_filter = ("id", "component", "block", "company", "date_add")
+    list_filter = ("company",)
+    search_fields = ['component__marking', 'component__type_component']
+
 
 
 class MakerAdmin(admin.ModelAdmin):
@@ -92,16 +88,12 @@ class MakerAdmin(admin.ModelAdmin):
         "maker_status",
         "reason",
     )
-    list_filter = ("id", "name_block", "maker", "date_shipment_maker", "date_add_maker", "maker_status")
+    search_fields = ['block__number_block', 'block__name_block__name_block__icontains']
     empty_value_display = "--пусто--"
 
 
 class Maker_companyAdmin(admin.ModelAdmin):
     list_display = (
-        "id",
-        "name",
-    )
-    list_filter = (
         "id",
         "name",
     )
