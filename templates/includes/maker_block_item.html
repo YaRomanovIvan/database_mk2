@@ -33,7 +33,7 @@ thead th {
               <td><a href="{% url 'block_info' bb.block.number_block %}">{{ bb.block.number_block }}</a></td>
               <td style="text-align: left;">{{ bb.block.name_block }}</td>
               <td>{{ bb.block.serial_number|default_if_none:"" }}</td>
-              <td>{{ bb.block.maker }}</td>
+              <td>{{ bb.block.name_block.maker }}</td>
               <td>{{ bb.block.region }}</td>
               <td>{{ bb.date_shipment_maker|date:"d.m.Y" }}</td>
               <td>{{ bb.date_add_maker|date:"d.m.Y" }}</td>
@@ -46,7 +46,7 @@ thead th {
               <td><a href="{% url 'block_info' bb.block.number_block %}">{{ bb.block.number_block }}</a></td>
               <td style="text-align: left;">{{ bb.block.name_block }}</td>
               <td>{{ bb.block.serial_number|default_if_none:"" }}</td>
-              <td>{{ bb.block.maker }}</td>
+              <td>{{ bb.block.name_block.maker }}</td>
               <td>{{ bb.block.region }}</td>
               <td>{{ bb.date_shipment_maker|date:"d.m.Y" }}</td>
               <td>{{ bb.date_add_maker|date:"d.m.Y" }}</td>
@@ -59,7 +59,7 @@ thead th {
               <td><a href="{% url 'block_info' bb.block.number_block %}">{{ bb.block.number_block }}</a></td>
               <td style="text-align: left;">{{ bb.block.name_block }}</td>
               <td>{{ bb.block.serial_number|default_if_none:"" }}</td>
-              <td>{{ bb.block.maker }}</td>
+              <td>{{ bb.block.name_block.maker }}</td>
               <td>{{ bb.block.region }}</td>
               <td>{{ bb.date_shipment_maker|date:"d.m.Y" }}</td>
               <td>{{ bb.date_add_maker|date:"d.m.Y" }}</td>
@@ -72,7 +72,7 @@ thead th {
               <td><a href="{% url 'block_info' bb.block.number_block %}">{{ bb.block.number_block }}</a></td>
               <td style="text-align: left;">{{ bb.block.name_block }}</td>
               <td>{{ bb.block.serial_number|default_if_none:"" }}</td>
-              <td>{{ bb.block.maker }}</td>
+              <td>{{ bb.block.name_block.maker }}</td>
               <td>{{ bb.block.region }}</td>
               <td>{{ bb.date_shipment_maker|date:"d.m.Y" }}</td>
               <td>{{ bb.date_add_maker|date:"d.m.Y" }}</td>
