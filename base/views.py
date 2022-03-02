@@ -579,7 +579,6 @@ def commit_return_block_maker(request):
         messages.success(request, "Блоки возвращены!")
         return redirect("view_block_maker")
     if "create_maker_xlsx" in request.POST:
-        print(number_id)
         qs = Maker.objects.filter(block__pk__in=number_id)
         create_repair_maker(qs)
         try:
@@ -1141,16 +1140,19 @@ def edit_order(request, pk):
 
 
 def order_confirmation(request):
+    cancel = False
+    if 'cancel' in request.GET:
+        cancel = True
     if request.method != 'POST':
         form = Confirmation_form()
-        return render(request, 'order_confirmation_form.html', {'form': form})
+        return render(request, 'order_confirmation_form.html', {'form': form, 'cancel': cancel})
     form = Confirmation_form(request.POST)
     if not form.is_valid():
-        return render(request, 'order_confirmation_form.html', {'form': form})
+        return render(request, 'order_confirmation_form.html', {'form': form, 'cnt':cnt, 'cancel': cancel})
     invoice_number = form.cleaned_data['invoice_number']
-    order = Order.objects.filter(invoice_number=invoice_number, status='оплачен')
+    order = Order.objects.filter(invoice_number=invoice_number, status='заказан')
     cnt = order.count()
-    return render(request, 'order_confirmation_commit.html', {'page':order, 'cnt':cnt})
+    return render(request, 'order_confirmation_commit.html', {'page':order, 'cnt':cnt, 'cancel': cancel})
 
 
 def confirmation_commit(request):
@@ -1160,18 +1162,41 @@ def confirmation_commit(request):
         request, 'На странице подтвеждения оплаты не были выбраны позиции!'
         )
         return redirect('view_order')
-    for pk in number_id:
-        order = get_object_or_404(Order, pk=pk)
-        if order.status != 'заказан':
-            messages.error(
-                request, 'Статус одного из заказов не прошел проверку! Статус должен быть "заказан"!'
+    if 'cancel' in request.POST:
+        for pk in number_id:
+            order = get_object_or_404(Order, pk=pk)
+            if order.status != 'заказан':
+                messages.error(
+                    request, 'Статус одного из заказов не прошел проверку! Статус должен быть "заказан"!'
+                )
+                return redirect('view_order')
+            order.status = 'отменен'
+            Order.objects.create(
+                component=order.component,
+                amount=order.amount,
+                status='ожидает',
+                date_created=order.date_created,
+                user=order.user,
+                note=order.note,
             )
-            return redirect('view_order')
-        order.status = 'оплачен'
-        order.save()
-    messages.success(
-        request,
-        'Позиции успешно изменили статус на "оплачено"!'
-    )
+            order.save()
+        messages.warning(
+            request,
+            'Позиции успешно изменили статус на "отменен"! Заявки пересозданы!'
+        )   
+    else:
+        for pk in number_id:
+            order = get_object_or_404(Order, pk=pk)
+            if order.status != 'заказан':
+                messages.error(
+                    request, 'Статус одного из заказов не прошел проверку! Статус должен быть "заказан"!'
+                )
+                return redirect('view_order')
+            order.status = 'оплачен'
+            order.save()
+        messages.success(
+            request,
+            'Позиции успешно изменили статус на "оплачено"!'
+        )
     return redirect('view_order')
 
