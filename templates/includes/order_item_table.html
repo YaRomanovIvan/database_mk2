@@ -18,7 +18,13 @@
     {% endif %}
     <td>{{ bb.amount_order|default_if_none:"" }}</td>
     <td>{{ bb.provider|default_if_none:"" }}</td>
+    {% if bb.status == 'обработан' %}
+    <td>
+      <a href='{% url "cancel_order" bb.pk %}' name="cancel" class="btn btn-danger btn-sm">Отменить</a>
+    </td>
+    {% else %}
     <td id="date_order_id_js">{{ bb.date_order|date:"d.m.Y" }}</td>
+    {% endif %}
     <td>{{ bb.invoice_number|default_if_none:"" }}</td>
     {% if bb.status == 'оплачен' or bb.status == 'недопоставка' %}
     <td colspan="2">
@@ -26,6 +32,10 @@
         <a href='{% url "incomplete_commit_order" bb.pk %}' name="commit" class="btn btn-primary btn-sm">Получить</a>
         <a href='{% url "cancel_order" bb.pk %}' name="cancel" class="btn btn-danger btn-sm">Отменить</a>
       </div>
+    </td>
+    {% elif bb.status == 'заказан' %}
+    <td colspan="2">
+      <a href='{% url "cancel_order" bb.pk %}' name="cancel" class="btn btn-danger btn-sm">Отменить</a>
     </td>
     {% else %}
       <td>{{ bb.amount_commit|default_if_none:"" }}</td>

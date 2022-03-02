@@ -317,7 +317,6 @@ def repair_block(request, pk):
             record.amount_vts,
             int(amount),
         )
-        print(result)
         if result["spent_trk"] == 0 and result["spent_eis"] == 0 and result["spent_vts"] == 0:
             messages.error(
                     request,
@@ -1110,6 +1109,14 @@ def cancel_order(request, pk):
         return render(request, 'cancel_order.html', context)
     order.amount_commit = 0
     order.status = 'отменен'
+    Order.objects.create(
+        component=order.component,
+        amount=order.amount,
+        status='ожидает',
+        date_created=order.date_created,
+        user=order.user,
+        note=order.note,
+    )
     order.save()
     messages.warning(
             request,
