@@ -1140,17 +1140,20 @@ def edit_order(request, pk):
 
 
 def order_confirmation(request):
-    cancel = False
     if 'cancel' in request.GET:
         cancel = True
+    else:
+        cancel = False
     if request.method != 'POST':
         form = Confirmation_form()
         return render(request, 'order_confirmation_form.html', {'form': form, 'cancel': cancel})
     form = Confirmation_form(request.POST)
     if not form.is_valid():
-        return render(request, 'order_confirmation_form.html', {'form': form, 'cnt':cnt, 'cancel': cancel})
+        return render(request, 'order_confirmation_form.html', {'form': form, 'cancel': cancel})
     invoice_number = form.cleaned_data['invoice_number']
     order = Order.objects.filter(invoice_number=invoice_number, status='заказан')
+    if not order.exists():
+        order = Order.objects.filter(invoice_number=invoice_number, status='оплачен')
     cnt = order.count()
     return render(request, 'order_confirmation_commit.html', {'page':order, 'cnt':cnt, 'cancel': cancel})
 
@@ -1165,11 +1168,6 @@ def confirmation_commit(request):
     if 'cancel' in request.POST:
         for pk in number_id:
             order = get_object_or_404(Order, pk=pk)
-            if order.status != 'заказан':
-                messages.error(
-                    request, 'Статус одного из заказов не прошел проверку! Статус должен быть "заказан"!'
-                )
-                return redirect('view_order')
             order.status = 'отменен'
             Order.objects.create(
                 component=order.component,

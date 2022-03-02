@@ -11,7 +11,7 @@
     z-index: 3051;
 }
 </style>
-{% if 'cancel' %}
+{% if cancel %}
   <h1 class='text-center'>Отмена заявок</h1>
 {% else %}
   <h1 class='text-center'>Подтверждение оплаты</h1>
@@ -25,7 +25,7 @@
 <form action='{% url "confirmation_commit" %}' method='POST'>
     {% csrf_token %}
     <div class='ms-3 me-3'>
-      {% if 'cancel' %}
+      {% if cancel %}
         <button type='submit' name='cancel' class="btn btn-danger">Отменить выбранные</button>
       {% else %}
         <button type='submit' class="btn btn-warning">Подтвердить оплату</button>

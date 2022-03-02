@@ -116,7 +116,7 @@
   <div class='ms-3 me-3'>
     <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#create_request">Создать заявку</button>
     <button type="button" class="btn btn-warning" data-bs-toggle="modal" data-bs-target="#invoice_order">Сформировать заказ</button>
-    <a href="{% url 'confirmation_form' %}" class="btn btn-info">Подтвердить оплату</a>
+    <a href="{% url 'confirmation_form' %}?commit" class="btn btn-info">Подтвердить оплату</a>
     <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#commit_order">Принять весь заказ</button>
     <div style="float: right;">
       <a href="{% url 'confirmation_form' %}?cancel" name='cancel' class="btn btn-danger">Отменить заказ</a> 
