@@ -1148,7 +1148,7 @@ def order_confirmation(request):
     if not form.is_valid():
         return render(request, 'order_confirmation_form.html', {'form': form})
     invoice_number = form.cleaned_data['invoice_number']
-    order = Order.objects.filter(invoice_number=invoice_number, status='заказан')
+    order = Order.objects.filter(invoice_number=invoice_number, status='оплачен')
     cnt = order.count()
     return render(request, 'order_confirmation_commit.html', {'page':order, 'cnt':cnt})
 

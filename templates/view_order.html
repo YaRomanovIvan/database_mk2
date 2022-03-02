@@ -116,7 +116,10 @@
   <div class='ms-3 me-3'>
     <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#create_request">Создать заявку</button>
     <button type="button" class="btn btn-warning" data-bs-toggle="modal" data-bs-target="#invoice_order">Сформировать заказ</button>
-    <a href="{% url 'confirmation_form' %}" class="btn btn-info">Подтвердить оплату</a>
+    <div class="btn-group" role="group" aria-label="Basic example">
+      <a href="{% url 'confirmation_form' %}" class="btn btn-info">Подтвердить оплату</a>
+      <a href="{% url 'confirmation_form' %}" class="btn btn-danger">Отменить заказ</a> 
+    </div>
     <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#commit_order">Принять весь заказ</button>
   </div>
   <hr>
