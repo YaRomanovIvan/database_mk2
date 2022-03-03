@@ -50,15 +50,24 @@ class Invoice_number_form(forms.Form):
         label="Номер счета",
         help_text='Укажите номер счета',
         required=False,
+        widget=forms.TextInput(
+            attrs={"placeholder": "544012Z"}
+        ),
     )
     invoice_amount = forms.FloatField(
         label="Сумма счета",
         help_text="Укажите сумму счета",
         required=False,
+        widget=forms.NumberInput(
+            attrs={"placeholder": "65000.55"}
+        ),
     )
     provider = forms.CharField(
         label='Поставщик',
-        required=False
+        required=False,
+        widget=forms.TextInput(
+            attrs={"placeholder": "Элитан/ЭКО ПАУЭР/Чип и Дип"}
+        ),
     )
     payer = forms.ChoiceField(
         choices=COMPANY_CHOICE,
@@ -67,7 +76,11 @@ class Invoice_number_form(forms.Form):
     )
     delivery_time = forms.CharField(
         label="Срок поставки",
+        help_text='1 нед. / 2 нед. / 3 нед.',
         required=False,
+        widget=forms.TextInput(
+            attrs={"placeholder": "1 нед. / 2 нед. / 3 нед."}
+        ),
     )
     
 

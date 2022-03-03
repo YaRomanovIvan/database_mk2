@@ -43,7 +43,7 @@ def viewing_block(request):
 
     return render(
         request,
-        "viewing-block.html",
+        "block template/viewing-block.html",
         {   "page": page,
             'paginator': paginator,
             "data_filter": data_filter,
@@ -70,7 +70,7 @@ def records_block(request):
 
     return render(
         request,
-        "records-block.html",
+        "block template/records-block.html",
         {
             "page": page,
             'paginator': paginator,
@@ -155,7 +155,7 @@ def send_block(request):
 
     return render(
         request,
-        "send_block.html",
+        "block template/send_block.html",
         {
             "data_filter": data_filter,
             "cnt": cnt,
@@ -220,7 +220,7 @@ def block_info(request, pk):
         'maker': block.maker,
         'defect': defect,
     }
-    return render(request, 'block_info.html', context)
+    return render(request, 'block template/block_info.html', context)
 
 
 @login_required
@@ -407,13 +407,13 @@ def edit_record_block(request, pk):
         'block': block,
     }
     if request.method != "POST":
-        return render(request, 'edit_record_block.html', context)
+        return render(request, 'block template/edit_record_block.html', context)
     form = Record_block_form(request.POST, instance=block)
     if not form.is_valid():
         messages.error(
             request, f'{form.errors}'
         )
-        return render(request, 'edit_record_block.html', context)
+        return render(request, 'block template/edit_record_block.html', context)
     form.save()
     messages.success(
         request,
@@ -428,7 +428,7 @@ def view_defective_statement(request):
     context = {
         'qs': qs,
     }
-    return render(request, 'defect_statement.html', context)
+    return render(request, 'block template/defect_statement.html', context)
 
 
 @login_required
@@ -487,7 +487,7 @@ def view_block_maker(request):
         'page': page,
         'paginator': paginator,
     }
-    return render(request, 'view_block_maker.html', context)
+    return render(request, 'block template/view_block_maker.html', context)
 
 
 def return_block_maker(request):
@@ -511,7 +511,7 @@ def return_block_maker(request):
 
     return render(
         request,
-        "return_block_maker.html",
+        "block template/return_block_maker.html",
         {
             "data_filter": data_filter,
             "page": data_filter.qs,
@@ -688,12 +688,12 @@ def view_components(request):
     context = {
         'result': result,
         "component_filter": component_filter,
-        "new_component_form": New_component_form(),
+        "new_component_form": New_component_form(initial={'amount_vts': 0, 'amount_eis': 0, 'amount_trk': 0,}),
         "edit_component_form": Edit_component_form(),
         "update_amount_form": Update_amount_form(),
         "update_price_form": Update_price_form(),
     }
-    return render(request, 'view_components.html', context)
+    return render(request, 'component template/view_components.html', context)
 
 
 @login_required
@@ -721,12 +721,12 @@ def edit_component(request, pk):
     form = Edit_component_form(instance=component)
     if request.method != 'POST':
         return render(
-            request, 'edit_component.html', {'form': form}
+            request, 'component template/edit_component.html', {'form': form}
         )
     form = Edit_component_form(request.POST, instance=component)
     if not form.is_valid():
         return render(
-            request, 'edit_component.html', {'form': form}
+            request, 'component template/edit_component.html', {'form': form}
         )
     form.save()
     messages.success(
@@ -829,7 +829,7 @@ def usage_components(request):
     components = Component.objects.all()
     usage_components = Record_component.objects.all()
     usage_filter = Record_components_filter(request.GET, queryset=usage_components)
-    return render(request, 'usage_components.html', {'usage_filter': usage_filter, 'components':components})
+    return render(request, 'component template/usage_components.html', {'usage_filter': usage_filter, 'components':components})
 
 # -----------------------------------------------------------------------------------------------------
 # ------------------------------------ Заявки и заказы ------------------------------------------------
@@ -861,7 +861,7 @@ def view_order(request):
         'invoice_number_form': Invoice_number_form(),
         'incomplete_commit_order': Invoice_number_form(),
     }
-    return render(request, 'view_order.html', context)
+    return render(request, 'order template/view_order.html', context)
 
 
 @login_required
@@ -923,14 +923,14 @@ def processing_order(request, pk):
             'processing_order_form': Create_request_form(instance=order),
             'order': order,
         }
-        return render(request, 'processing_order.html', context)
+        return render(request, 'order template/processing_order.html', context)
     form = Create_request_form(request.POST, instance=order)
     if not form.is_valid():
         context = {
             'processing_order_form': Create_request_form(instance=order),
             'order': order,
         }
-        return render(request, 'processing_order.html', context)
+        return render(request, 'order template/processing_order.html', context)
     form = form.save(commit=False)
     date = datetime.datetime.today()
     form.date_processing = date
@@ -1044,7 +1044,7 @@ def incomplete_commit_order(request, pk):
             'incomplete_commit_order': Create_request_form(instance=order),
             'order': order,
         }
-        return render(request, 'incomplete_commit_order.html', context)
+        return render(request, 'order template/incomplete_commit_order.html', context)
     form = Create_request_form(request.POST, instance=order)
     date = datetime.datetime.today()
     if not form.is_valid():
@@ -1052,7 +1052,7 @@ def incomplete_commit_order(request, pk):
             'incomplete_commit_order': Create_request_form(instance=order),
             'order': order,
         }
-        return render(request, 'incomplete_commit_order.html', context)
+        return render(request, 'order template/incomplete_commit_order.html', context)
     form = form.save(commit=False)
     if form.amount_commit > form.amount_order:
         messages.error(
@@ -1105,7 +1105,7 @@ def cancel_order(request, pk):
         context = {
             'order': order,
         }
-        return render(request, 'cancel_order.html', context)
+        return render(request, 'order template/cancel_order.html', context)
     order.amount_commit = 0
     order.status = 'отменен'
     Order.objects.create(
@@ -1128,10 +1128,10 @@ def edit_order(request, pk):
     get = get_object_or_404(Order, pk=pk)
     form = Create_request_form(instance=get)
     if request.method != 'POST':
-        return render(request, 'edit_order.html', {'form':form})
+        return render(request, 'order template/edit_order.html', {'form':form})
     form = Create_request_form(request.POST, instance=get)
     if not form.is_valid():
-        return render(request, 'edit_order.html', {'form':form})
+        return render(request, 'order template/edit_order.html', {'form':form})
     form.save()
     messages.success(
         request, 'Заявка отредактирована!'
@@ -1146,16 +1146,16 @@ def order_confirmation(request):
         cancel = False
     if request.method != 'POST':
         form = Confirmation_form()
-        return render(request, 'order_confirmation_form.html', {'form': form, 'cancel': cancel})
+        return render(request, 'order template/order_confirmation_form.html', {'form': form, 'cancel': cancel})
     form = Confirmation_form(request.POST)
     if not form.is_valid():
-        return render(request, 'order_confirmation_form.html', {'form': form, 'cancel': cancel})
+        return render(request, 'order template/order_confirmation_form.html', {'form': form, 'cancel': cancel})
     invoice_number = form.cleaned_data['invoice_number']
     order = Order.objects.filter(invoice_number=invoice_number, status='заказан')
     if not order.exists():
         order = Order.objects.filter(invoice_number=invoice_number, status='оплачен')
     cnt = order.count()
-    return render(request, 'order_confirmation_commit.html', {'page':order, 'cnt':cnt, 'cancel': cancel})
+    return render(request, 'order template/order_confirmation_commit.html', {'page':order, 'cnt':cnt, 'cancel': cancel})
 
 
 def confirmation_commit(request):

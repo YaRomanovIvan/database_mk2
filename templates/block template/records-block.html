@@ -42,24 +42,17 @@
         <form action='{% url "add_new_record_block" %}' method='POST'>
           {% csrf_token %}
           <div class="modal-body">
-            {% if form.subject.errors %}
-              <ol>
-              {% for error in form.subject.errors %}
-                  <li><strong>{{ error|escape }}</strong></li>
-              {% endfor %}
-              </ol>
-            {% endif %}
-            {{ record_block_form.number_block.errors }}
-            {{ record_block_form.number_block.label_tag }}
-            {{ record_block_form.number_block }}
-            {{ record_block_form.name_block.label_tag }}
-            {{ record_block_form.name_block }}
-            {{ record_block_form.serial_number.label_tag }}
-            {{ record_block_form.serial_number }}
-            {{ record_block_form.region.label_tag }}
-            {{ record_block_form.region }}
-            {{ record_block_form.note.label_tag }}
-            {{ record_block_form.note|addclass:'form-control form-control-sm' }}
+            {% for field in record_block_form %}
+              <div class="fieldWrapper">
+                {{ field.errors }}
+                {{ field.label_tag }} {{ field|addclass:'form-control form-control-sm' }}
+                {% if field.help_text %}
+                <ul>
+                  <li><p class="help"><i>{{ field.help_text|safe }}</i></p></li>
+                </ul>
+                {% endif %}
+              </div>
+            {% endfor %}
           </div>
           <div class="modal-footer">
             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
@@ -80,12 +73,17 @@
         <form action='{% url "add_new_type_block" %}' method='POST'>
           {% csrf_token %}
           <div class="modal-body">
-            {{ type_block_form.name_block.label_tag }}
-            {{ type_block_form.name_block }}
-            {{ type_block_form.components.label_tag }}
-            {{ type_block_form.components }}
-            {{ type_block_form.maker.label_tag}}
-            {{ type_block_form.maker|addclass:'form-control form-control-sm' }}
+            {% for field in type_block_form %}
+              <div class="fieldWrapper">
+                {{ field.errors }}
+                {{ field.label_tag }} {{ field }}
+                {% if field.help_text %}
+                <ul>
+                  <li><p class="help"><i>{{ field.help_text|safe }}</i></p></li>
+                </ul>
+                {% endif %}
+              </div>
+            {% endfor %}
           </div>
           <div class="modal-footer">
             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Закрыть</button>
@@ -109,6 +107,11 @@
             {% for field in unit_form %}
               {{ field.label }}
               {{ field }}
+              {% if field.help_text %}
+                <ul>
+                  <li><p class="help"><i>{{ field.help_text|safe }}</i></p></li>
+                </ul>
+                {% endif %}
               <br>
             {% endfor %}
           </div>

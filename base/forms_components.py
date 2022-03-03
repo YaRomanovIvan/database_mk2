@@ -4,10 +4,11 @@ from .models import Component
 class New_component_form(forms.ModelForm):
     type_component = forms.CharField(
         label='Тип компонента',
-        help_text = 'Например "стабилизатор"',
+        help_text = 'Например "Стабилизатор"',
         widget=forms.TextInput(
             attrs={
-                'class':'form-control form-control-sm'
+                'class':'form-control form-control-sm',
+                'placeholder': 'Стабилизатор/Микросхема/Транзистор',
             }
         ),
     )
@@ -16,17 +17,19 @@ class New_component_form(forms.ModelForm):
         help_text = 'Например "78L05"',
         widget=forms.TextInput(
             attrs={
-                'class':'form-control form-control-sm'
+                'class':'form-control form-control-sm',
+                'placeholder': '78L05/HCPL316J/TPS5420D',
             }
         ),
     )
     note = forms.CharField(
-        label='Примечание',
+        label='Тип корпуса',
         required=False,
         help_text = 'Например "SOT-89"',
         widget=forms.TextInput(
             attrs={
-                'class':'form-control form-control-sm'
+                'class':'form-control form-control-sm',
+                'placeholder': 'SOT-89/DIP-8/TO-247',
             }
         ),
     )

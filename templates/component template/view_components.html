@@ -10,7 +10,9 @@
 
 <nav class="navbar">
   <div class="container">
-    <button type="button" class="btn btn-outline-primary nav-link zoom-menu mb-2" data-bs-toggle="modal" data-bs-target="#new_component">Новый компонент</button>
+    <button id="help" type="button" class="btn btn-outline-primary nav-link zoom-menu mb-2" data-bs-toggle="modal" data-bs-target="#new_component" data-placement="top" title="Перед добавлением нового компонента, убедитесь что его никто не добавил до вас!">
+      Новый компонент
+    </button>
     <button type="button" class="btn btn-outline-primary nav-link zoom-menu mb-2" data-bs-toggle="modal" data-bs-target="#update_amount">Увеличить количество</button>
     <button type="button" class="btn btn-outline-primary nav-link zoom-menu mb-2" data-bs-toggle="modal" data-bs-target="#update_price">Изменить цену</button>
   </div>
@@ -36,32 +38,21 @@
         <form action='{% url "new_component" %}' method='POST'>
           {% csrf_token %}
           <div class="modal-body">
-            {% if form.subject.errors %}
-                <ol>
-                {% for error in form.subject.errors %}
-                    <li><strong>{{ error|escape }}</strong></li>
-                {% endfor %}
-                </ol>
-            {% endif %}
-            {{ new_component_form.type_component.errors }}
-            {{ new_component_form.type_component.label_tag }}
-            {{ new_component_form.type_component}}
-            {{ new_component_form.marking.label_tag }}
-            {{ new_component_form.marking }}
-            {{ new_component_form.note.label_tag }}
-            {{ new_component_form.note }}
-            {{ new_component_form.amount_trk.label_tag }}
-            {{ new_component_form.amount_trk }}
-            {{ new_component_form.amount_eis.label_tag }}
-            {{ new_component_form.amount_eis }}
-            {{ new_component_form.amount_vts.label_tag }}
-            {{ new_component_form.amount_vts }}
-            {{ new_component_form.price.label_tag }}
-            {{ new_component_form.price }}
+            {% for field in new_component_form %}
+              <div class="fieldWrapper">
+                {{ field.errors }}
+                {{ field.label_tag }} {{ field|addclass:'form-control form-control-sm' }}
+                {% if field.help_text %}
+                <ul>
+                  <li><p class="help fs-6"><i>{{ field.help_text|safe }}</i></p></li>
+                </ul>
+                {% endif %}
+              </div>
+            {% endfor %}
           </div>
           <div class="modal-footer">
             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Закрыть</button>
-            <button type="submit" class="btn btn-primary">Добавить</button>
+            <button id="help" data-placement="top" title="Перед добавлением нового компонента, убедитесь что его никто не добавил до вас!" type="submit" class="btn btn-primary">Добавить</button>
           </div>
         </form>
       </div>
@@ -159,4 +150,10 @@
         </tbody>
     </table>
 </div>
+
+<script>
+  $(function () {
+    $('[id="help"]').tooltip()
+  });
+</script>
 {% endblock %}

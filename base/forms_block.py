@@ -1,3 +1,4 @@
+from logging import PlaceHolder
 from typing import DefaultDict
 from django import forms
 from .models import Component, Type_block, Unit, Record_block, Defect_statement, Maker
@@ -8,7 +9,7 @@ class Type_block_form(forms.ModelForm):
         label="Наименование блока",
         help_text='Например "Плата драйвера ДТИ 6/12 СМПК.758725.026"',
         widget=forms.TextInput(
-            attrs={"class": "form-control form-control-sm"}
+            attrs={"class": "form-control form-control-sm", "placeholder": "Плата драйвера ДТИ 6/12 СМПК.758725.026"}
         ),
     )
     components = forms.ModelMultipleChoiceField(
@@ -19,6 +20,13 @@ class Type_block_form(forms.ModelForm):
             "id": "id_record_component", 
             "class": "component_multiple_select2",}),
         required=False,
+    )
+    maker = forms.ModelChoiceField(
+        queryset=Maker.objects.all(),
+        label='Производитель',
+        required=False,
+        widget=forms.Select(attrs={
+            "class": "form-control form-control-sm",}),
     )
 
     class Meta:
@@ -31,7 +39,7 @@ class Unit_form(forms.ModelForm):
         label="Наименование участка",
         help_text='Например "Москва-Киевская"',
         widget=forms.TextInput(
-            attrs={"class": "form-control form-control-sm"}
+            attrs={"class": "form-control form-control-sm", 'placeholder': 'Москва-Киевская'}
         ),
     )
 
@@ -44,7 +52,7 @@ class Record_block_form(forms.ModelForm):
     number_block = forms.IntegerField(
         label="Номер блока",
         widget=forms.NumberInput(
-            attrs={"class": "form-control form-control-sm"}
+            attrs={"class": "form-control form-control-sm", 'placeholder': '99666'}
         ),
     )
     name_block = forms.ModelChoiceField(
@@ -55,7 +63,7 @@ class Record_block_form(forms.ModelForm):
     serial_number = forms.CharField(
         label="Заводской номер",
         widget=forms.TextInput(
-            attrs={"class": "form-control form-control-sm"}
+            attrs={"class": "form-control form-control-sm", 'placeholder': '2D738415'}
         ),
         required=False,
     )
@@ -64,13 +72,10 @@ class Record_block_form(forms.ModelForm):
         queryset=Unit.objects.all(),
         widget=forms.Select(attrs={"class": "form-control form-control-sm"}),
     )
-    date_add = forms.DateField(
-        required=False
-    )
 
     class Meta:
         model = Record_block
-        fields = ("__all__")
+        fields = ("number_block", "name_block", "serial_number", "region")
 
 
 class Send_block_form(forms.ModelForm):

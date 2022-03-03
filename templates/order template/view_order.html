@@ -4,26 +4,28 @@
 
 {% block content %}
 <style>
-.select2-close-mask{
-    z-index: 2099;
-}
-.select2-dropdown{
-    z-index: 3051;
-}
-thead th {
-  position: sticky;
-  top: 0;
-  background: white;
-}
-.tooltip > .tooltip-inner {
-  background-color: #black;
-  color: #FFFFFF;
-  border: 1px solid black;
-  padding: 10px;
-  font-size: 14px;
-  max-width: 500px;
-}
+  .select2-close-mask{
+      z-index: 2099;
+  }
+  .select2-dropdown{
+      z-index: 3051;
+  }
+  thead th {
+    position: sticky;
+    top: 0;
+    background: white;
+  }
+  .tooltip > .tooltip-inner {
+    background-color: black;
+    color: #FFFFFF;
+    border: 1px solid black;
+    padding: 10px;
+    font-size: 14px;
+    max-width: 500px;
+  }
 </style>
+
+
 <h1 class='text-center'>Заказы</h1>
 
 <div class='container'>
@@ -54,6 +56,10 @@ thead th {
       <div class="col">
         {{ data_filter_form.form.invoice_number.label_tag }}
         {{ data_filter_form.form.invoice_number|addclass:"form-control form-control-sm" }}
+      </div>
+      <div class="col">
+        {{ data_filter_form.form.user.label_tag }}
+        {{ data_filter_form.form.user|addclass:"form-control form-control-sm" }}
       </div>
     </div>
     <br>
@@ -108,11 +114,11 @@ thead th {
               {{ field.errors }}
               {{ field.label_tag }} {{ field|addclass:"form-control form-control-sm" }}
               {% if field.help_text %}
-              <p class="help"><i>{{ field.help_text|safe }}</i></p>
+                <p class="help"><i>{{ field.help_text|safe }}</i></p>
               {% endif %}
             </div>
             {% else %}
-            {{ field.as_hidden }}
+              {{ field.as_hidden }}
             {% endif %}
           {% endfor %}
         </div>
@@ -206,11 +212,17 @@ thead th {
           <div class="modal-body">
             <p><i>Не забудьте сначала выбрать позиции используя "checkbox"</i></p>
             {% for field in invoice_number_form %}
-                <div class="fieldWrapper">
-                    {{ field.errors }}
-                    {{ field.label_tag }} {{ field|addclass:"form-control form-control-sm" }}
-                </div>
+              <div class="fieldWrapper">
+                {{ field.errors }}
+                {{ field.label_tag }} {{ field|addclass:'form-control form-control-sm' }}
+                {% if field.help_text %}
+                <ul>
+                  <li><p class="help"><i>{{ field.help_text|safe }}</i></p></li>
+                </ul>
+                {% endif %}
+              </div>
             {% endfor %}
+            
           </div>
           <div class="modal-footer">
             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Закрыть</button>

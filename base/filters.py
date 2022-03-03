@@ -167,6 +167,10 @@ class Order_filter(django_filters.FilterSet):
         lookup_expr='icontains',
         label='Поставщик',
     )
+    user = django_filters.CharFilter(
+        lookup_expr='icontains',
+        label='Фамилия',
+    )
     class Meta:
         model = Order
         fields = ('__all__')
