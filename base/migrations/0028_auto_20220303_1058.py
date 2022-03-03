@@ -15,11 +15,6 @@ class Migration(migrations.Migration):
             name='order',
             options={'ordering': [django.db.models.expressions.OrderBy(django.db.models.expressions.F('date_processing'), descending=True, nulls_first=True), 'provider', 'date_created', 'invoice_number'], 'verbose_name': 'Заказ', 'verbose_name_plural': 'Заказы'},
         ),
-        migrations.AddField(
-            model_name='order',
-            name='delivery_time',
-            field=models.CharField(blank=True, max_length=15, null=True, verbose_name='Срок поставки'),
-        ),
         migrations.AlterField(
             model_name='maker',
             name='note_maker',
