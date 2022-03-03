@@ -8,7 +8,6 @@ def employee_permission(func):
     """
 
     def check_permissions(request, *args, **kwargs):
-        print(request.user.role)
         if request.user.role == 'USR':
             messages.error(
                 request,
