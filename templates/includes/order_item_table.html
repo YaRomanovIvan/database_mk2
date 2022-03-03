@@ -6,7 +6,7 @@
     <td style="text-align: left;">
       {{ bb.component }}
       {% if bb.note %}
-        <a href='{{ bb.note }}'>ссылка</a>
+        <a href='{{ bb.note }}' target="_blank">ссылка</a>
       {% endif %}
       {% if bb.component.block_components.exists %}
         <a href="#"style="float: right;" data-toggle="tooltip" id='help_block' type="button" class="btn btn-sm btn-outline-primary" data-placement="right" title="{% for i in bb.component.block_components.all %} {{ i }} <br>---<br> {% endfor %}">блоки</a>
