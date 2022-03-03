@@ -8,6 +8,9 @@
       {% if bb.note %}
         <a href='{{ bb.note }}'>ссылка</a>
       {% endif %}
+      {% if bb.component.block_components.exists %}
+        <button style="float: right;" id='help' type="button" class="btn btn-sm btn-outline-primary" data-placement="right" title="{% for i in bb.component.block_components.all %} {{ i }}, {% endfor %}">блоки</button>
+      {% endif %}
     </td>
     <td>{{ bb.amount }}</td>
     <td>{{ bb.date_created|date:"d.m.Y" }}</td>

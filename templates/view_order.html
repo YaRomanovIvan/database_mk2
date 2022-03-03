@@ -10,6 +10,11 @@
 .select2-dropdown{
     z-index: 3051;
 }
+thead th {
+  position: sticky;
+  top: 0;
+  background: white;
+}
 </style>
 <h1 class='text-center'>Заказы</h1>
 
@@ -114,12 +119,16 @@
 
 <form action="{% url 'order_components' %}" method='POST'>
   <div class='ms-3 me-3'>
-    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#create_request">Создать заявку</button>
-    <button type="button" class="btn btn-warning" data-bs-toggle="modal" data-bs-target="#invoice_order">Сформировать заказ</button>
-    <a href="{% url 'confirmation_form' %}?commit" class="btn btn-info">Подтвердить оплату</a>
-    <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#commit_order">Принять весь заказ</button>
+    <button id='help' type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#create_request" data-placement="top" title="Создание заявки для заказа компонента">
+      Создать заявку
+    </button>
+    <button id='help' type="button" class="btn btn-warning" data-bs-toggle="modal" data-bs-target="#invoice_order" data-placement="top" title="После обработки заявки. Выделите используя 'чекбокс' необходимые заявки и нажмите на кнопку.">
+      Сформировать заказ
+    </button>
+    <a id='help' href="{% url 'confirmation_form' %}?commit" class="btn btn-info" data-placement="top" title="Подтвердите оплату используя номер счета. Выделять заявки не требуется.">Подтвердить оплату</a>
+    <button id='help' type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#commit_order" data-placement="top" title="После подтверждения оплаты. Выделите используя 'чекбокс' зявки и нажмите кнопку.">Принять весь заказ</button>
     <div style="float: right;">
-      <a href="{% url 'confirmation_form' %}?cancel" name='cancel' class="btn btn-danger">Отменить заказ</a> 
+      <a id='help' href="{% url 'confirmation_form' %}?cancel" name='cancel' class="btn btn-danger" data-placement="top" title="Отмените заказы используя номер счета. Выделять заявки не требуется.">Отменить заказ</a> 
     </div>
   </div>
   <hr>
@@ -255,8 +264,10 @@
     Array.prototype.forEach.call(els, function(cb){
       cb.checked = e.target.checked;
     });
-  })
-;
+  });
+  $(function () {
+    $('[id="help"]').tooltip()
+  });
 </script>
 
 {% endblock %}
