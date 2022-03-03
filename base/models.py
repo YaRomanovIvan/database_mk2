@@ -332,11 +332,10 @@ class Maker(models.Model):
         null=True,
         verbose_name="Причина отправки",
     )
-    note_maker = models.CharField(
-        max_length=65,
+    note_maker = models.TextField(
         blank=True,
         null=True,
-        verbose_name="Примечание",
+        verbose_name="Ссылка",
     )
 
     class Meta:
