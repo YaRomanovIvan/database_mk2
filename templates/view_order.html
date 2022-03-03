@@ -15,6 +15,14 @@ thead th {
   top: 0;
   background: white;
 }
+.tooltip > .tooltip-inner {
+  background-color: #black;
+  color: #FFFFFF;
+  border: 1px solid black;
+  padding: 10px;
+  font-size: 14px;
+  max-width: 500px;
+}
 </style>
 <h1 class='text-center'>Заказы</h1>
 
@@ -267,6 +275,12 @@ thead th {
   });
   $(function () {
     $('[id="help"]').tooltip()
+  });
+  $(function () {
+    $('[id="help_block"]').tooltip({
+      placement:"right",
+      html:true,
+    })
   });
 </script>
 
