@@ -370,7 +370,6 @@ class Order(models.Model):
         (trk, "ТРК"),
         (vts, "ВТС"),
         (eis, "ЭИС"),
-        (default, "--------")
     ]
     component = models.ForeignKey(
         Component,
@@ -448,7 +447,6 @@ class Order(models.Model):
         blank=True,
         null=True,
         choices=CHOICE_COMPANY,
-        default=default,
     )
     user = models.CharField(
         max_length=180,

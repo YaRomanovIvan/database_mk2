@@ -57,10 +57,6 @@
         {{ data_filter_form.form.invoice_number.label_tag }}
         {{ data_filter_form.form.invoice_number|addclass:"form-control form-control-sm" }}
       </div>
-      <div class="col">
-        {{ data_filter_form.form.user.label_tag }}
-        {{ data_filter_form.form.user|addclass:"form-control form-control-sm" }}
-      </div>
     </div>
     <br>
     <div class="row">
@@ -87,6 +83,12 @@
         <input type="date" name="date_commit_after" class="form-control form-control-sm" placeholder="Дата приема" title="" id="id_date_commit_0">
         <label for="id_date_commit_1">по</label>
         <input type="date" name="date_commit_before" class="form-control form-control-sm" placeholder="Дата приема" title="" id="id_date_commit_1">
+      </div>
+      <div class="col">
+        {{ data_filter_form.form.user.label_tag }}
+        {{ data_filter_form.form.user|addclass:"form-control form-control-sm" }}
+        {{ data_filter_form.form.payer.label_tag }}
+        {{ data_filter_form.form.payer|addclass:"form-control form-control-sm" }}
       </div>
     </div>
     <br>
@@ -163,10 +165,11 @@
           <th scope="col">Поставщик</th>
           <th style="min-width: 112px;" scope="col">Дата заказа</th>
           <th style="min-width: 112px;" scope="col">Номер счета</th>
+          <th scope="col">Плательщик</th>
           <th scope="col">Получено</th>
           <th style="min-width: 140px;" scope="col">Дата получения</th>
           <th scope="col">Статус</th>
-          <th style="min-width: 135px;" scope="col">Срок поставки</th>
+          <th scope="col">Срок</th>
           <th scope="col">Фамилии</th>
         </tr>
       </thead>
