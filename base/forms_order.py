@@ -4,18 +4,9 @@ from .models import Order, Component
 
 
 class Create_request_form(forms.ModelForm):
-    trk = "ТРК"
-    vts = "ВТС"
-    eis = "ЭИС"
-    default = "--------"
-    CHOICE_COMPANY = [
-        (default, "--------"),
-        (trk, "ТРК"),
-        (vts, "ВТС"),
-        (eis, "ЭИС"),
-    ]
     payer = forms.ChoiceField(
-        choices=CHOICE_COMPANY,
+        label='Плательщик',
+        choices=Order.CHOICE_COMPANY,
         required=False,
     )
     component = forms.ModelChoiceField(
