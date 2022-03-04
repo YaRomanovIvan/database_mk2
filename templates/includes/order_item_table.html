@@ -29,8 +29,7 @@
     {% else %}
     <td id="date_order_id_js">{{ bb.date_order|date:"d.m.Y" }}</td>
     {% endif %}
-    <td>{{ bb.invoice_number|default_if_none:"" }}</td>
-    <td>{{ bb.payer|default_if_none:"" }}</td>
+    <td>{{ bb.invoice_number|default_if_none:"" }}  {% if bb.payer %} <br> {{ bb.payer|default_if_none:"" }} {% endif %}</td>
     {% if bb.status == 'оплачен' or bb.status == 'недопоставка' %}
     <td colspan="2">
       <div class="btn-group" role="group" aria-label="Basic example">
