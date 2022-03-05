@@ -1001,9 +1001,13 @@ def order_components(request):
         return redirect("view_order")
     invoice_number = form.cleaned_data['number']
     invoice_amount = form.cleaned_data['invoice_amount']
-    if not invoice_number or not invoice_amount:
-        messages.error(request, "Заполните поля!")
+    if not invoice_number:
+        messages.error(request, "Заполните поле 'Номер счета'")
         return redirect("view_order")
+    if not invoice_amount:
+        if not invoice_amount == 0:
+            messages.error(request, "Заполните поле 'Сумма счета'")
+            return redirect("view_order")
     payer = form.cleaned_data['payer']
     provider = form.cleaned_data['provider']
     delivery_time = form.cleaned_data['delivery_time']
