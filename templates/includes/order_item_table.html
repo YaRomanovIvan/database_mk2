@@ -4,10 +4,14 @@
     </th>
     <td>{{ bb.pk }}&nbsp;<a href='{% url "edit_order" bb.pk %}'>ред.</a></td>
     <td style="text-align: left;">
+      {{ bb.component.type_component }}
+    </td>
+    <td style="text-align: left;">
       {% if bb.component.block_components.exists %}
-      <p style="margin-bottom: 2px;" data-toggle="tooltip" id='help_block' data-placement="right" title="{% for i in bb.component.block_components.all %} {{ i }}; <br> {% endfor %}">{{ bb.component }}</p>
+        <p style="margin-bottom: 2px;" data-toggle="tooltip" id='help_block' data-placement="right" title="{% for i in bb.component.block_components.all %} {{ i }}; <br> {% endfor %}">{{ bb.component.marking }} {{ bb.component.note }}</p>
       {% else %}
-      {{ bb.component }}
+        {{ bb.component.marking }}
+        {{ bb.component.note }}
       {% endif %}
       {% if bb.note %}
         <a href='{{ bb.note }}' target="_blank">ссылка</a>
