@@ -1,7 +1,5 @@
-from logging import PlaceHolder
-from typing import DefaultDict
 from django import forms
-from .models import Component, Type_block, Unit, Record_block, Defect_statement, Maker
+from .models import Component, Type_block, Unit, Record_block, Defect_statement, Maker, Maker_company
 
 
 class Type_block_form(forms.ModelForm):
@@ -22,7 +20,7 @@ class Type_block_form(forms.ModelForm):
         required=False,
     )
     maker = forms.ModelChoiceField(
-        queryset=Maker.objects.all(),
+        queryset=Maker_company.objects.all(),
         label='Производитель',
         required=False,
         widget=forms.Select(attrs={

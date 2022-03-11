@@ -217,7 +217,6 @@ def block_info(request, pk):
         'maker_form': MakerForm(initial={'block': about_block, 'maker':block.maker}, instance=about_block),
         'repair_block_form': form,
         'components': components,
-        'maker': block.maker,
         'defect': defect,
     }
     return render(request, 'block template/block_info.html', context)
