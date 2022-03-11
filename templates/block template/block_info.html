@@ -127,7 +127,8 @@ thead th {
           {% csrf_token %}
           <div class="modal-body">
             {{ type_block_form.name_block.as_hidden }}
-            {{ type_block_form.maker.as_hidden }}
+            <label for="{{ type_block_form.maker.id_for_maker }}">Указать производителя:</label>
+            {{ type_block_form.maker }}
             <label for="{{ type_block_form.components.id_for_label }}">Привязать или удалить компонент:</label>
             {{ type_block_form.components }}
 
