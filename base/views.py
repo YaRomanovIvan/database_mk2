@@ -301,11 +301,6 @@ def repair_block(request, pk):
         record_check = Component.objects.filter(
             marking__in=marking
         ).exists()
-        print('---------------------')
-        print(marking)
-        print(Component.objects.filter(marking='5,1 Om 2W'))
-        print(Component.objects.filter(type_component__in=marking).filter(marking__in=marking))
-        print('---------------------')
         if not record_check:
             messages.error(
             request, (
