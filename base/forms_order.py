@@ -45,6 +45,11 @@ class Invoice_number_form(forms.Form):
             attrs={"placeholder": "544012Z"}
         ),
     )
+    document = forms.FileField(
+        label='Файл',
+        help_text='Подгрузить файл счета',
+        required=False,
+    )
     invoice_amount = forms.FloatField(
         label="Сумма счета",
         help_text="Укажите сумму счета",

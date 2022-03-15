@@ -173,4 +173,4 @@ class Order_filter(django_filters.FilterSet):
     )
     class Meta:
         model = Order
-        fields = ('__all__')
+        exclude = ('invoice_document')

@@ -124,6 +124,7 @@ class OrderAdmin(admin.ModelAdmin):
         'provider',
         'status',
         'invoice_number',
+        'invoice_document',
         'invoice_amount',
         'payer',
         'user',

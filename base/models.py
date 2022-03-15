@@ -437,6 +437,12 @@ class Order(models.Model):
         blank=True,
         null=True,
     )
+    invoice_document = models.FileField(
+        upload_to='staticfiles/invoice_document_file/',
+        verbose_name='Счет',
+        blank=True,
+        null=True,
+    )
     invoice_amount = models.FloatField(
         verbose_name='Сумма счета',
         blank=True,

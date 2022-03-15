@@ -31,9 +31,14 @@
       <a href='{% url "cancel_order" bb.pk %}' name="cancel" class="btn btn-danger btn-sm">Отменить</a>
     </td>
     {% else %}
-    <td id="date_order_id_js">{{ bb.date_order|date:"d.m.Y" }}</td>
+      <td id="date_order_id_js">{{ bb.date_order|date:"d.m.Y" }}</td>
     {% endif %}
-    <td>{{ bb.invoice_number|default_if_none:"" }}</td>
+    <td>
+      {{ bb.invoice_number|default_if_none:"" }}
+      {% if bb.invoice_document %}
+        <a href="{{ bb.invoice_document.url }}" target="_blank"><img src="https://img.icons8.com/office/16/000000/installing-updates--v2.png"/></a>
+      {% endif %}
+    </td>
     <td>{{ bb.payer|default_if_none:"" }}</td>
     {% if bb.status == 'оплачен' or bb.status == 'недопоставка' %}
     <td colspan="2">

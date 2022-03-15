@@ -133,7 +133,7 @@
   </div>
 </div>
 
-<form action="{% url 'order_components' %}" method='POST'>
+<form action="{% url 'order_components' %}" method='POST',  enctype="multipart/form-data">
   <div class='ms-3 me-3'>
     <button id='help' type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#create_request" data-placement="top" title="Создание заявки для заказа компонента">
       Создать заявку

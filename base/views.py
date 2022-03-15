@@ -995,7 +995,7 @@ def order_components(request):
         return redirect("view_order")
     if request.method != 'POST':
         return redirect("view_order")
-    form = Invoice_number_form(request.POST)
+    form = Invoice_number_form(request.POST, request.FILES or None)
     if not form.is_valid():
         return redirect("view_order")
     invoice_number = form.cleaned_data['number']
@@ -1010,6 +1010,7 @@ def order_components(request):
     payer = form.cleaned_data['payer']
     provider = form.cleaned_data['provider']
     delivery_time = form.cleaned_data['delivery_time']
+    invoice_document = form.cleaned_data['document']
     date_order = datetime.datetime.today()
     error = []
     for pk in number_id:
@@ -1021,6 +1022,7 @@ def order_components(request):
             order.payer = payer
             order.provider = provider
             order.delivery_time = delivery_time
+            order.invoice_document = invoice_document
             order.status = "заказан"
             order.save()
         else:
@@ -1048,7 +1050,7 @@ def incomplete_commit_order(request, pk):
             'order': order,
         }
         return render(request, 'order template/incomplete_commit_order.html', context)
-    form = Create_request_form(request.POST, instance=order)
+    form = Create_request_form(request.POST, request.FILES or None, instance=order)
     date = datetime.datetime.today()
     if not form.is_valid():
         context = {
@@ -1132,7 +1134,7 @@ def edit_order(request, pk):
     form = Create_request_form(instance=get)
     if request.method != 'POST':
         return render(request, 'order template/edit_order.html', {'form':form})
-    form = Create_request_form(request.POST, instance=get)
+    form = Create_request_form(request.POST, request.FILES or None, instance=get)
     if not form.is_valid():
         return render(request, 'order template/edit_order.html', {'form':form})
     form.save()
