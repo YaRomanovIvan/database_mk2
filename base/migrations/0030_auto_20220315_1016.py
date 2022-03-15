@@ -12,11 +12,6 @@ class Migration(migrations.Migration):
     operations = [
         migrations.AddField(
             model_name='order',
-            name='delivery_time',
-            field=models.CharField(blank=True, max_length=15, null=True, verbose_name='Срок поставки'),
-        ),
-        migrations.AddField(
-            model_name='order',
             name='invoice_document',
             field=models.FileField(blank=True, null=True, upload_to='invoice_document_file/', verbose_name='Счет'),
         ),
