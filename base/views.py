@@ -1,6 +1,6 @@
 import datetime
 import os
-from django.http import FileResponse
+from django.http import FileResponse, HttpResponseRedirect, HttpResponse
 from django.shortcuts import get_object_or_404, render, redirect
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
@@ -1064,7 +1064,7 @@ def incomplete_commit_order(request, pk):
         request,
         'Вы не можете получить больше, чем заказали!'
         )
-        return redirect('view_order')
+        return HttpResponse('<script>history.go(-2);</script>') #костыль. Целью было сделать возврат на страницу, где заказы отфильтрованы по счету. 
     if form.amount_commit < form.amount_order:
         Order.objects.create(
             component=form.component,
@@ -1099,7 +1099,7 @@ def incomplete_commit_order(request, pk):
         request,
         'Заявка обработана! Компонент успешно получен!'
     )
-    return redirect('view_order')
+    return HttpResponse('<script>history.go(-2);</script>') #костыль. Целью было сделать возврат на страницу, где заказы отфильтрованы по счету.
         
 
 @login_required
