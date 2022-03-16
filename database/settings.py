@@ -25,7 +25,7 @@ SECRET_KEY = '_tmw8tyw(l0e40qzox1fv+5^qu$uk(+&ihag^&_ig_lgujua^-'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['127.0.0.1', '51.250.38.128', 'yatuber.ru', 'www.yatuber.ru']
+ALLOWED_HOSTS = ['127.0.0.1', '51.250.38.128',]
 
 AUTH_USER_MODEL = "users.User"
 

@@ -8,13 +8,26 @@
     </td>
     <td style="text-align: left;">
       {% if bb.component.block_components.exists %}
-        <p style="margin-bottom: 2px;" data-toggle="tooltip" id='help_block' data-placement="right" title="{% for i in bb.component.block_components.all %} {{ i }}; <br> {% endfor %}">{{ bb.component.marking }} {{ bb.component.note }}</p>
+        <p style="margin-bottom: 2px;" data-toggle="tooltip" id='help_block' data-placement="right" title="{% for i in bb.component.block_components.all %} {{ i }}; <br> {% endfor %}">
+          {{ bb.component.marking }} {{ bb.component.note }}
+          {% if bb.note %}
+            {% if 'aliexpress' in bb.note %}
+              <a href='{{ bb.note }}' target="_blank">aliexpr</a>
+            {% else %}
+              <a href='{{ bb.note }}' target="_blank">ссылка</a>
+            {% endif %}
+          {% endif %}
+        </p>
       {% else %}
         {{ bb.component.marking }}
         {{ bb.component.note }}
-      {% endif %}
-      {% if bb.note %}
-        <a href='{{ bb.note }}' target="_blank">ссылка</a>
+        {% if bb.note %}
+          {% if 'aliexpress' in bb.note %}
+            <a href='{{ bb.note }}' target="_blank">aliexpr</a>
+          {% else %}
+            <a href='{{ bb.note }}' target="_blank">ссылка</a>
+          {% endif %}
+        {% endif %}
       {% endif %}
     </td>
     <td>{{ bb.amount }}</td>
