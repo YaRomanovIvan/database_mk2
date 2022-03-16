@@ -1,5 +1,6 @@
-from django import forms
 import django_filters
+from django import forms
+from django.db.models import Q
 from .models import Maker_company, Record_block, Component, Record_component, Defect_statement, Maker, Type_block, Order
 
 
@@ -80,23 +81,16 @@ class Maker_filter(django_filters.FilterSet):
 
 
 class Components_filter(django_filters.FilterSet):
-    type_component = django_filters.CharFilter(
+    component = django_filters.CharFilter(
         lookup_expr='icontains',
-        label='Тип компонента',
+        label='Тип или маркировка компонента:',
+        help_text='Будьте внимательны! В поле следуется указать либо тип микросхемы, либо ее маркировку!',
+        method='get_name',
         widget=forms.TextInput(
             attrs={
-                'placeholder': 'стабилизатор/микросхема/транзистор и т.п.'
+                'placeholder': 'Стабилизатор/Микросхема/Транзистор/78L05/LTO100F20R/IRF640N и т.п.'
             }
         ),
-    )
-    marking = django_filters.CharFilter(
-        lookup_expr='icontains',
-        label='Маркировка',
-        widget=forms.TextInput(
-            attrs={
-                'placeholder': '78L05/LTO100F20R/IRF640N и т.п.'
-            }
-        )
     )
     amount_eis = django_filters.RangeFilter(
         label='Количество ЭИС',
@@ -113,6 +107,9 @@ class Components_filter(django_filters.FilterSet):
     price = django_filters.RangeFilter(
         label='Цена',
     )
+
+    def get_name(self, queryset, field_name, value):
+        return queryset.filter(Q(type_component__iregex=value) | Q(marking__iregex=value))
 
     class Meta:
         model = Component

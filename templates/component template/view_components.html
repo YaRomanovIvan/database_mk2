@@ -3,11 +3,29 @@
 {% load user_filters %}
 
 {% block content %}
+<style>
+  .select2-close-mask{
+      z-index: 2099;
+  }
+  .select2-dropdown{
+      z-index: 3051;
+  }
+  thead th {
+    position: sticky;
+    top: 0;
+    background: white;
+  }
+  .tooltip > .tooltip-inner {
+    background-color: black;
+    color: #FFFFFF;
+    border: 1px solid black;
+    padding: 10px;
+    font-size: 14px;
+    max-width: 500px;
+  }
+</style>
 <h1 class="text-center">Информация о компонентах</h1>
-
 <hr>
-
-
 <nav class="navbar">
   <div class="container">
     <button id="help" type="button" class="btn btn-outline-primary nav-link zoom-menu mb-2" data-bs-toggle="modal" data-bs-target="#new_component" data-placement="top" title="Перед добавлением нового компонента, убедитесь что его никто не добавил до вас!">
@@ -112,17 +130,17 @@
 
 
 <div class='ms-3 me-3'>
-    <table class="table table-sm table-bordered table-hover">
+    <table class="table table-sm table-bordered table-hover text-center">
         <thead>
             <tr>
                 <th scope="col" style="width: 1%"></th>
-                <th scope="col">Наименование компонента <br>Всего наименований: кол-во</th>
+                <th scope="col">Наименование компонента</th>
                 <th>Ссылки на поиск</th>
-                <th scope="col" style="width: 5%">Количество ЭИС</th>
-                <th scope="col" style="width: 5%">Количество ТРК</th>
-                <th scope="col" style="width: 5%">Количество ВТС</th>
-                <th scope="col" style="width: 5%">Общее количество</th>
-                <th scope="col" style="width: 10%">Списано за прошедшие 30 дней</th>
+                <th scope="col" style="width: 7%">Кол-во ЭИС</th>
+                <th scope="col" style="width: 7%">Кол-во ТРК</th>
+                <th scope="col" style="width: 7%">Кол-во ВТС</th>
+                <th scope="col" style="width: 7%">Общее кол-во</th>
+                <th scope="col" style="width: 9%">Списано за 30 дней</th>
                 <th scope="col" style="width: 10%">Цена за единицу</th>
             </tr>
         </thead>
@@ -130,9 +148,10 @@
             {% for record, cnt in result %}
             <tr>
                 <td><a href="{% url 'edit_component' record.pk %}">ред.</a></td>
-                <td>{{ record.type_component }}
-                    {{ record.marking }}
-                    {{ record.note|default_if_none:"" }}  
+                <td>
+                  <p style="margin-bottom: 2px; text-align: left;" data-toggle="tooltip" id='help_block' data-placement="right" title="{% for i in record.block_components.all %} {{ i }}; <br> {% endfor %}">
+                    {{ record.type_component }} {{ record.marking }} {{ record.note }}
+                  </p>
                 </td>
                 <td>
                     <a href="https://www.chipdip.ru/search?searchtext={{ record.marking }}">ChipDip</a>&nbsp
@@ -154,6 +173,12 @@
 <script>
   $(function () {
     $('[id="help"]').tooltip()
+  });
+  $(function () {
+    $('[id="help_block"]').tooltip({
+      placement:"right",
+      html:true,
+    })
   });
 </script>
 {% endblock %}

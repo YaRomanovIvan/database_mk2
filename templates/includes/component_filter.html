@@ -3,20 +3,11 @@
     {% csrf_token %}
         <h3>Фильтр</h3>
         <div class="row">
-            <div class="col">
-                <label for="{{ component_filter.form.type_component.id_for_label }}" >{{ component_filter.form.type_component.label }}</label>
-                {{ component_filter.form.type_component|addclass:"form-control form-control-sm" }}
+            <div class="col-3">
+                <label for="{{ component_filter.form.component.id_for_label }}" >{{ component_filter.form.component.label }}</label>
+                {{ component_filter.form.component|addclass:"form-control form-control-sm" }}
+                <p class="ms-1 me-1 help fs-6"><i>{{ component_filter.form.component.help_text }}</i></p>
             </div>
-            <div class="col">
-                <label for="{{ component_filter.form.marking.id_for_label }}" >{{ component_filter.form.marking.label }}</label>
-                {{ component_filter.form.marking|addclass:"form-control form-control-sm" }}
-            </div>
-        </div>
-        <br>
-        <div class="row">
-            {% for field in component_filter.form %}
-                {{ field.help_text }}
-            {% endfor %}
             <div class="col">
                 <label for="{{ component_filter.form.amount_eis.id_for_label }}" >{{ component_filter.form.amount_eis.label }}</label>
                 {{ component_filter.form.amount_eis|addclass:"form-control form-control-sm" }}
