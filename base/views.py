@@ -707,6 +707,9 @@ def new_component(request):
         request, 'Ошибка формы!'
         )
         return redirect("components")
+    marking = form.cleaned_data['marking']
+    form = form.save(commit=False)
+    form.marking = marking.replace(' ', '_')
     form.save()
     messages.success(
         request, 'Компонент добавлен успешно!'
@@ -727,6 +730,9 @@ def edit_component(request, pk):
         return render(
             request, 'component template/edit_component.html', {'form': form}
         )
+    marking = form.cleaned_data['marking']
+    form = form.save(commit=False)
+    form.marking = marking.replace(' ', '_')
     form.save()
     messages.success(
         request, f'Компонент "{component}" изменен успешно!'
