@@ -12,7 +12,7 @@ SECRET_KEY = '_tmw8tyw(l0e40qzox1fv+5^qu$uk(+&ihag^&_ig_lgujua^-'
 
 DEBUG = True
 
-ALLOWED_HOSTS = ['127.0.0.1', '51.250.38.128',]
+ALLOWED_HOSTS = ['127.0.0.1', '51.250.38.128', 'trk-itcsoir.ru', 'www.trk-itcsoir.ru',]
 
 AUTH_USER_MODEL = "users.User"
 
