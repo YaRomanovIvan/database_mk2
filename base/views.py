@@ -1221,7 +1221,7 @@ def create_report(request):
     date_before = form.cleaned_data['date_before']
     company = form.cleaned_data['company']
     order = Order.objects.filter(
-        date_commit__range=[date_after, date_before],
+        date_commit__range=[date_before, date_after],
         status__in=['оплачен', 'получен'],
         payer=company,
     ).order_by('date_commit', 'invoice_number', 'component')

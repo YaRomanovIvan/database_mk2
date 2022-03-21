@@ -111,9 +111,10 @@ def create_report_excel(order, date_after, date_before, company):
     agr = []
     for i in unique_invoice_number:
         agr.append(i['invoice_amount'])
-    max_invoice = max(agr)
-    min_invoice = min(agr)
-    avg_invoice = sum(agr) / len(agr)
+    if agr:
+        max_invoice = max(agr)
+        min_invoice = min(agr)
+        avg_invoice = sum(agr) / len(agr)
 
     path_template = os.path.join(
         os.getcwd(), "base/Order report/report_order_template.xlsx"
