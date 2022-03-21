@@ -1237,8 +1237,4 @@ def create_report(request):
             dest_filename.replace("/", "")
         ),
     )
-    return FileResponse(
-        open(
-            path_open,"rb",
-                )
-            )
+    return FileResponse(open(path_open,"rb",))

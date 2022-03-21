@@ -155,7 +155,7 @@ def create_report_excel(order, date_after, date_before, company):
         sheet.cell(row=i, column=8).border = thin_border
         sheet.cell(row=i, column=9).border = thin_border
     sheet["L4"].value = str(company)
-    sheet["L5"].value = f'{date_after} - {date_before}'
+    sheet["L5"].value = f'{date_before} - {date_after}'
     sheet["L6"].value = int(len(unique_invoice_number))
     sheet["L7"].value = int(all_cnt_component)
     sheet["L8"].value = int(all_summ_invoice)
