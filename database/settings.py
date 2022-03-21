@@ -1,6 +1,8 @@
 from pathlib import Path
 import environ
 import os
+import sentry_sdk
+from sentry_sdk.integrations.django import DjangoIntegration
 
 
 env = environ.Env()
@@ -119,6 +121,18 @@ DEFAULT_AUTO_FIELD = 'django.db.models.AutoField'
 
 STATIC_URL = "/static/"
 STATIC_ROOT = os.path.join(BASE_DIR, "static")
+
+
+import sentry_sdk
+from sentry_sdk.integrations.django import DjangoIntegration
+
+# скопируйте dsn из вашего личного кабинета на Sentry: 
+# Projects → <имя-проекта> → Client Keys
+sentry_sdk.init(
+    dsn="https://657caf22edd2494da172e3ca4626c490@o556942.ingest.sentry.io/6268410", 
+    integrations=[DjangoIntegration()],
+)
+
 
 EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
 EMAIL_HOST = os.environ.get("EMAIL_HOST")
