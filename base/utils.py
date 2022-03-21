@@ -117,7 +117,7 @@ def create_report_excel(order, date_after, date_before, company):
         avg_invoice = sum(agr) / len(agr)
 
     path_template = os.path.join(
-        os.getcwd(), "base/Order report/report_order_template.xlsx"
+        os.getcwd(), "base/Order_report/report_order_template.xlsx"
     )
     wb = load_workbook(filename=path_template)
     sheet = wb["Лист1"]
@@ -174,7 +174,7 @@ def create_report_excel(order, date_after, date_before, company):
 
     path_save = os.path.join(
         os.getcwd(),
-        "base/Order report/report.xlsx"
+        "base/Order_report/report.xlsx"
     )
     wb.save(path_save)
     

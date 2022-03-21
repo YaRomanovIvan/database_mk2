@@ -1233,7 +1233,7 @@ def create_report(request):
     dest_filename = "report.xlsx"
     path_open = os.path.join(
         os.getcwd(),
-        "base/Order report/{}".format(
+        "base/Order_report/{}".format(
             dest_filename.replace("/", "")
         ),
     )
