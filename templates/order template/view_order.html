@@ -144,6 +144,7 @@
     <a id='help' href="{% url 'confirmation_form' %}?commit" class="btn btn-info" data-placement="top" title="Подтвердите оплату используя номер счета. Выделять заявки не требуется.">Подтвердить оплату</a>
     <button id='help' type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#commit_order" data-placement="top" title="После подтверждения оплаты. Выделите используя 'чекбокс' зявки и нажмите кнопку.">Принять весь заказ</button>
     <div style="float: right;">
+      <a id='help' href="{% url 'create_report' %}?cancel" name='cancel' class="btn btn-danger" data-placement="top" title="Сформировать отчет по заявкам за определенный период">Сформировать отчет</a> 
       <a id='help' href="{% url 'confirmation_form' %}?cancel" name='cancel' class="btn btn-danger" data-placement="top" title="Отмените заказы используя номер счета. Выделять заявки не требуется.">Отменить заказ</a> 
     </div>
   </div>

@@ -12,4 +12,5 @@ urlpatterns = [
     path('order/edit/<int:pk>/', views.edit_order, name='edit_order'),
     path('order/confirmation_form/', views.order_confirmation, name='confirmation_form'),
     path('order/confirmation_commit/', views.confirmation_commit, name='confirmation_commit'),
+    path('order/create_report/', views.create_report, name='create_report'),
 ]

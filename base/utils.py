@@ -1,6 +1,7 @@
 import os
 from openpyxl import load_workbook
 from openpyxl.styles.borders import Border, Side
+from openpyxl.styles import Alignment
 
 def calculate_component(amount_trk, amount_eis, amount_vts, amount):
     spent_eis = 0
@@ -95,3 +96,84 @@ def create_repair_maker(qs):
         "base/Maker/repair_maker.xlsx"
     )
     wb.save(path_save)
+
+
+def create_report_excel(order, date_after, date_before, company):
+    unique_invoice_number = list({v['invoice_number']:v for v in order.values('invoice_number', 'invoice_amount')}.values()) # получаем уникальные номера счетов и их сумму
+    invoice_order = {}
+    all_cnt_component = 0
+    all_summ_invoice = 0
+    for i in unique_invoice_number:
+        cnt_component = order.filter(invoice_number=i['invoice_number']).values('component').count() # считаем количество компонентов в счете
+        invoice_order[i['invoice_number']] = [cnt_component, i['invoice_amount']] # словарь с указанием номера счета, количества компонентов в счете и сумма счета
+        all_cnt_component += cnt_component
+        all_summ_invoice += i['invoice_amount']
+    agr = []
+    for i in unique_invoice_number:
+        agr.append(i['invoice_amount'])
+    max_invoice = max(agr)
+    min_invoice = min(agr)
+    avg_invoice = sum(agr) / len(agr)
+
+    path_template = os.path.join(
+        os.getcwd(), "base/Order report/report_order_template.xlsx"
+    )
+    wb = load_workbook(filename=path_template)
+    sheet = wb["Лист1"]
+    cnt = 5
+    for record in order:
+        sheet["B" + str(cnt)].value = str(record.invoice_number)
+        sheet["C" + str(cnt)].value = str(record.component.type_component)
+        sheet["D" + str(cnt)].value = str(record.component.marking)
+        sheet["E" + str(cnt)].value = str(record.amount_commit)
+        sheet["B" + str(cnt)].alignment = Alignment(horizontal='center')
+        sheet["E" + str(cnt)].alignment = Alignment(horizontal='center')
+
+        cnt += 1
+    cnt = 5
+    for record in invoice_order:
+        sheet["G" + str(cnt)].value = str(record)
+        sheet["H" + str(cnt)].value = int(invoice_order[record][0])
+        sheet["I" + str(cnt)].value = float(invoice_order[record][1])
+        sheet["G" + str(cnt)].alignment = Alignment(horizontal='center')
+        sheet["H" + str(cnt)].alignment = Alignment(horizontal='center')
+        sheet["I" + str(cnt)].alignment = Alignment(horizontal='center')
+        cnt += 1
+    thin_border = Border(left=Side(style='thin'), 
+                     right=Side(style='thin'), 
+                     top=Side(style='thin'), 
+                     bottom=Side(style='thin'))
+    for i in range(5, order.count()+5):
+        sheet.cell(row=i, column=2).border = thin_border
+        sheet.cell(row=i, column=3).border = thin_border
+        sheet.cell(row=i, column=4).border = thin_border
+        sheet.cell(row=i, column=5).border = thin_border
+
+    for i in range(5, len(invoice_order)+5):
+        sheet.cell(row=i, column=7).border = thin_border
+        sheet.cell(row=i, column=8).border = thin_border
+        sheet.cell(row=i, column=9).border = thin_border
+    sheet["L4"].value = str(company)
+    sheet["L5"].value = f'{date_after} - {date_before}'
+    sheet["L6"].value = int(len(unique_invoice_number))
+    sheet["L7"].value = int(all_cnt_component)
+    sheet["L8"].value = int(all_summ_invoice)
+    sheet["L10"].value = float(min_invoice)
+    sheet["L11"].value = float(max_invoice)
+    sheet["L12"].value = float(avg_invoice)
+
+    sheet["L4"].alignment = Alignment(horizontal='center')
+    sheet["L5"].alignment = Alignment(horizontal='center')
+    sheet["L6"].alignment = Alignment(horizontal='center')
+    sheet["L7"].alignment = Alignment(horizontal='center')
+    sheet["L8"].alignment = Alignment(horizontal='center')
+    sheet["L10"].alignment = Alignment(horizontal='center')
+    sheet["L11"].alignment = Alignment(horizontal='center')
+    sheet["L12"].alignment = Alignment(horizontal='center')
+
+    path_save = os.path.join(
+        os.getcwd(),
+        "base/Order report/report.xlsx"
+    )
+    wb.save(path_save)
+    

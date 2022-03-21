@@ -86,3 +86,30 @@ class Confirmation_form(forms.Form):
         help_text='Укажите номер счета',
         required=False,
     )
+
+
+class Report_order_form(forms.Form):
+    TRK = 'ТРК'
+    EIS = 'ЭИС'
+    VTS = 'ВТС'
+    COMPANY_CHOICE = (
+        (TRK, 'ТРК'),
+        (EIS, 'ЭИС'),
+        (VTS, 'ВТС'),
+    )
+    date_before = forms.DateField(
+        label='Дата с',
+        widget=forms.TextInput(
+            attrs={"type": "date"}
+        ),
+    )
+    date_after = forms.DateField(
+        label='Дата до',
+        widget=forms.TextInput(
+            attrs={"type": "date"}
+        ),
+    )
+    company = forms.ChoiceField(
+        choices=COMPANY_CHOICE,
+        label='Компания',
+    )

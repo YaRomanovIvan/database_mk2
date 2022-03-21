@@ -1,6 +1,6 @@
 import datetime
 import os
-from django.http import FileResponse, HttpResponseRedirect, HttpResponse
+from django.http import FileResponse, HttpResponse
 from django.shortcuts import get_object_or_404, render, redirect
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
@@ -13,9 +13,9 @@ from .forms_components import (
     New_component_form,
     Edit_component_form, Update_amount_form, Update_price_form
 )
-from .forms_order import Create_request_form, Invoice_number_form, Confirmation_form
-from users.permissions import employee_permission, admin_permission
-from .utils import calculate_component, create_statement, create_repair_maker
+from .forms_order import Create_request_form, Invoice_number_form, Confirmation_form, Report_order_form
+from users.permissions import employee_permission
+from .utils import calculate_component, create_statement, create_repair_maker, create_report_excel
 
 
 @login_required
@@ -1209,3 +1209,32 @@ def confirmation_commit(request):
         )
     return redirect('view_order')
 
+
+def create_report(request):
+    form = Report_order_form()
+    if request.method != 'POST':
+        return render(request, 'order template/create_report.html', {'form': form,})
+    form = Report_order_form(request.POST)
+    if not form.is_valid():
+        return render(request, 'order template/create_report.html', {'form': form,})
+    date_after = form.cleaned_data['date_after']
+    date_before = form.cleaned_data['date_before']
+    company = form.cleaned_data['company']
+    order = Order.objects.filter(
+        date_commit__range=[date_after, date_before],
+        status__in=['оплачен', 'получен'],
+        payer=company,
+    ).order_by('date_commit', 'invoice_number', 'component')
+    create_report_excel(order, date_after, date_before, company)
+    dest_filename = "report.xlsx"
+    path_open = os.path.join(
+        os.getcwd(),
+        "base/Order report/{}".format(
+            dest_filename.replace("/", "")
+        ),
+    )
+    return FileResponse(
+        open(
+            path_open,"rb",
+                )
+            )
