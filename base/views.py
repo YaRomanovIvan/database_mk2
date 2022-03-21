@@ -1225,7 +1225,11 @@ def create_report(request):
         status__in=['оплачен', 'получен'],
         payer=company,
     ).order_by('date_commit', 'invoice_number', 'component')
-    create_report_excel(order, date_after, date_before, company)
+    if order:
+        create_report_excel(order, date_after, date_before, company)
+    else:
+        messages.error(request, 'Ошибка! Возможно в указанный период нет заказов!')
+        return redirect('view_order')
     dest_filename = "report.xlsx"
     path_open = os.path.join(
         os.getcwd(),
