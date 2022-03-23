@@ -99,6 +99,81 @@
   </div>
 </form>
 <hr>
+<div class='container text-center'>
+  <div class='row'>
+    <div class='col'>
+      <button id='help' type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#create_unit_order" data-placement="top" title="После обработки заявки. Выделите используя 'чекбокс' необходимые заявки и нажмите на кнопку.">
+        Добавить подразделение для платежей
+      </button>
+    </div>
+    <div class='col'>
+      <button id='help' type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#create_purpose_order" data-placement="top" title="После обработки заявки. Выделите используя 'чекбокс' необходимые заявки и нажмите на кнопку.">
+        Добавить назначение для платежей
+      </button>
+    </div>
+  </div>
+</div>
+<hr>
+
+<div class="modal fade" id="create_unit_order" data-bs-backdrop="static" data-bs-keyboard="false"  aria-labelledby="staticBackdropLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="staticBackdropLabel">Добавить подразделение для платежей</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <form action='{% url "create_unit_order" %}' method='POST'>
+        {% csrf_token %}
+        <div class="modal-body">
+          {% for field in create_unit_order_form %}
+            <div class="fieldWrapper">
+              {{ field.errors }}
+              {{ field.label_tag }} {{ field|addclass:"form-control form-control-sm" }}
+              {% if field.help_text %}
+                <p class="help"><i>{{ field.help_text|safe }}</i></p>
+              {% endif %}
+            </div>
+          {% endfor %}
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Закрыть</button>
+          <button type="submit" class="btn btn-primary">Добавить</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+
+<div class="modal fade" id="create_purpose_order" data-bs-backdrop="static" data-bs-keyboard="false"  aria-labelledby="staticBackdropLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="staticBackdropLabel">Добавить назначение для платежей</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <form action='{% url "create_purpose_order" %}' method='POST'>
+        {% csrf_token %}
+        <div class="modal-body">
+          {% for field in create_purpose_order_form %}
+            <div class="fieldWrapper">
+              {{ field.errors }}
+              {{ field.label_tag }} {{ field|addclass:"form-control form-control-sm" }}
+              {% if field.help_text %}
+                <p class="help"><i>{{ field.help_text|safe }}</i></p>
+              {% endif %}
+            </div>
+          {% endfor %}
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Закрыть</button>
+          <button type="submit" class="btn btn-primary">Добавить</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
 
 <div class="modal fade" id="create_request" data-bs-backdrop="static" data-bs-keyboard="false"  aria-labelledby="staticBackdropLabel" aria-hidden="true">
   <div class="modal-dialog">
@@ -154,7 +229,7 @@
 </div>
   <div class="ms-3 me-3">
     <table class="table table-sm table-hover table-bordered text-center" id="table_order">
-      <thead>
+      <thead class='table-light'>
         <tr>
           <th scope="col" style="width: 1%"><input id="select_all" type="checkbox" class="form-check-input"></th>
           <th style="width: 3%">№</th>
@@ -167,7 +242,7 @@
           <th scope="col">Поставщик</th>
           <th style="min-width: 112px;" scope="col">Дата заказа</th>
           <th style="min-width: 112px;" scope="col">Номер счета</th>
-          <th style="min-width: 50px;" scope="col">Оплачено</th>
+          <th style="min-width: 50px;" scope="col">Плательщик</th>
           <th scope="col">Получено</th>
           <th style="min-width: 140px;" scope="col">Дата получения</th>
           <th scope="col">Статус</th>

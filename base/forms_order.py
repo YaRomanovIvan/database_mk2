@@ -1,6 +1,5 @@
-from tabnanny import verbose
 from django import forms
-from .models import Order, Component
+from .models import Order, Component, Unit_payment, Purpose_payment
 
 
 class Create_request_form(forms.ModelForm):
@@ -70,6 +69,16 @@ class Invoice_number_form(forms.Form):
         label='Плательщик',
         required=False
     )
+    unit_order = forms.ModelChoiceField(
+        queryset=Unit_payment.objects.all(),
+        label='Подразделение',
+        required=False,
+    )
+    purpose_order = forms.ModelChoiceField(
+        queryset=Purpose_payment.objects.all(),
+        label='Назначение платежа',
+        required=False,
+    )
     delivery_time = forms.CharField(
         label="Срок поставки",
         help_text='1 нед. / 2 нед. / 3 нед.',
@@ -113,3 +122,15 @@ class Report_order_form(forms.Form):
         choices=COMPANY_CHOICE,
         label='Компания',
     )
+
+
+class Create_unit_order_form(forms.ModelForm):
+    class Meta:
+        model = Unit_payment
+        fields = '__all__'
+    
+
+class Create_purpose_order_form(forms.ModelForm):
+    class Meta:
+        model = Purpose_payment
+        fields = '__all__'

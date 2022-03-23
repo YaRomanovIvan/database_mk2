@@ -13,4 +13,6 @@ urlpatterns = [
     path('order/confirmation_form/', views.order_confirmation, name='confirmation_form'),
     path('order/confirmation_commit/', views.confirmation_commit, name='confirmation_commit'),
     path('order/create_report/', views.create_report, name='create_report'),
+    path('order/create_unit_order/', views.create_unit_order, name='create_unit_order'),
+    path('order/create_purpose_order/', views.create_purpose_order, name='create_purpose_order'),
 ]

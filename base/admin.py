@@ -2,7 +2,7 @@ from django.contrib import admin
 
 from .models import (Component, Defect_statement, Maker, Order,
                      Maker_company, Record_block, Record_component,
-                     Type_block, Unit, Post)
+                     Type_block, Unit, Post, Unit_payment, Purpose_payment)
 
 
 class PostAdmin(admin.ModelAdmin):
@@ -111,6 +111,18 @@ class RequestAdmin(admin.ModelAdmin):
     empty_value_display = "--пусто--"
 
 
+class Unit_paymentAdmin(admin.ModelAdmin):
+    list_display = (
+        'unit',
+    )
+
+
+class Purpose_paymentAdmin(admin.ModelAdmin):
+    list_display = (
+        'purpose',
+    )
+
+
 class OrderAdmin(admin.ModelAdmin):
     list_display = (
         'component',
@@ -127,6 +139,8 @@ class OrderAdmin(admin.ModelAdmin):
         'invoice_document',
         'invoice_amount',
         'payer',
+        'unit_order',
+        'purpose_order',
         'user',
         'note',
     )
@@ -153,4 +167,6 @@ admin.site.register(Record_component, Record_componentsAdmin)
 admin.site.register(Maker, MakerAdmin)
 admin.site.register(Maker_company, Maker_companyAdmin)
 admin.site.register(Order, OrderAdmin)
+admin.site.register(Unit_payment, Unit_paymentAdmin)
+admin.site.register(Purpose_payment, Purpose_paymentAdmin)
 admin.site.register(Defect_statement, DefectAdmin)

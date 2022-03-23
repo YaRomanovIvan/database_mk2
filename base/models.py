@@ -345,6 +345,40 @@ class Maker(models.Model):
         ordering = ["-id"]
 
 
+class Unit_payment(models.Model):
+    unit = models.CharField(
+        verbose_name='Подразделение',
+        unique=True,
+        max_length=30,
+    )
+
+    def __str__(self):
+        return self.unit
+
+    
+    class Meta:
+        verbose_name_plural = "Подразделение платежей"
+        verbose_name = "Подразделение платежа"
+        ordering = ["id"]
+
+
+class Purpose_payment(models.Model):
+    purpose = models.CharField(
+        verbose_name='Назначение',
+        max_length=30,
+        unique=True,
+    )
+
+    def __str__(self):
+        return self.purpose
+
+    
+    class Meta:
+        verbose_name_plural = "Назначение платежей"
+        verbose_name = "Назначение платежа"
+        ordering = ["id"]
+
+
 class Order(models.Model):
     wait = "ожидает"
     processing = "обработан"
@@ -455,6 +489,20 @@ class Order(models.Model):
         null=True,
         choices=CHOICE_COMPANY,
         default=default
+    )
+    unit_order = models.ForeignKey(
+        Unit_payment,
+        on_delete=SET_NULL,
+        verbose_name='Подразделение',
+        blank=True,
+        null=True,
+    )
+    purpose_order = models.ForeignKey(
+        Purpose_payment,
+        on_delete=SET_NULL,
+        verbose_name='Назначение',
+        blank=True,
+        null=True,
     )
     user = models.CharField(
         max_length=180,

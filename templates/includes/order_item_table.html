@@ -52,7 +52,11 @@
         <a href="{{ bb.invoice_document.url }}" target="_blank"><img src="https://img.icons8.com/office/16/000000/installing-updates--v2.png"/></a>
       {% endif %}
     </td>
-    <td>{{ bb.payer|default_if_none:"" }}</td>
+
+    <td>
+      <p style="margin-bottom: 2px;" data-toggle="tooltip" id='help_block' data-placement="right" title="{% if bb.unit_order %}{{ bb.unit_order }}{% if bb.purpose_order %} --> {{ bb.purpose_order }}{% endif %}{% endif %}">{{ bb.payer|default_if_none:"" }}</p>
+    </td>
+
     {% if bb.status == 'оплачен' or bb.status == 'недопоставка' %}
     <td colspan="2">
       <div class="btn-group" role="group" aria-label="Basic example">

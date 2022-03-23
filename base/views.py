@@ -13,7 +13,7 @@ from .forms_components import (
     New_component_form,
     Edit_component_form, Update_amount_form, Update_price_form
 )
-from .forms_order import Create_request_form, Invoice_number_form, Confirmation_form, Report_order_form
+from .forms_order import Create_request_form, Invoice_number_form, Confirmation_form, Report_order_form, Create_unit_order_form, Create_purpose_order_form
 from users.permissions import employee_permission
 from .utils import calculate_component, create_statement, create_repair_maker, create_report_excel
 
@@ -865,8 +865,46 @@ def view_order(request):
         'processing_order_form': Create_request_form(),
         'invoice_number_form': Invoice_number_form(),
         'incomplete_commit_order': Invoice_number_form(),
+        'create_unit_order_form': Create_unit_order_form(),
+        'create_purpose_order_form': Create_purpose_order_form(),
     }
     return render(request, 'order template/view_order.html', context)
+
+
+def create_unit_order(request):
+    form = Create_unit_order_form()
+    if request.method != 'POST':
+        return redirect('view_order')
+    form = Create_unit_order_form(request.POST)
+    if not form.is_valid():
+        messages.error(
+                request, 
+                    f"Ошибка! Форма не прошла проверку на валидность!"
+        )
+        return redirect('view_order')
+    form.save()
+    messages.success(
+        request, f"Подразделение добавлено!"
+    )
+    return redirect('view_order')
+
+
+def create_purpose_order(request):
+    form = Create_purpose_order_form()
+    if request.method != 'POST':
+        return redirect('view_order')
+    form = Create_purpose_order_form(request.POST)
+    if not form.is_valid():
+        messages.error(
+                request, 
+                    f"Ошибка! Форма не прошла проверку на валидность!"
+        )
+        return redirect('view_order')
+    form.save()
+    messages.success(
+        request, f"Назначение добавлено!"
+    )
+    return redirect('view_order')
 
 
 @login_required
@@ -1016,6 +1054,11 @@ def order_components(request):
     payer = form.cleaned_data['payer']
     provider = form.cleaned_data['provider']
     delivery_time = form.cleaned_data['delivery_time']
+    unit = form.cleaned_data['unit_order']
+    if not unit:
+        messages.error(request, "Вы не указали подразделение!")
+        return redirect("view_order")
+    purpose_order = form.cleaned_data['purpose_order']
     invoice_document = form.cleaned_data['document']
     date_order = datetime.datetime.today()
     error = []
@@ -1028,6 +1071,8 @@ def order_components(request):
             order.payer = payer
             order.provider = provider
             order.delivery_time = delivery_time
+            order.unit_order = unit
+            order.purpose_order = purpose_order
             order.invoice_document = invoice_document
             order.status = "заказан"
             order.save()
@@ -1036,7 +1081,7 @@ def order_components(request):
     if error:
         messages.error(
             request,
-            f'Заявки {error} не могут быть обработаны! Проверьте их статус!'
+            f'Заявки {error} не могут быть обработаны! Проверьте их статус! Остальные заявки обработаны успешно!'
         )
         return redirect("view_order")
     messages.success(
