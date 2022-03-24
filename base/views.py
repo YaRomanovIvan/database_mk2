@@ -6,7 +6,7 @@ from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.core.paginator import Paginator
 from django.db.models import Sum
-from .models import Defect_statement, Post, Record_block, Type_block, Component, User, Record_component, Maker, Order
+from .models import Defect_statement, Post, Purpose_payment, Record_block, Type_block, Component, Unit_payment, User, Record_component, Maker, Order
 from .filters import Block_filter, Components_filter, Order_filter, Record_components_filter, Maker_filter
 from .forms_block import Defect_statement_form, Record_block_form, Repair_block_form, Type_block_form, Unit_form, Send_block_form, MakerForm, Return_maker_block_form
 from .forms_components import (
@@ -214,7 +214,7 @@ def block_info(request, pk):
         'type_block_form': Type_block_form(instance=block),
         'record_block_form': Record_block_form(instance=about_block),
         'defect_form': Defect_statement_form(),
-        'maker_form': MakerForm(initial={'block': about_block, 'maker':block.maker}, instance=about_block),
+        'maker_form': MakerForm(initial={'block': about_block, }),
         'repair_block_form': form,
         'components': components,
         'defect': defect,
@@ -495,7 +495,7 @@ def return_block_maker(request):
     if not number_id:
         messages.error(request, "Выберите блоки!")
         return redirect("view_block_maker")
-    queryset = Maker.objects.filter(number_block__in=number_id)
+    queryset = Maker.objects.filter(block__pk__in=number_id)
     data_filter = Maker_filter(request.GET, queryset=queryset)
     cnt = data_filter.qs.count()
     status_block = ''
@@ -540,7 +540,7 @@ def commit_return_block_maker(request):
     date_shipment = datetime.date.today()
     if "send_block" in request.POST:
         for id in number_id:
-            block = Maker.objects.get(number_block=id)
+            block = Maker.objects.get(block__number_block=id)
             return_block = get_object_or_404(Record_block, pk=id)
             block.note_maker = passed
             block.date_shipment_maker = date_shipment
@@ -552,7 +552,7 @@ def commit_return_block_maker(request):
         return redirect("view_block_maker")
     if "return_block" in request.POST:
         for id in number_id:
-            block = Maker.objects.get(number_block=id)
+            block = Maker.objects.get(block__number_block=id)
             return_block = get_object_or_404(Record_block, pk=id)
             block.note_maker = passed
             block.date_add_maker = date_shipment
@@ -565,7 +565,7 @@ def commit_return_block_maker(request):
         return redirect("view_block_maker")
     if "defect_block" in request.POST:
         for id in number_id:
-            block = Maker.objects.get(number_block=id)
+            block = Maker.objects.get(block__number_block=id)
             return_block = get_object_or_404(Record_block, pk=id)
             block.note_maker = passed
             block.date_add_maker = date_shipment
@@ -871,6 +871,8 @@ def view_order(request):
     return render(request, 'order template/view_order.html', context)
 
 
+@login_required
+@employee_permission
 def create_unit_order(request):
     form = Create_unit_order_form()
     if request.method != 'POST':
@@ -889,6 +891,8 @@ def create_unit_order(request):
     return redirect('view_order')
 
 
+@login_required
+@employee_permission
 def create_purpose_order(request):
     form = Create_purpose_order_form()
     if request.method != 'POST':
@@ -1269,9 +1273,11 @@ def create_report(request):
         date_commit__range=[date_before, date_after],
         status__in=['оплачен', 'получен'],
         payer=company,
-    ).order_by('date_commit', 'invoice_number', 'component')
+    ).order_by('date_commit', 'invoice_number', 'component', 'pk')
+    unit_order = Unit_payment.objects.all()
+    purpose_order = Purpose_payment.objects.all()
     if order:
-        create_report_excel(order, date_after, date_before, company)
+        create_report_excel(order, date_after, date_before, company, unit_order, purpose_order)
     else:
         messages.error(request, 'Ошибка! Возможно в указанный период нет заказов!')
         return redirect('view_order')
@@ -1282,4 +1288,5 @@ def create_report(request):
             dest_filename.replace("/", "")
         ),
     )
-    return FileResponse(open(path_open,"rb",))
+    return redirect('create_report')
+#    return FileResponse(open(path_open,"rb",))

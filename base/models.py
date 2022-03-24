@@ -292,24 +292,6 @@ class Maker(models.Model):
         on_delete=models.CASCADE,
         verbose_name="Блок",
     )
-    number_block = models.PositiveIntegerField(
-        verbose_name='Номер блока'
-    )
-    name_block = models.CharField(
-        max_length=150,
-        verbose_name="Тип блока",
-    )
-    serial_number = models.CharField(
-        max_length=20,
-        null=True,
-        blank=True,
-        verbose_name="Заводской_номер",
-    )
-    maker = models.ForeignKey(
-        Maker_company,
-        on_delete=models.CASCADE,
-        verbose_name='Производитель',
-    )
     date_shipment_maker = models.DateField(
         blank=True,
         null=True,

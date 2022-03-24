@@ -98,16 +98,22 @@ def create_repair_maker(qs):
     wb.save(path_save)
 
 
-def create_report_excel(order, date_after, date_before, company):
-    unique_invoice_number = list({v['invoice_number']:v for v in order.values('invoice_number', 'invoice_amount')}.values()) # получаем уникальные номера счетов и их сумму
+def create_report_excel(order, date_after, date_before, company, unit_order, purpose_order):
+    unique_invoice_number = list({v['invoice_number']:v for v in order.values('invoice_number', 'invoice_amount', 'provider', 'unit_order', 'purpose_order')}.values()) # получаем уникальные номера счетов и сумму счетов
     invoice_order = {}
+    unique_unit_order = []
     all_cnt_component = 0
     all_summ_invoice = 0
     for i in unique_invoice_number:
         cnt_component = order.filter(invoice_number=i['invoice_number']).values('component').count() # считаем количество компонентов в счете
         invoice_order[i['invoice_number']] = [cnt_component, i['invoice_amount']] # словарь с указанием номера счета, количества компонентов в счете и сумма счета
+        #unit_order[i['unit_order']] = [i['invoice_number'], cnt_component, i['invoice_amount'], i['provider'], i['unit_order'], i['purpose_order']]
+        unique_unit_order.append([i['invoice_number'], cnt_component, i['invoice_amount'], i['provider'], i['unit_order'], i['purpose_order']])
         all_cnt_component += cnt_component
         all_summ_invoice += i['invoice_amount']
+    print('-------------------')
+    
+        
     agr = []
     for i in unique_invoice_number:
         agr.append(i['invoice_amount'])
@@ -132,14 +138,31 @@ def create_report_excel(order, date_after, date_before, company):
 
         cnt += 1
     cnt = 5
-    for record in invoice_order:
-        sheet["G" + str(cnt)].value = str(record)
-        sheet["H" + str(cnt)].value = int(invoice_order[record][0])
-        sheet["I" + str(cnt)].value = float(invoice_order[record][1])
-        sheet["G" + str(cnt)].alignment = Alignment(horizontal='center')
-        sheet["H" + str(cnt)].alignment = Alignment(horizontal='center')
-        sheet["I" + str(cnt)].alignment = Alignment(horizontal='center')
+    for i in unit_order:
+        sheet["G" + str(cnt)].value = str(i)
+      #  sheet.merge_cells(f'G{str(cnt)}:D{str(cnt)}')
         cnt += 1
+        sum_purpose = 0
+        for j in unique_unit_order:
+            if i == unit_order.get(pk=j[4]):
+                sheet["G" + str(cnt)].value = str(j[0])
+                sheet["H" + str(cnt)].value = int(j[1])
+                sheet["I" + str(cnt)].value = str(j[3])
+                sheet["J" + str(cnt)].value = float(j[2])
+                cnt += 1
+                sum_purpose += j[2]
+        sheet["I" + str(cnt)].value = 'Итого:'
+        sheet["J" + str(cnt)].value = float(sum_purpose)
+        cnt += 1
+    print('-------------------')
+#    for record in invoice_order:
+#        sheet["G" + str(cnt)].value = str(record)
+#        sheet["H" + str(cnt)].value = int(invoice_order[record][0])
+#        sheet["I" + str(cnt)].value = float(invoice_order[record][1])
+#        sheet["G" + str(cnt)].alignment = Alignment(horizontal='center')
+#        sheet["H" + str(cnt)].alignment = Alignment(horizontal='center')
+#        sheet["I" + str(cnt)].alignment = Alignment(horizontal='center')
+#        cnt += 1
     thin_border = Border(left=Side(style='thin'), 
                      right=Side(style='thin'), 
                      top=Side(style='thin'), 
@@ -154,23 +177,23 @@ def create_report_excel(order, date_after, date_before, company):
         sheet.cell(row=i, column=7).border = thin_border
         sheet.cell(row=i, column=8).border = thin_border
         sheet.cell(row=i, column=9).border = thin_border
-    sheet["L4"].value = str(company)
-    sheet["L5"].value = f'{date_before} - {date_after}'
-    sheet["L6"].value = int(len(unique_invoice_number))
-    sheet["L7"].value = int(all_cnt_component)
-    sheet["L8"].value = int(all_summ_invoice)
-    sheet["L10"].value = float(min_invoice)
-    sheet["L11"].value = float(max_invoice)
-    sheet["L12"].value = float(avg_invoice)
+    sheet["M4"].value = str(company)
+    sheet["M5"].value = f'{date_before} - {date_after}'
+    sheet["M6"].value = int(len(unique_invoice_number))
+    sheet["M7"].value = int(all_cnt_component)
+    sheet["M8"].value = int(all_summ_invoice)
+    sheet["M10"].value = float(min_invoice)
+    sheet["M11"].value = float(max_invoice)
+    sheet["M12"].value = float(avg_invoice)
 
-    sheet["L4"].alignment = Alignment(horizontal='center')
-    sheet["L5"].alignment = Alignment(horizontal='center')
-    sheet["L6"].alignment = Alignment(horizontal='center')
-    sheet["L7"].alignment = Alignment(horizontal='center')
-    sheet["L8"].alignment = Alignment(horizontal='center')
-    sheet["L10"].alignment = Alignment(horizontal='center')
-    sheet["L11"].alignment = Alignment(horizontal='center')
-    sheet["L12"].alignment = Alignment(horizontal='center')
+    sheet["M4"].alignment = Alignment(horizontal='center')
+    sheet["M5"].alignment = Alignment(horizontal='center')
+    sheet["M6"].alignment = Alignment(horizontal='center')
+    sheet["M7"].alignment = Alignment(horizontal='center')
+    sheet["M8"].alignment = Alignment(horizontal='center')
+    sheet["M10"].alignment = Alignment(horizontal='center')
+    sheet["M11"].alignment = Alignment(horizontal='center')
+    sheet["M12"].alignment = Alignment(horizontal='center')
 
     path_save = os.path.join(
         os.getcwd(),

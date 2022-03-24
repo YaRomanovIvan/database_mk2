@@ -77,18 +77,16 @@ class Record_componentsAdmin(admin.ModelAdmin):
 
 
 class MakerAdmin(admin.ModelAdmin):
+    list_select_related = True
     list_display = (
         "id",
-        "number_block",
-        "name_block",
-        "serial_number",
-        "maker",
+        "block",
         "date_shipment_maker",
         "date_add_maker",
         "maker_status",
         "reason",
     )
-    search_fields = ['block__number_block', 'block__name_block__name_block__icontains']
+#    search_fields = ['block__number_block', 'block__name_block__name_block__icontains']
     empty_value_display = "--пусто--"
 
 

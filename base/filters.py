@@ -60,20 +60,38 @@ class Block_filter(django_filters.FilterSet):
 
 
 class Maker_filter(django_filters.FilterSet):
-    number_block = django_filters.RangeFilter()
+    number_block = django_filters.RangeFilter(
+        method='get_number_block',
+    )
     name_block = django_filters.ModelChoiceFilter(
         label="Наименование блока",
         queryset=Type_block.objects.all(),
+        method='get_name_block',
     )
     serial_number = django_filters.CharFilter(
         lookup_expr='icontains',
         method='get_serial_number',
+    )
+    maker = django_filters.ModelChoiceFilter(
+        label="Проивзодитель",
+        queryset=Maker_company.objects.all(),
+        method='get_maker_block',
     )
     date_add_maker = django_filters.DateFromToRangeFilter()
     date_shipment_maker = django_filters.DateFromToRangeFilter()
 
     def get_serial_number(self, queryset, field_name, value):
         return queryset.filter(block__serial_number=value)
+    
+    def get_number_block(self, queryset, field_name, value):
+
+        return queryset.filter(block__number_block__range=[value.start, value.stop])
+
+    def get_name_block(self, queryset, field_name, value):
+        return queryset.filter(block__name_block=value)
+
+    def get_maker_block(self, queryset, field_name, value):
+        return queryset.filter(block__name_block__maker=value)
     
     class Meta:
         model = Maker
