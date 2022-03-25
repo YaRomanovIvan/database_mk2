@@ -1288,5 +1288,4 @@ def create_report(request):
             dest_filename.replace("/", "")
         ),
     )
-    return redirect('create_report')
     return FileResponse(open(path_open,"rb",))
