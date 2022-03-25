@@ -61,7 +61,7 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'database.wsgi.application'
-"""
+
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
@@ -74,8 +74,8 @@ DATABASES = {
         'PASSWORD': 'mysql'
     }
 }
-"""
 
+"""
 DATABASES = {
     'default': {
         'ENGINE': os.getenv('DB_ENGINE', 'django.db.backends.postgresql'),
@@ -86,7 +86,7 @@ DATABASES = {
         'PORT': os.getenv('DB_PORT')
     }
 }
-
+"""
 
 AUTH_PASSWORD_VALIDATORS = [
     {

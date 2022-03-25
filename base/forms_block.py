@@ -134,17 +134,6 @@ class Defect_statement_form(forms.ModelForm):
 
 
 class MakerForm(forms.ModelForm):
-    number_block = forms.IntegerField(
-        label="Номер блока",
-        widget=forms.NumberInput(
-            attrs={"class": "form-control form-control-sm"}
-        ),
-    )
-    name_block = forms.ModelChoiceField(
-        label="Наименование блока",
-        queryset=Type_block.objects.all(),
-        widget=forms.Select(attrs={"id": "id_record_block", "class": "form-control form-control-sm",}),
-    )
     class Meta:
         model = Maker
         fields = ("__all__")
