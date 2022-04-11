@@ -14,6 +14,7 @@ thead th {
             <thead>
               <tr>
                 <th scope="col" style="width: 1%"><input id="select_all" type="checkbox" class="form-check-input"></th>
+                <th scope="col" style="width: 1%"></th>
                 <th scope="col" style="width: 7%">Учетный №</th>
                 <th style="min-width: 350px; width: 25%" scope="col">Наименование блока</th>
                 <th scope="col" style="width: 5%">Зав. номер</th>
@@ -30,6 +31,7 @@ thead th {
             {% if bb.maker_status == 'забракован' %}
             <tr class="text-danger">
               <td><input class="form-check-input" type="checkbox" name="checkbox" value="{{ bb.block.number_block }}" id='{{ bb.block.number_block }}'></td>
+              <td><a href="{% url 'edit_block_maker' bb.pk %}">ред.</a></td>
               <td><a href="{% url 'block_info' bb.block.number_block %}">{{ bb.block.number_block }}</a></td>
               <td style="text-align: left;">{{ bb.block.name_block }}</td>
               <td>{{ bb.block.serial_number|default_if_none:"" }}</td>
@@ -43,6 +45,7 @@ thead th {
             {%elif bb.maker_status == 'отправлен'%}
             <tr style="color:DarkGoldenRod;">
               <td><input class="form-check-input" type="checkbox" name="checkbox" value="{{ bb.block.number_block }}" id='{{ bb.block.number_block }}'></td>
+              <td><a href="{% url 'edit_block_maker' bb.pk %}">ред.</a></td>
               <td><a href="{% url 'block_info' bb.block.number_block %}">{{ bb.block.number_block }}</a></td>
               <td style="text-align: left;">{{ bb.block.name_block }}</td>
               <td>{{ bb.block.serial_number|default_if_none:"" }}</td>
@@ -56,6 +59,7 @@ thead th {
             {% elif bb.maker_status == 'возвращен' %}
             <tr class="text-primary">
               <td><input class="form-check-input" type="checkbox" name="checkbox" value="{{ bb.block.number_block }}" id='{{ bb.block.number_block }}'></td>
+              <td><a href="{% url 'edit_block_maker' bb.pk %}">ред.</a></td>
               <td><a href="{% url 'block_info' bb.block.number_block %}">{{ bb.block.number_block }}</a></td>
               <td style="text-align: left;">{{ bb.block.name_block }}</td>
               <td>{{ bb.block.serial_number|default_if_none:"" }}</td>
@@ -69,6 +73,7 @@ thead th {
             {% elif bb.maker_status == 'ожидает' %}
             <tr>
               <td><input class="form-check-input" type="checkbox" name="checkbox" value="{{ bb.block.number_block }}" id='{{ bb.block.number_block }}'></td>
+              <td><a href="{% url 'edit_block_maker' bb.pk %}">ред.</a></td>
               <td><a href="{% url 'block_info' bb.block.number_block %}">{{ bb.block.number_block }}</a></td>
               <td style="text-align: left;">{{ bb.block.name_block }}</td>
               <td>{{ bb.block.serial_number|default_if_none:"" }}</td>

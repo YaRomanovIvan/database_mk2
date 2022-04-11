@@ -230,8 +230,6 @@ class Record_block(models.Model):
         verbose_name="Передан ФИО",
     )
 
-    def __str__(self):
-        return "%s | %s" % (self.number_block, self.name_block)
 
     class Meta:
         verbose_name_plural = "Блоки в центре"

@@ -39,6 +39,7 @@ urlpatterns = [
     path('block/send_block_maker/<int:pk>/', views.send_block_maker, name='send_block_maker'),
     path('block/return_block_maker/', views.return_block_maker, name='return_block_maker'),
     path('block/return_block_maker/commit/', views.commit_return_block_maker, name='commit_return_block_maker'),
+    path('block/edit_block_maker/<int:pk>/', views.edit_block_maker, name='edit_block_maker'),
     path('block/defective_statement/', views.view_defective_statement, name='defective_statement'),
     path('block/create_defective_statement/<int:pk>/', views.create_defective_statement, name='create_defective_statement'),
     path('open_defect_statement/<int:pk>/', views.open_defect_statement, name='open_defect_statement'),

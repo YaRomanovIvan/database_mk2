@@ -1,5 +1,6 @@
 import datetime
 import os
+from webbrowser import get
 from django.http import FileResponse, HttpResponse
 from django.shortcuts import get_object_or_404, render, redirect
 from django.contrib import messages
@@ -474,7 +475,7 @@ def create_defective_statement(request, pk):
 @login_required
 @employee_permission    
 def view_block_maker(request):
-    queryset = Maker.objects.all()
+    queryset = Maker.objects.select_related('block', 'block__region', 'block__name_block')
     data_filter = Maker_filter(request.GET, queryset=queryset)
     paginator = Paginator(data_filter.qs, 100)
     page_number = request.GET.get("page")
@@ -631,6 +632,30 @@ def send_block_maker(request, pk):
         'Блок добавлен в список отправки!'
     )
     return redirect('block_info', pk)
+
+
+@login_required
+@employee_permission
+def edit_block_maker(request, pk):
+    block = Maker.objects.select_related('block__name_block').get(pk=pk)
+    form = MakerForm(instance=block)
+    if request.method != 'POST':
+        context = {
+            'form': form,
+        }
+        return render(request, 'block template/edit_block_maker.html', context)
+    form = MakerForm(request.POST, instance=block)
+    if not form.is_valid():
+        context = {
+            'form': form,
+        }
+        return render(request, 'block template/edit_block_maker.html', context)
+    form.save()
+    context = {
+        'block': block,
+        'form': form,
+    }
+    return redirect('view_block_maker')
 
 
 @login_required

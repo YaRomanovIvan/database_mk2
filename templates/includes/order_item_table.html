@@ -1,6 +1,6 @@
 
     <th scope="row">
-      <input class="form-check-input" type="checkbox" name="checkbox" value="{{ bb.pk }}" id='{{ bb.pk }}'>
+      <input class="form-check-input" type="checkbox" name="checkbox" value="{{ bb.pk }}" id='{{ bb.pk }}' v-model="checkedPK">
     </th>
     <td>{{ bb.pk }}&nbsp;<a href='{% url "edit_order" bb.pk %}'>ред.</a></td>
     <td style="text-align: left;">

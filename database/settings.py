@@ -12,9 +12,13 @@ environ.Env.read_env(os.path.join(BASE_DIR, '.env'))
 
 SECRET_KEY = '_tmw8tyw(l0e40qzox1fv+5^qu$uk(+&ihag^&_ig_lgujua^-'
 
-DEBUG = True
+DEBUG = False
 
 ALLOWED_HOSTS = ['127.0.0.1', '51.250.38.128', 'trk-itcsoir.ru', 'www.trk-itcsoir.ru',]
+
+INTERNAL_IPS = [
+    "127.0.0.1",
+]
 
 AUTH_USER_MODEL = "users.User"
 
@@ -29,6 +33,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'sorl.thumbnail',
     "django_filters",
+    'debug_toolbar',
 ]
 
 MIDDLEWARE = [
@@ -36,6 +41,7 @@ MIDDLEWARE = [
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
+    "debug_toolbar.middleware.DebugToolbarMiddleware",
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
@@ -126,8 +132,7 @@ STATIC_ROOT = os.path.join(BASE_DIR, "static")
 import sentry_sdk
 from sentry_sdk.integrations.django import DjangoIntegration
 
-# скопируйте dsn из вашего личного кабинета на Sentry: 
-# Projects → <имя-проекта> → Client Keys
+
 sentry_sdk.init(
     dsn="https://657caf22edd2494da172e3ca4626c490@o556942.ingest.sentry.io/6268410", 
     integrations=[DjangoIntegration()],
