@@ -208,6 +208,7 @@
   </div>
 </div>
 
+
 <form action="{% url 'order_components' %}" method='POST',  enctype="multipart/form-data">
   <div class='ms-3 me-3'>
     <button id='help' type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#create_request" data-placement="top" title="Создание заявки для заказа компонента">
@@ -224,6 +225,17 @@
     </div>
   </div>
   <hr>
+  <div class="row">
+    <div class="col">
+    </div>
+    <div class="col">
+      {% if page.has_other_pages %}
+        {% include "includes/paginator.html" with items=page paginator=paginator%}
+      {% endif %}
+    </div>
+    <div class="col">
+    </div>
+  </div>
   <div class='ms-3 me-3'>
     <p>Заказов в выборке: {{ cnt }}</p>
 </div>
